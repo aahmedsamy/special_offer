@@ -35,8 +35,11 @@ class User(AbstractUser):
 
     @property
     def total_visits(self):
-        offer = self.publisher_offer.aggregate(Sum("visited"))['visited']
-        discount = self.publisher_discount.aggregate(Sum("visited"))['visited']
+        offer = self.publisher_offer.aggregate(Sum("visited"))['visited__sum']
+        offer = offer if offer else 0
+        discount = self.publisher_discount.aggregate(Sum("visited"))[
+            'visited__sum']
+        discount = discount if discount else 0
         return offer + discount
 
     def is_verified(self):

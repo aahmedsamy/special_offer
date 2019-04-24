@@ -30,6 +30,9 @@ class UserAdmin(admin.ModelAdmin):
             fieldsets[2] = (_('Important dates'), {
                 'fields': ('date_joined', 'last_login'),
             })
+            fieldsets.append((_('Insights'), {
+                'fields': ('total_visits',),
+            }))
         else:
             fieldsets[0] = (_('User data'),
                             {
@@ -43,9 +46,10 @@ class UserAdmin(admin.ModelAdmin):
         if obj and request.user.id != obj.id:
             return self.readonly_fields + (
                 'email', 'phone', 'date_joined',
-                'last_login'
+                'last_login', 'total_visits'
             )
-        return self.readonly_fields + ('date_joined', 'last_login')
+        return self.readonly_fields + ('date_joined', 'last_login',
+                                       'total_visits')
 
     def save_model(self, request, obj, form, change):
         if 'password' in form.changed_data:
