@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'users',
+    'galleries',
+    'offers'
 
 ]
 
@@ -97,7 +99,6 @@ DATABASES = {
         'PORT': '',
     }
 }
-
 
 
 # Password validation
@@ -182,9 +183,9 @@ JWT_AUTH = {
     "JWT_VERIFY_EXPIRATION": False,
     'JWT_ALLOW_REFRESH': False,
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
-    'JWT_PAYLOAD_HANDLER': 'accounts.jwt_custom.jwt_payload_handler',
-    'JWT_PAYLOAD_GET_USERNAME_HANDLER': 'accounts.jwt_custom.jwt_get_username_from_payload',
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'accounts.jwt_custom.jwt_response_payload_handler',
+    'JWT_PAYLOAD_HANDLER': 'users.jwt_custom.jwt_payload_handler',
+    'JWT_PAYLOAD_GET_USERNAME_HANDLER': 'users.jwt_custom.jwt_get_username_from_payload',
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.jwt_custom.jwt_response_payload_handler',
 }
 ################################
 
@@ -193,5 +194,14 @@ CORS_ORIGIN_ALLOW_ALL = True
 ################################
 
 logging.Formatter()
-logging.basicConfig(filename='forrentlog.log', filemode='a', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+logging.basicConfig(filename='special_offer.log', filemode='a', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.DEBUG if DEBUG else logging.INFO)
+
+# EMAILS SETTINGS ##############
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'aahmedsamy.specialoffer@gmail.com'
+EMAIL_HOST_PASSWORD = 'adminadminspecialoffer'
