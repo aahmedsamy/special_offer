@@ -5,15 +5,14 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.utils.translation import ugettext_lazy as _
 
-
 from .models import (User,)
 # Register your models here.
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'phone', 'is_active')
+    list_display = ('email', 'phone', 'user_type', 'is_active', 'total_visits', )
     search_fields = ('phone', 'email',)
-    list_editable = ('is_active',)
+    list_editable = ('is_active', 'user_type')
     list_per_page = 10
 
     def get_fieldsets(self, request, obj=None):
@@ -56,6 +55,7 @@ class UserAdmin(admin.ModelAdmin):
             obj.set_password(obj.password)
         super().save_model(request, obj, form, change)
 
+# admin.site.unregister(Group)
 
 admin.site.register(User, UserAdmin)
 

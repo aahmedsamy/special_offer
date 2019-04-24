@@ -93,5 +93,6 @@ tobedeleted.txt
 4rent_backend/settings/local.py
 media/*
 static/*
+scripts/*
 url_patterns_to_be_deleted.txt
 helpers/status.py

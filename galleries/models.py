@@ -8,6 +8,7 @@ class OfferImage(models.Model):
     offer = models.ForeignKey(
         "offers.Offer", on_delete=models.CASCADE, related_name="offer_image")
     image = models.ImageField(_("Image"), upload_to="items/imags/")
+    small_image_path = models.TextField()
 
     class Meta:
         verbose_name = _("Offer image")
@@ -19,6 +20,7 @@ class PlusItemImage(models.Model):
         "offers.PlusItem", on_delete=models.CASCADE,
         related_name="plus_item_image")
     image = models.ImageField(_("Image"), upload_to="items/imags/")
+    small_image_path = models.TextField()
 
     class Meta:
         verbose_name = _("Offer image")
@@ -30,6 +32,7 @@ class DiscountImage(models.Model):
         "offers.Discount", on_delete=models.CASCADE,
         related_name="discount_image")
     image = models.ImageField(_("Image"), upload_to="items/imags/")
+    small_image_path = models.TextField()
 
     class Meta:
         verbose_name = _("Offer image")

@@ -1,0 +1,232 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-25 01:25+0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: galleries/models.py:10 galleries/models.py:22 galleries/models.py:34
+#: users/models.py:27
+msgid "Image"
+msgstr "صورة"
+
+#: galleries/models.py:14 galleries/models.py:26 galleries/models.py:38
+msgid "Offer image"
+msgstr "صورة العرض"
+
+#: galleries/models.py:15 galleries/models.py:27 galleries/models.py:39
+msgid "Offer images"
+msgstr "صور العرض"
+
+#: helpers/validators.py:8
+msgid ""
+"Ensure all letters in this value is in english letters         (a:z and/or A:"
+"Z)."
+msgstr "تأكد ان كل الحروف المستخدمه حروف انجلزيه فقط"
+
+#: helpers/validators.py:30
+msgid ""
+"Ensure all letters in this value is in lowercase english          letters (a:"
+"z)."
+msgstr "تأكد ان الحروف حروف انجليزيه صغيره فقط"
+
+#: helpers/validators.py:42
+msgid ""
+"Ensure all letters in this value is in uppercase english         letters (A:"
+"Z)."
+msgstr "تاكد ان كل الحروف حروف انجليزيه كبيره فقط"
+
+#: offers/models.py:10 offers/models.py:24 offers/models.py:37
+#: offers/models.py:51 users/models.py:18
+msgid "Name"
+msgstr "اسم"
+
+#: offers/models.py:11
+msgid "Icon"
+msgstr "رمز"
+
+#: offers/models.py:15 offers/models.py:23 offers/models.py:50
+msgid "Category"
+msgstr "قسم"
+
+#: offers/models.py:16
+msgid "Categories"
+msgstr "اقسام"
+
+#: offers/models.py:21 offers/models.py:47
+msgid "Publisher"
+msgstr "الناشر"
+
+#: offers/models.py:25 offers/models.py:38 offers/models.py:52
+msgid "Description"
+msgstr "وصف"
+
+#: offers/models.py:26 offers/models.py:53
+msgid "Price"
+msgstr "سعر"
+
+#: offers/models.py:27
+msgid "Visited"
+msgstr "زيارات"
+
+#: offers/models.py:30 offers/models.py:36
+msgid "Offer"
+msgstr "عرض"
+
+#: offers/models.py:31
+msgid "Offers"
+msgstr "عروض"
+
+#: offers/models.py:41
+msgid "Plus item"
+msgstr "عنصر اضافي"
+
+#: offers/models.py:42
+msgid "Plus items"
+msgstr "عناصر اضافيه"
+
+#: offers/models.py:54
+msgid "visited"
+msgstr "زيارات"
+
+#: offers/models.py:55
+msgid "Precentage"
+msgstr "نسبة"
+
+#: offers/models.py:60
+msgid "Discount"
+msgstr "خصم"
+
+#: offers/models.py:61
+msgid "Discounts"
+msgstr "خصومات"
+
+#: special_offer/settings.py:141
+msgid "Arabic"
+msgstr "عربي"
+
+#: users/admin.py:22
+msgid "User informations"
+msgstr "معلومت المستخدم"
+
+#: users/admin.py:27
+msgid "Permissions"
+msgstr "الاذونات"
+
+#: users/admin.py:30
+msgid "Important dates"
+msgstr "تواريخ هامه"
+
+#: users/admin.py:33
+msgid "Insights"
+msgstr "احصائيات"
+
+#: users/admin.py:37
+msgid "User data"
+msgstr "معلومات المستخدم"
+
+#: users/admin.py:62
+msgid "Special offer admin panel"
+msgstr "لوحة تحكم اسبيشل اوفر"
+
+#: users/admin.py:63
+msgid "Special offer Administration"
+msgstr "ادارة اسبيشل اوفر"
+
+#: users/admin.py:64
+msgid "Special offer Management"
+msgstr "ادارة اسبيشل اوفر"
+
+#: users/models.py:15
+msgid "Normal"
+msgstr "باحث"
+
+#: users/models.py:16
+msgid "Premuim"
+msgstr "معلن"
+
+#: users/models.py:21
+msgid "Email address"
+msgstr "عنوان بريد الكتروني"
+
+#: users/models.py:22
+msgid "Phone"
+msgstr "جوال"
+
+#: users/models.py:25
+msgid "Verified"
+msgstr "مفعل"
+
+#: users/models.py:46
+msgid "Total visits"
+msgstr "عدد الزيارات"
+
+#: users/models.py:55
+msgid "User"
+msgstr "مستخدم"
+
+#: users/models.py:56
+msgid "Users"
+msgstr "مستخدمين"
+
+#: users/views.py:116
+msgid "Change special offer password"
+msgstr "تغيير كلمة المرور"
+
+#: users/views.py:117
+msgid "You special offer password has been changed."
+msgstr "تم تغيير كلمة المرور"
+
+#: users/views.py:121
+msgid "Password changed successfully."
+msgstr "تم تغيير كلمة المرور بنجاح"
+
+#: users/views.py:127
+msgid "Old password is wrong!"
+msgstr "كملة المرور القديمه خاطئه"
+
+#: users/views.py:145
+msgid "Unable to login with provided                      credentials"
+msgstr "غير قادر علي تسجيل الدخول بالبيانات المعطاه"
+
+#: users/views.py:207
+msgid "Password Resetted successfully"
+msgstr "تم استعادة كلمة المرور بنجاح"
+
+#: users/views.py:213
+msgid "invalid code!"
+msgstr "كود خاطئ"
+
+#: users/views.py:236 users/views.py:242
+msgid "Invalid URL!"
+msgstr "رابط خاطئ"
+
+#: users/views.py:251
+msgid "Your account verified successfuly"
+msgstr "تم تفعيل الحساب بنجاح"
+
+#: users/views.py:257
+msgid "Wrong verification code!"
+msgstr "كود تفعيل خاطئ"
+
+#: users/views.py:275
+msgid "User Data updated successfully"
+msgstr "تم تحديث بيانات المستخدم بنجاح"
+
+#: users/views.py:325
+msgid "No property yet!"
+msgstr ""

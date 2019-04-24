@@ -24,7 +24,7 @@ class Offer(models.Model):
     name = models.CharField(_("Name"), max_length=256)
     description = models.TextField(_("Description"), max_length=1024)
     price = models.FloatField(_("Price"), validators=[MinValueValidator(0.0)])
-    visited = models.PositiveIntegerField(default=0)
+    visited = models.PositiveIntegerField(_("Visited"), default=0)
 
     class Meta:
         verbose_name = _("Offer")
@@ -35,7 +35,7 @@ class PlusItem(models.Model):
     offer = models.ForeignKey("offers.Offer", verbose_name=_(
         "Offer"), related_name="plus_offer", on_delete=models.CASCADE)
     name = models.CharField(_("Name"), max_length=256)
-    description = models.TextField(max_length=1024)
+    description = models.TextField(_("Description"), max_length=1024)
 
     class Meta:
         verbose_name = _("Plus item")
@@ -51,7 +51,7 @@ class Discount(models.Model):
     name = models.CharField(_("Name"), max_length=256)
     description = models.TextField(_("Description"), max_length=1024)
     price = models.FloatField(_("Price"), validators=[MinValueValidator(0.0)])
-    visited = models.PositiveIntegerField(default=0)
+    visited = models.PositiveIntegerField(_("visited"), default=0)
     precentage = models.FloatField(_("Precentage"), validators=[
                                    MinValueValidator(0.0),
                                    MaxValueValidator(100.0)])

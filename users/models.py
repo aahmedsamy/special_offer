@@ -33,14 +33,17 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['name', 'phone']
     objects = UserManager()
 
-    @property
     def total_visits(self):
+        if self.user_type == self.NORMAL:
+            return "--"
         offer = self.publisher_offer.aggregate(Sum("visited"))['visited__sum']
         offer = offer if offer else 0
         discount = self.publisher_discount.aggregate(Sum("visited"))[
             'visited__sum']
         discount = discount if discount else 0
         return offer + discount
+
+    total_visits.short_description = (_("Total visits"))
 
     def is_verified(self):
         return self.verified
