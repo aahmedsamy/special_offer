@@ -11,6 +11,9 @@ class Category(models.Model):
     icon = models.FileField(_("Icon"), upload_to="icons/",
                             validators=[HasSvgExtention])
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
@@ -26,6 +29,9 @@ class Offer(models.Model):
     price = models.FloatField(_("Price"), validators=[MinValueValidator(0.0)])
     visited = models.PositiveIntegerField(_("Visited"), default=0)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name = _("Offer")
         verbose_name_plural = _("Offers")
@@ -36,6 +42,9 @@ class PlusItem(models.Model):
         "Offer"), related_name="plus_offer", on_delete=models.CASCADE)
     name = models.CharField(_("Name"), max_length=256)
     description = models.TextField(_("Description"), max_length=1024)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name = _("Plus item")
@@ -55,6 +64,9 @@ class Discount(models.Model):
     precentage = models.FloatField(_("Precentage"), validators=[
                                    MinValueValidator(0.0),
                                    MaxValueValidator(100.0)])
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name = _("Discount")
