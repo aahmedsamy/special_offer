@@ -27,7 +27,11 @@ class Offer(models.Model):
     name = models.CharField(_("Name"), max_length=256)
     description = models.TextField(_("Description"), max_length=1024)
     price = models.FloatField(_("Price"), validators=[MinValueValidator(0.0)])
+    start_date = models.DateTimeField(_("Start date"))
+    end_date = models.DateTimeField(_("End date"))
     visited = models.PositiveIntegerField(_("Visited"), default=0)
+    bending = models.BooleanField(_("Bending"), default=True)
+    visible = models.BooleanField(_("Visible"), default=False)
 
     def __str__(self):
         return self.name
@@ -41,7 +45,7 @@ class PlusItem(models.Model):
     offer = models.ForeignKey("offers.Offer", verbose_name=_(
         "Offer"), related_name="plus_offer", on_delete=models.CASCADE)
     name = models.CharField(_("Name"), max_length=256)
-    description = models.TextField(_("Description"), max_length=1024)
+
 
     def __str__(self):
         return self.name
@@ -60,10 +64,14 @@ class Discount(models.Model):
     name = models.CharField(_("Name"), max_length=256)
     description = models.TextField(_("Description"), max_length=1024)
     price = models.FloatField(_("Price"), validators=[MinValueValidator(0.0)])
-    visited = models.PositiveIntegerField(_("visited"), default=0)
     precentage = models.FloatField(_("Precentage"), validators=[
                                    MinValueValidator(0.0),
                                    MaxValueValidator(100.0)])
+    start_date = models.DateTimeField(_("Start date"))
+    end_date = models.DateTimeField(_("End date"))
+    visited = models.PositiveIntegerField(_("Visited"), default=0)
+    bending = models.BooleanField(_("Bending"), default=True)
+    visible = models.BooleanField(_("Visible"), default=False)
 
     def __str__(self):
         return self.name

@@ -24,7 +24,7 @@ class UserAdmin(admin.ModelAdmin):
                            'user_type')
             })
             fieldsets[1] = (_('Permissions'), {
-                'fields': ('verified', 'is_staff', 'is_superuser', ),
+                'fields': ('verified', ),
             })
             fieldsets[2] = (_('Important dates'), {
                 'fields': ('date_joined', 'last_login'),
@@ -55,7 +55,7 @@ class UserAdmin(admin.ModelAdmin):
             obj.set_password(obj.password)
         super().save_model(request, obj, form, change)
 
-# admin.site.unregister(Group)
+admin.site.unregister(Group)
 
 admin.site.register(User, UserAdmin)
 

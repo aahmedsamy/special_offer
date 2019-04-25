@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-25 01:25+0400\n"
+"POT-Creation-Date: 2019-04-26 02:00+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,68 +50,80 @@ msgid ""
 "Z)."
 msgstr "تاكد ان كل الحروف حروف انجليزيه كبيره فقط"
 
-#: offers/models.py:10 offers/models.py:24 offers/models.py:37
-#: offers/models.py:51 users/models.py:18
+#: offers/models.py:10 offers/models.py:27 offers/models.py:47
+#: offers/models.py:64 users/models.py:18
 msgid "Name"
-msgstr "اسم"
+msgstr "الاسم الاعلاني"
 
 #: offers/models.py:11
 msgid "Icon"
 msgstr "رمز"
 
-#: offers/models.py:15 offers/models.py:23 offers/models.py:50
+#: offers/models.py:18 offers/models.py:26 offers/models.py:63
 msgid "Category"
 msgstr "قسم"
 
-#: offers/models.py:16
+#: offers/models.py:19
 msgid "Categories"
 msgstr "اقسام"
 
-#: offers/models.py:21 offers/models.py:47
+#: offers/models.py:24 offers/models.py:60
 msgid "Publisher"
 msgstr "الناشر"
 
-#: offers/models.py:25 offers/models.py:38 offers/models.py:52
+#: offers/models.py:28 offers/models.py:65
 msgid "Description"
 msgstr "وصف"
 
-#: offers/models.py:26 offers/models.py:53
+#: offers/models.py:29 offers/models.py:66
 msgid "Price"
-msgstr "سعر"
+msgstr "سعر اساسي"
 
-#: offers/models.py:27
+#: offers/models.py:30 offers/models.py:70
+msgid "Start date"
+msgstr "تاريخ البداية"
+
+#: offers/models.py:31 offers/models.py:71
+msgid "End date"
+msgstr "تاريخ النهاية"
+
+#: offers/models.py:32 offers/models.py:72
 msgid "Visited"
-msgstr "زيارات"
+msgstr "المشاهدات"
 
-#: offers/models.py:30 offers/models.py:36
+#: offers/models.py:33 offers/models.py:73
+msgid "Bending"
+msgstr "معلق"
+
+#: offers/models.py:34 offers/models.py:74
+msgid "Visible"
+msgstr "مرئي"
+
+#: offers/models.py:40 offers/models.py:46
 msgid "Offer"
 msgstr "عرض"
 
-#: offers/models.py:31
+#: offers/models.py:41
 msgid "Offers"
 msgstr "عروض"
 
-#: offers/models.py:41
+#: offers/models.py:54
 msgid "Plus item"
 msgstr "عنصر اضافي"
 
-#: offers/models.py:42
-msgid "Plus items"
-msgstr "عناصر اضافيه"
-
-#: offers/models.py:54
-msgid "visited"
-msgstr "زيارات"
-
 #: offers/models.py:55
-msgid "Precentage"
-msgstr "نسبة"
+msgid "Plus items"
+msgstr "محتوايات العرض"
 
-#: offers/models.py:60
+#: offers/models.py:67
+msgid "Precentage"
+msgstr "نسبة الخصم"
+
+#: offers/models.py:80
 msgid "Discount"
 msgstr "خصم"
 
-#: offers/models.py:61
+#: offers/models.py:81
 msgid "Discounts"
 msgstr "خصومات"
 
@@ -119,23 +131,23 @@ msgstr "خصومات"
 msgid "Arabic"
 msgstr "عربي"
 
-#: users/admin.py:22
+#: users/admin.py:21
 msgid "User informations"
 msgstr "معلومت المستخدم"
 
-#: users/admin.py:27
+#: users/admin.py:26
 msgid "Permissions"
 msgstr "الاذونات"
 
-#: users/admin.py:30
+#: users/admin.py:29
 msgid "Important dates"
 msgstr "تواريخ هامه"
 
-#: users/admin.py:33
+#: users/admin.py:32
 msgid "Insights"
 msgstr "احصائيات"
 
-#: users/admin.py:37
+#: users/admin.py:36
 msgid "User data"
 msgstr "معلومات المستخدم"
 
@@ -230,3 +242,6 @@ msgstr "تم تحديث بيانات المستخدم بنجاح"
 #: users/views.py:325
 msgid "No property yet!"
 msgstr ""
+
+#~ msgid "visited"
+#~ msgstr "زيارات"
