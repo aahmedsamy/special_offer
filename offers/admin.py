@@ -37,12 +37,12 @@ class OfferAdmin(admin.ModelAdmin):
     ]
     # raw_id_fields = ('publisher', 'category')
     list_display = ('publisher', 'category', 'name',
-                    'price', 'visible', 'bending',)
+                    'price', 'bending',)
     # readonly_fields = ('visited',)
     search_fields = ('id', 'publisher',
                      'publisher__phone', 'category__name', )
-    list_filter = ('publisher__name', 'category__name', 'bending', 'visible')
-    list_editable = ('visible', 'bending', )
+    list_filter = ('publisher__name', 'category__name', 'bending',)
+    list_editable = ('bending', )
     autocomplete_fields = ('publisher',)
     list_per_page = 10
 
@@ -67,7 +67,7 @@ class BendingOfferAdmin(admin.ModelAdmin):
                     'price',)
     # readonly_fields = ('visited',)
     search_fields = ('id', 'publisher',
-                     'publisher__phone', 'category__name', )
+                     'publisher__user__phone', 'category__name', )
     list_filter = ('publisher__name', 'category__name',)
     autocomplete_fields = ('publisher',)
     list_per_page = 10
@@ -89,12 +89,12 @@ class DiscountAdmin(admin.ModelAdmin):
     ]
     # raw_id_fields = ('publisher', 'category')
     list_display = ('publisher', 'category', 'name', 'price',
-                    'precentage', 'bending', 'visible')
-    list_editable = ('visible', 'bending', )
+                    'precentage', 'bending',)
+    list_editable = ('bending', )
 
     search_fields = ('id', 'publisher',
-                     'publisher__phone', 'category__name',)
-    list_filter = ('publisher__name', 'category__name', 'bending', 'visible')
+                     'publisher__user__phone', 'category__name',)
+    list_filter = ('publisher__name', 'category__name', 'bending',)
     autocomplete_fields = ('publisher',)
     list_per_page = 10
 
@@ -118,7 +118,7 @@ class BendingDiscountAdmin(admin.ModelAdmin):
                     'precentage')
 
     search_fields = ('id', 'publisher',
-                     'publisher__phone', 'category__name',)
+                     'publisher__user__phone', 'category__name',)
     list_filter = ('publisher__name', 'category__name')
     autocomplete_fields = ('publisher',)
     list_per_page = 10
@@ -148,6 +148,7 @@ class BendingDiscountAdmin(admin.ModelAdmin):
 admin.site.register(Offer, OfferAdmin)
 admin.site.register(BendingOffer, BendingOfferAdmin)
 admin.site.register(Category)
+# admin.site.register(Like)
 admin.site.register(Discount, DiscountAdmin)
 admin.site.register(BendingDiscount, DiscountAdmin)
 

@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group
 from django.utils.translation import ugettext_lazy as _
 
 from offers.models import (FollowedCategory)
-from .models import (User,)
+from .models import (User, Searcher, Publisher)
 # Register your models here.
 
 
@@ -16,9 +16,7 @@ class FollowedCategoryInline(admin.TabularInline):
 
 
 class UserAdmin(admin.ModelAdmin):
-    inlines = [
-        FollowedCategoryInline
-    ]
+
     list_display = ('email', 'phone', 'user_type',
                     'is_active', 'total_visits', )
     search_fields = ('phone', 'email',)
@@ -66,9 +64,87 @@ class UserAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
+class PublisherInline(admin.StackedInline):
+    model = User
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = [None] * 3
+
+        fieldsets[0] = (_('User informations'),
+                        {
+            'fields': ('email', 'phone',
+                       )
+        })
+        fieldsets[1] = (_('Permissions'), {
+            'fields': ('verified', ),
+        })
+        fieldsets[2] = (_('Important dates'), {
+            'fields': ('date_joined', 'last_login'),
+        })
+        return fieldsets
+
+
+class SearcherInline(admin.StackedInline):
+    model = User
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = [None] * 2
+
+        fieldsets[0] = (_('User informations'),
+                        {
+            'fields': ('email', 'phone',
+                       )
+        })
+        fieldsets[1] = (_('Important dates'), {
+            'fields': ('date_joined', 'last_login'),
+        })
+        return fieldsets
+
+    def get_readonly_fields(self, request, obj=None):
+        return self.readonly_fields + ('email', 'phone', 'verified',
+                                       'date_joined', 'last_login')
+
+
+class SearcherAdmin(admin.ModelAdmin):
+    inlines = [
+        SearcherInline,
+        FollowedCategoryInline
+    ]
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ('name',)
+        return self.readonly_fields
+
+    # def has_add_permission(self, request):
+    #     return False
+
+
+class PublisherAdmin(admin.ModelAdmin):
+    inlines = [
+        PublisherInline,
+    ]
+    search_fields = ('id', 'name',)
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ('name', 'image', 'address_url',
+                                           'website_url', 'facebook_url',
+                                           'twitter_url', 'instgram_url',
+                                           'trading_doc', 'work_start_at',
+                                           'work_end_at', 'total_visits',
+                                           'likes')
+        return self.readonly_fields
+
+    # def has_add_permission(self, request):
+    #     return False
+
+
 admin.site.unregister(Group)
 
-admin.site.register(User, UserAdmin)
+admin.site.register(Searcher, SearcherAdmin)
+admin.site.register(Publisher, PublisherAdmin)
+# admin.site.register(User)
 
 admin.site.index_title = _('Special offer admin panel')
 admin.site.site_header = _('Special offer Administration')

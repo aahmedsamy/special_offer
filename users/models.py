@@ -9,28 +9,24 @@ from .managers import UserManager
 
 
 class User(AbstractUser):
-    NORMAL = 100
-    PREMUIM = 101
-    USER_TYPE_CHOICES = (
-        (NORMAL, _('Normal')),
-        (PREMUIM, _('Premuim'))
-    )
-    name = models.CharField(_('Name'), max_length=255)
-    user_type = models.SmallIntegerField(
-        choices=USER_TYPE_CHOICES, default=NORMAL)
+    searcher = models.OneToOneField(
+        "users.Searcher", on_delete=models.CASCADE, related_name="searcher",
+        null=True, blank=True)
+    publisher = models.OneToOneField(
+        "users.Publisher", on_delete=models.CASCADE, related_name="publisher",
+        null=True, blank=True)
     email = models.EmailField(_('Email address'), unique=True)
     phone = models.CharField(_('Phone'), max_length=20, null=True, blank=True)
     verification_code = models.CharField(
         max_length=6, null=True, blank=True)
     verified = models.BooleanField(_("Verified"), default=False)
     pass_reset_code = models.CharField(max_length=7, null=True, blank=True)
-    image = models.ImageField(_("Image"), upload_to="users/images")
     """User model."""
     use_in_migrations = True
     username = None
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'phone']
+    REQUIRED_FIELDS = ['phone']
     objects = UserManager()
 
     def total_visits(self):
@@ -48,26 +44,77 @@ class User(AbstractUser):
     def is_verified(self):
         return self.verified
 
-    def likes_count(self):
-        if self.user_type == self.NORMAL:
-            return '--'
-        return self.like_user.count()
-
-    def followers_count(self):
-        if self.user_type == self.PREMUIM:
-            return "--"
-        return self.followed_category_user.count()
-
-    likes_count.short_description = (_("Likes"))
-    followers_count.short_description = (_("Followers count"))
-
     def __str__(self):
-        return self.name
+        return self.email
 
     class Meta:
         verbose_name = _("User")
         verbose_name_plural = _("Users")
 
 
-class Subscriptions(models.Model):
-    pass
+class Searcher(models.Model):
+    name = models.CharField(_('Searcher name'), max_length=255)
+
+    def following_count(self):
+        return self.followed_category_user.count()
+
+    following_count.short_description = (_("Following count"))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("Searcher")
+        verbose_name_plural = _("Searchers")
+
+
+class Publisher(models.Model):
+    name = models.CharField(_('Publisher name'), max_length=255)
+    image = models.ImageField(_("Image"), upload_to="users/images")
+    address_url = models.URLField(_("Address URL"), max_length=256, null=True)
+    website_url = models.URLField(_("Website URL"), max_length=256, null=True)
+    facebook_url = models.URLField(
+        _("Facebook URL"), max_length=256, null=True)
+    twitter_url = models.URLField(_("Twitter URL"), max_length=256, null=True)
+    instgram_url = models.URLField(
+        _("Instgram URL"), max_length=256, null=True)
+    trading_doc = models.ImageField(
+        _("Trading document"), upload_to="images/doc")
+    work_start_at = models.DateTimeField(_("Work starts at"))
+    work_end_at = models.DateTimeField(_("Work ends at"))
+
+    def active_posts(self):
+        pass
+
+    def total_visits(self):
+        offer = self.publisher_offer.aggregate(Sum("visited"))['visited__sum']
+        offer = offer if offer else 0
+        discount = self.publisher_discount.aggregate(Sum("visited"))[
+            'visited__sum']
+        discount = discount if discount else 0
+        return offer + discount
+
+    def likes(self):
+        cnt = 0
+        offers = self.publisher_offer.all()
+        for offer in offers:
+            cnt += offer.likes_count()
+
+        discounts = self.publisher_discount.all()
+        for discount in discounts:
+            cnt += discount.likes_count()
+        return cnt
+
+    active_posts.short_description = (_("Active posts"))
+    total_visits.short_description = (_("Total visits"))
+    likes.short_description = (_("Likes"))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("Publisher")
+        verbose_name_plural = _("Publishers")
+
+    class Subscriptions(models.Model):
+        pass

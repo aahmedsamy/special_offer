@@ -23,7 +23,7 @@ class Category(models.Model):
 
 
 class Offer(models.Model):
-    publisher = models.ForeignKey("users.User", verbose_name=_(
+    publisher = models.ForeignKey("users.Publisher", verbose_name=_(
         "Publisher"), on_delete=models.CASCADE, related_name="publisher_offer")
     category = models.ForeignKey("offers.Category", verbose_name=_(
         "Category"), on_delete=models.SET_NULL, null=True)
@@ -34,7 +34,6 @@ class Offer(models.Model):
     end_date = models.DateTimeField(_("End date"))
     visited = models.PositiveIntegerField(_("Visited"), default=0)
     bending = models.BooleanField(_("Bending"), default=True)
-    visible = models.BooleanField(_("Visible"), default=False)
 
     def __str__(self):
         return self.name
@@ -74,7 +73,7 @@ class PlusItem(models.Model):
 
 
 class Discount(models.Model):
-    publisher = models.ForeignKey("users.User", verbose_name=_(
+    publisher = models.ForeignKey("users.Publisher", verbose_name=_(
         "Publisher"), on_delete=models.CASCADE,
         related_name="publisher_discount")
     category = models.ForeignKey("offers.Category", verbose_name=_(
@@ -89,7 +88,6 @@ class Discount(models.Model):
     end_date = models.DateTimeField(_("End date"))
     visited = models.PositiveIntegerField(_("Visited"), default=0)
     bending = models.BooleanField(_("Bending"), default=True)
-    visible = models.BooleanField(_("Visible"), default=False)
 
     def __str__(self):
         return self.name
@@ -116,7 +114,7 @@ class BendingDiscount(Discount):
 
 
 class Like(models.Model):
-    user = models.ForeignKey("users.User", verbose_name=_(
+    user = models.ForeignKey("users.Searcher", verbose_name=_(
         "User"), on_delete=models.CASCADE, related_name='like_user')
     offer = models.ForeignKey("offers.Offer", verbose_name=_(
         "Offer"), on_delete=models.CASCADE, related_name='like_offer')
@@ -126,10 +124,11 @@ class Like(models.Model):
     class Meta:
         verbose_name = _("Like")
         verbose_name = _("Likes")
+        unique_together = ('user', 'offer', 'discount')
 
 
 class FollowedCategory(models.Model):
-    user = models.ForeignKey("users.User", verbose_name=_(
+    user = models.ForeignKey("users.Searcher", verbose_name=_(
         "User"), on_delete=models.CASCADE,
         related_name='followed_category_user')
     category = models.ForeignKey("offers.Category", verbose_name=_(
@@ -143,3 +142,4 @@ class FollowedCategory(models.Model):
     class Meta:
         verbose_name = _("Followed category")
         verbose_name_plural = _("Followed categories")
+        unique_together = ('user', 'category')
