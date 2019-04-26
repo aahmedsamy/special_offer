@@ -83,6 +83,10 @@ class PublisherInline(admin.StackedInline):
         })
         return fieldsets
 
+    def get_readonly_fields(self, request, obj=None):
+        return self.readonly_fields + ('email', 'phone', 'verified',
+                                       'date_joined', 'last_login')
+
 
 class SearcherInline(admin.StackedInline):
     model = User
