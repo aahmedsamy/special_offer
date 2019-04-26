@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext as u
 
@@ -47,6 +47,19 @@ class User(AbstractUser):
 
     def is_verified(self):
         return self.verified
+
+    def likes_count(self):
+        if self.user_type == self.NORMAL:
+            return '--'
+        return self.like_user.count()
+
+    def followers_count(self):
+        if self.user_type == self.PREMUIM:
+            return "--"
+        return self.followed_category_user.count()
+
+    likes_count.short_description = (_("Likes"))
+    followers_count.short_description = (_("Followers count"))
 
     def __str__(self):
         return self.name

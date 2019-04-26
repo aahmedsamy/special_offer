@@ -5,12 +5,22 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.utils.translation import ugettext_lazy as _
 
+from offers.models import (FollowedCategory)
 from .models import (User,)
 # Register your models here.
 
 
+class FollowedCategoryInline(admin.TabularInline):
+    model = FollowedCategory
+    extra = 0
+
+
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'phone', 'user_type', 'is_active', 'total_visits', )
+    inlines = [
+        FollowedCategoryInline
+    ]
+    list_display = ('email', 'phone', 'user_type',
+                    'is_active', 'total_visits', )
     search_fields = ('phone', 'email',)
     list_editable = ('is_active', 'user_type')
     list_per_page = 10
@@ -30,7 +40,7 @@ class UserAdmin(admin.ModelAdmin):
                 'fields': ('date_joined', 'last_login'),
             })
             fieldsets.append((_('Insights'), {
-                'fields': ('total_visits',),
+                'fields': ('total_visits', 'likes_count', 'followers_count'),
             }))
         else:
             fieldsets[0] = (_('User data'),
@@ -45,15 +55,16 @@ class UserAdmin(admin.ModelAdmin):
         if obj and request.user.id != obj.id:
             return self.readonly_fields + (
                 'email', 'phone', 'date_joined',
-                'last_login', 'total_visits'
+                'last_login', 'total_visits', 'likes_count', 'followers_count'
             )
         return self.readonly_fields + ('date_joined', 'last_login',
-                                       'total_visits')
+                                       'total_visits', 'likes_count', 'followers_count')
 
     def save_model(self, request, obj, form, change):
         if 'password' in form.changed_data:
             obj.set_password(obj.password)
         super().save_model(request, obj, form, change)
+
 
 admin.site.unregister(Group)
 

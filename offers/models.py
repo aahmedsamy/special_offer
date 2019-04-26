@@ -1,8 +1,11 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import (MinValueValidator, MaxValueValidator)
+from django.db.models import Count
 
 from helpers.validators import HasSvgExtention
+
+from .managers import (BendingManager, NotBendingManager)
 # Create your models here.
 
 
@@ -36,16 +39,31 @@ class Offer(models.Model):
     def __str__(self):
         return self.name
 
+    def likes_count(self):
+        return self.like_offer.count()
+
+    likes_count.short_description = (_("Likes"))
+
     class Meta:
         verbose_name = _("Offer")
         verbose_name_plural = _("Offers")
+
+
+class BendingOffer(Offer):
+
+    objects = BendingManager()
+
+    class Meta:
+
+        proxy = True
+        verbose_name = _("Bending Offer")
+        verbose_name_plural = _("Bending Offers")
 
 
 class PlusItem(models.Model):
     offer = models.ForeignKey("offers.Offer", verbose_name=_(
         "Offer"), related_name="plus_offer", on_delete=models.CASCADE)
     name = models.CharField(_("Name"), max_length=256)
-
 
     def __str__(self):
         return self.name
@@ -76,6 +94,52 @@ class Discount(models.Model):
     def __str__(self):
         return self.name
 
+    def likes_count(self):
+        return self.like_discount.count()
+
+    likes_count.short_description = (_("Likes"))
+
     class Meta:
         verbose_name = _("Discount")
         verbose_name_plural = _("Discounts")
+
+
+class BendingDiscount(Discount):
+
+    objects = BendingManager()
+
+    class Meta:
+
+        proxy = True
+        verbose_name = _("Bending Discount")
+        verbose_name_plural = _("Bending Discounts")
+
+
+class Like(models.Model):
+    user = models.ForeignKey("users.User", verbose_name=_(
+        "User"), on_delete=models.CASCADE, related_name='like_user')
+    offer = models.ForeignKey("offers.Offer", verbose_name=_(
+        "Offer"), on_delete=models.CASCADE, related_name='like_offer')
+    discount = models.ForeignKey("offers.Discount", verbose_name=_(
+        "Discount"), on_delete=models.CASCADE, related_name='like_discount')
+
+    class Meta:
+        verbose_name = _("Like")
+        verbose_name = _("Likes")
+
+
+class FollowedCategory(models.Model):
+    user = models.ForeignKey("users.User", verbose_name=_(
+        "User"), on_delete=models.CASCADE,
+        related_name='followed_category_user')
+    category = models.ForeignKey("offers.Category", verbose_name=_(
+        "Category"), on_delete=models.CASCADE,
+        related_name='followed_category_category')
+
+    def __str__(self):
+        return ""
+        # return "{} --> {}".format(self.user.name, self.category.name)
+
+    class Meta:
+        verbose_name = _("Followed category")
+        verbose_name_plural = _("Followed categories")

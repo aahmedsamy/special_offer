@@ -2,7 +2,8 @@ from django.contrib import admin
 
 from galleries.models import (OfferImage, PlusItemImage, DiscountImage)
 
-from .models import (Offer, Category, Discount, PlusItem)
+from .models import (Offer, Category, Discount, PlusItem,
+                     BendingOffer, BendingDiscount)
 # Register your models here.
 
 
@@ -47,12 +48,38 @@ class OfferAdmin(admin.ModelAdmin):
 
     def get_exclude(self, request, obj=None):
         if not obj:
-            return ['visited']
+            return ['visited', 'likes_count']
         return []
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
-            return self.readonly_fields + ('visited',)
+            return self.readonly_fields + ('visited', 'likes_count')
+        return self.readonly_fields
+
+
+class BendingOfferAdmin(admin.ModelAdmin):
+    inlines = [
+        PlusItemInline,
+        OfferImageInline,
+    ]
+    # raw_id_fields = ('publisher', 'category')
+    list_display = ('publisher', 'category', 'name',
+                    'price',)
+    # readonly_fields = ('visited',)
+    search_fields = ('id', 'publisher',
+                     'publisher__phone', 'category__name', )
+    list_filter = ('publisher__name', 'category__name',)
+    autocomplete_fields = ('publisher',)
+    list_per_page = 10
+
+    def get_exclude(self, request, obj=None):
+        if not obj:
+            return ['visited', 'likes_count']
+        return []
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ('visited', 'likes_count')
         return self.readonly_fields
 
 
@@ -73,6 +100,31 @@ class DiscountAdmin(admin.ModelAdmin):
 
     def get_exclude(self, request, obj=None):
         if not obj:
+            return ['visited', 'likes_count']
+        return []
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ('visited', 'likes_count')
+        return self.readonly_fields
+
+
+class BendingDiscountAdmin(admin.ModelAdmin):
+    inlines = [
+        DiscountImageInline,
+    ]
+    # raw_id_fields = ('publisher', 'category')
+    list_display = ('publisher', 'category', 'name', 'price',
+                    'precentage')
+
+    search_fields = ('id', 'publisher',
+                     'publisher__phone', 'category__name',)
+    list_filter = ('publisher__name', 'category__name')
+    autocomplete_fields = ('publisher',)
+    list_per_page = 10
+
+    def get_exclude(self, request, obj=None):
+        if not obj:
             return ['visited']
         return []
 
@@ -80,7 +132,6 @@ class DiscountAdmin(admin.ModelAdmin):
         if obj:
             return self.readonly_fields + ('visited',)
         return self.readonly_fields
-
 
 # class PlusItemAdmin(admin.ModelAdmin):
 #     inlines = [
@@ -95,6 +146,9 @@ class DiscountAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Offer, OfferAdmin)
+admin.site.register(BendingOffer, BendingOfferAdmin)
 admin.site.register(Category)
 admin.site.register(Discount, DiscountAdmin)
+admin.site.register(BendingDiscount, DiscountAdmin)
+
 # admin.site.register(PlusItem, PlusItemAdmin)

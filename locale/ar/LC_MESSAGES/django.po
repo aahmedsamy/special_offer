@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-26 02:00+0400\n"
+"POT-Creation-Date: 2019-04-26 13:13+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,116 +50,154 @@ msgid ""
 "Z)."
 msgstr "تاكد ان كل الحروف حروف انجليزيه كبيره فقط"
 
-#: offers/models.py:10 offers/models.py:27 offers/models.py:47
-#: offers/models.py:64 users/models.py:18
+#: offers/models.py:13 offers/models.py:30 offers/models.py:66
+#: offers/models.py:82 users/models.py:18
 msgid "Name"
 msgstr "الاسم الاعلاني"
 
-#: offers/models.py:11
+#: offers/models.py:14
 msgid "Icon"
 msgstr "رمز"
 
-#: offers/models.py:18 offers/models.py:26 offers/models.py:63
+#: offers/models.py:21 offers/models.py:29 offers/models.py:81
+#: offers/models.py:136
 msgid "Category"
 msgstr "قسم"
 
-#: offers/models.py:19
+#: offers/models.py:22
 msgid "Categories"
 msgstr "اقسام"
 
-#: offers/models.py:24 offers/models.py:60
+#: offers/models.py:27 offers/models.py:78
 msgid "Publisher"
 msgstr "الناشر"
 
-#: offers/models.py:28 offers/models.py:65
+#: offers/models.py:31 offers/models.py:83
 msgid "Description"
 msgstr "وصف"
 
-#: offers/models.py:29 offers/models.py:66
+#: offers/models.py:32 offers/models.py:84
 msgid "Price"
 msgstr "سعر اساسي"
 
-#: offers/models.py:30 offers/models.py:70
+#: offers/models.py:33 offers/models.py:88
 msgid "Start date"
 msgstr "تاريخ البداية"
 
-#: offers/models.py:31 offers/models.py:71
+#: offers/models.py:34 offers/models.py:89
 msgid "End date"
 msgstr "تاريخ النهاية"
 
-#: offers/models.py:32 offers/models.py:72
+#: offers/models.py:35 offers/models.py:90
 msgid "Visited"
 msgstr "المشاهدات"
 
-#: offers/models.py:33 offers/models.py:73
+#: offers/models.py:36 offers/models.py:91
 msgid "Bending"
 msgstr "معلق"
 
-#: offers/models.py:34 offers/models.py:74
+#: offers/models.py:37 offers/models.py:92
 msgid "Visible"
 msgstr "مرئي"
 
-#: offers/models.py:40 offers/models.py:46
+#: offers/models.py:45 offers/models.py:100 offers/models.py:128
+#: users/models.py:61
+msgid "Likes"
+msgstr "الاعجابات"
+
+#: offers/models.py:48 offers/models.py:65 offers/models.py:122
 msgid "Offer"
 msgstr "عرض"
 
-#: offers/models.py:41
+#: offers/models.py:49
 msgid "Offers"
 msgstr "عروض"
 
-#: offers/models.py:54
+#: offers/models.py:59
+msgid "Bending Offer"
+msgstr "عرض معلق"
+
+#: offers/models.py:60
+msgid "Bending Offers"
+msgstr "عروض معلقه"
+
+#: offers/models.py:72
 msgid "Plus item"
 msgstr "عنصر اضافي"
 
-#: offers/models.py:55
+#: offers/models.py:73
 msgid "Plus items"
 msgstr "محتوايات العرض"
 
-#: offers/models.py:67
+#: offers/models.py:85
 msgid "Precentage"
 msgstr "نسبة الخصم"
 
-#: offers/models.py:80
+#: offers/models.py:103 offers/models.py:124
 msgid "Discount"
 msgstr "خصم"
 
-#: offers/models.py:81
+#: offers/models.py:104
 msgid "Discounts"
 msgstr "خصومات"
+
+#: offers/models.py:114
+msgid "Bending Discount"
+msgstr "خصم معلق"
+
+#: offers/models.py:115
+msgid "Bending Discounts"
+msgstr "خصومات معلقه"
+
+#: offers/models.py:120 offers/models.py:133 users/models.py:68
+msgid "User"
+msgstr "مستخدم"
+
+#: offers/models.py:127
+msgid "Like"
+msgstr "اعاجب"
+
+#: offers/models.py:140
+msgid "Followed category"
+msgstr "قسم المتابع"
+
+#: offers/models.py:141
+msgid "Followed categories"
+msgstr "اقسام متابعه"
 
 #: special_offer/settings.py:141
 msgid "Arabic"
 msgstr "عربي"
 
-#: users/admin.py:21
+#: users/admin.py:31
 msgid "User informations"
 msgstr "معلومت المستخدم"
 
-#: users/admin.py:26
+#: users/admin.py:36
 msgid "Permissions"
 msgstr "الاذونات"
 
-#: users/admin.py:29
+#: users/admin.py:39
 msgid "Important dates"
 msgstr "تواريخ هامه"
 
-#: users/admin.py:32
+#: users/admin.py:42
 msgid "Insights"
 msgstr "احصائيات"
 
-#: users/admin.py:36
+#: users/admin.py:46
 msgid "User data"
 msgstr "معلومات المستخدم"
 
-#: users/admin.py:62
+#: users/admin.py:73
 msgid "Special offer admin panel"
 msgstr "لوحة تحكم اسبيشل اوفر"
 
-#: users/admin.py:63
+#: users/admin.py:74
 msgid "Special offer Administration"
 msgstr "ادارة اسبيشل اوفر"
 
-#: users/admin.py:64
+#: users/admin.py:75
 msgid "Special offer Management"
 msgstr "ادارة اسبيشل اوفر"
 
@@ -187,11 +225,11 @@ msgstr "مفعل"
 msgid "Total visits"
 msgstr "عدد الزيارات"
 
-#: users/models.py:55
-msgid "User"
-msgstr "مستخدم"
+#: users/models.py:62
+msgid "Followers count"
+msgstr "عدد المتابعات"
 
-#: users/models.py:56
+#: users/models.py:69
 msgid "Users"
 msgstr "مستخدمين"
 
