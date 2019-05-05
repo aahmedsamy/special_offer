@@ -1,12 +1,40 @@
 from rest_framework import serializers
-from .models import User
+
+from drf_extra_fields.fields import Base64ImageField
+
+from .models import User, Searcher, Publisher
 
 
 class UserSerializer(serializers.ModelSerializer):
 
+    # def get_fields(self, obj=None):
+    #     if obj:
+    #         if obj.searcher:
+    #             return ('id', 'first_name', 'last_name', 'email',
+    #                     'phone', 'searcher')
+    #         elif obj.publisher:
+    #             return ('id', 'first_name', 'last_name', 'email',
+    #                     'phone', 'publisher')
+    #     return '__all__'
+
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name', 'email', 'phone',)
+        fields = ('id', 'first_name', 'last_name', 'email',
+                  'phone', 'searcher', 'publisher')
+        depth = 1
+
+
+class SearcherSerialzer(serializers.ModelSerializer):
+    class Meta:
+        model = Searcher
+        fields = "__all__"
+
+
+class PublisherSerialzer(serializers.ModelSerializer):
+    image = Base64ImageField()
+    class Meta:
+        model = Publisher
+        fields = "__all__"
 
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -15,8 +43,8 @@ class SignupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email',
-                  'phone', 'password', 'password1', 'user_type')
+        fields = ('id', 'first_name', 'last_name', 'email',
+                  'phone', 'searcher', 'publisher', 'password', 'password1')
 
     def validate(self, data):
         """
