@@ -32,6 +32,7 @@ class SearcherSerialzer(serializers.ModelSerializer):
 
 class PublisherSerialzer(serializers.ModelSerializer):
     image = Base64ImageField()
+
     class Meta:
         model = Publisher
         fields = "__all__"

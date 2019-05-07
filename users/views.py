@@ -75,14 +75,23 @@ class UserViewSet(
             if user_type in user_type_values:
                 basic_info = request.data.get('basic_info', None)
                 more_info = request.data.get('more_info', None)
-                if not basic_info:
-                    context['detail'] = "'basic_info' key is required."
-                    return Response(context, 400)
-                if not more_info:
-                    context['detail'] = "more_info' key is required."
+                if not more_info or not basic_info:
+                    context['detail'] = {
+                        "basic_info": {
+                            "email": "s.specialoffer@gmail.com",
+                            "phone": "01000000000",
+                            "password": "adminadmin",
+                            "password1": "adminadmin",
+                        },
+                        "more_info": {
+                            "name": "sh"
+                        }
+                    }
+                    context['info'] = "send body as same as the detail object"
                     return Response(context, 400)
                 basic_serializer = SignupSerializer(data=basic_info)
                 if basic_serializer.is_valid():
+                    basic_info = basic_serializer.data.copy()
                     del basic_info['password1']
                     if user_type == 'searcher':
                         more_serializer = SearcherSerialzer(data=more_info)
@@ -97,8 +106,8 @@ class UserViewSet(
                         else:
                             basic.publisher = more
                         basic.save()
-                        context['basic'] = UserSerializer(basic).data
-                        context['more'] = more_serializer.data
+                        context['basic_info'] = UserSerializer(basic).data
+                        context['more_info'] = more_serializer.data
                         logging.info("{} - New user {}".format(
                             api_code, basic.email,
                         ))
@@ -281,6 +290,7 @@ class UserViewSet(
     @action(detail=False, methods=['post'])
     def edit(self, request, pk=None):
         api_code = self.__class__.__name__, "edit"
+        return Response("it is not working, check your whatsapp for more info ya mostafa ")
         context = dict()
         user = request.user
         serializer = UserSerializer(
@@ -299,27 +309,27 @@ class UserViewSet(
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=['get'])
-    def my(self, request,):
-        api_code = self.__class__.__name__, "my"
-        context = dict()
-        user = request.user
-        queryset = user.property_user.all()
-        page = request.GET.get("page", 1)
+    # @action(detail=False, methods=['get'])
+    # def my(self, request,):
+    #     api_code = self.__class__.__name__, "my"
+    #     context = dict()
+    #     user = request.user
+    #     queryset = user.property_user.all()
+    #     page = request.GET.get("page", 1)
 
-        if queryset:
-            queryset, cur_page, last_page = PaginatorView.queryset_paginator(
-                queryset, page, 10)
-            serializer = PropertyListSerializer(queryset, many=True)
-            context['previous'] = cur_page - 1 if int(cur_page) > 1 else None
-            context['next'] = cur_page + 1 \
-                if int(cur_page) < last_page else None
-            context['count'] = last_page
-            context['detail'] = serializer.data
-            return Response(context, status=status.HTTP_200_OK)
-        else:
-            context['detail'] = "No property yet!"
-            return Response(context, status=status.HTTP_204_NO_CONTENT)
+    #     if queryset:
+    #         queryset, cur_page, last_page = PaginatorView.queryset_paginator(
+    #             queryset, page, 10)
+    #         serializer = PropertyListSerializer(queryset, many=True)
+    #         context['previous'] = cur_page - 1 if int(cur_page) > 1 else None
+    #         context['next'] = cur_page + 1 \
+    #             if int(cur_page) < last_page else None
+    #         context['count'] = last_page
+    #         context['detail'] = serializer.data
+    #         return Response(context, status=status.HTTP_200_OK)
+    #     else:
+    #         context['detail'] = "No property yet!"
+    #         return Response(context, status=status.HTTP_204_NO_CONTENT)
 
 
 class SearcherViewSet(mixins.RetrieveModelMixin,
