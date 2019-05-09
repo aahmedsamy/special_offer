@@ -32,6 +32,7 @@ class SearcherSerialzer(serializers.ModelSerializer):
 
 class PublisherSerialzer(serializers.ModelSerializer):
     image = Base64ImageField()
+    trading_doc = Base64ImageField()
 
     class Meta:
         model = Publisher

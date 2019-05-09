@@ -1,0 +1,51 @@
+[
+    {
+        "model": "users.holiday",
+        "pk": 1,
+        "fields": {
+            "day": "Saturday"
+        }
+    },
+    {
+        "model": "users.holiday",
+        "pk": 2,
+        "fields": {
+            "day": "Sunday"
+        }
+    },
+    {
+        "model": "users.holiday",
+        "pk": 3,
+        "fields": {
+            "day": "Monday"
+        }
+    },
+    {
+        "model": "users.holiday",
+        "pk": 4,
+        "fields": {
+            "day": "Tuesday"
+        }
+    },
+    {
+        "model": "users.holiday",
+        "pk": 5,
+        "fields": {
+            "day": "Wednesday"
+        }
+    },
+    {
+        "model": "users.holiday",
+        "pk": 6,
+        "fields": {
+            "day": "Thursday"
+        }
+    },
+    {
+        "model": "users.holiday",
+        "pk": 7,
+        "fields": {
+            "day": "Friday"
+        }
+    }
+]

@@ -148,7 +148,6 @@ admin.site.unregister(Group)
 
 admin.site.register(Searcher, SearcherAdmin)
 admin.site.register(Publisher, PublisherAdmin)
-# admin.site.register(User)
 
 admin.site.index_title = _('Special offer admin panel')
 admin.site.site_header = _('Special offer Administration')

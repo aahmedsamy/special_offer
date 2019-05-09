@@ -107,13 +107,13 @@ class UserViewSet(
                             basic.publisher = more
                         basic.save()
                         context['basic_info'] = UserSerializer(basic).data
-                        context['more_info'] = more_serializer.data
+                        # context['more_info'] = more_serializer.data
                         logging.info("{} - New user {}".format(
                             api_code, basic.email,
                         ))
                         return Response(context, 201)
                     else:
-                        return Response(more_serializer.errors)
+                        return Response(more_serializer.errors, 400)
                 else:
                     return Response(basic_serializer.errors, 400)
             else:

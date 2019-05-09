@@ -69,6 +69,8 @@ class Searcher(models.Model):
 
 
 class Publisher(models.Model):
+    holidays = models.ManyToManyField(
+        "users.Holiday", verbose_name=_("Holidays"), blank=True)
     name = models.CharField(_('Publisher name'), max_length=255)
     image = models.ImageField(_("Image"), upload_to="users/images")
     address_url = models.URLField(_("Address URL"), max_length=256, null=True)
@@ -79,9 +81,9 @@ class Publisher(models.Model):
     instgram_url = models.URLField(
         _("Instgram URL"), max_length=256, null=True)
     trading_doc = models.ImageField(
-        _("Trading document"), upload_to="images/doc")
-    work_start_at = models.DateTimeField(_("Work starts at"))
-    work_end_at = models.DateTimeField(_("Work ends at"))
+        _("Trading document"), upload_to="images/docs")
+    work_start_at = models.TimeField(_("Work starts at"))
+    work_end_at = models.TimeField(_("Work ends at"))
 
     def active_posts(self):
         pass
@@ -116,5 +118,10 @@ class Publisher(models.Model):
         verbose_name = _("Publisher")
         verbose_name_plural = _("Publishers")
 
-    class Subscriptions(models.Model):
+
+class Subscriptions(models.Model):
         pass
+
+
+class Holiday(models.Model):
+    day = models.CharField(_("Day"), max_length=50)
