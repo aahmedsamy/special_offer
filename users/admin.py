@@ -17,9 +17,9 @@ class FollowedCategoryInline(admin.TabularInline):
 
 class UserAdmin(admin.ModelAdmin):
 
-    list_display = ('email', 'phone', 'user_type',
+    list_display = ('email', 'user_type',
                     'is_active', 'total_visits', )
-    search_fields = ('phone', 'email',)
+    search_fields = ('email',)
     list_editable = ('is_active', 'user_type')
     list_per_page = 10
 
@@ -28,7 +28,7 @@ class UserAdmin(admin.ModelAdmin):
         if obj:
             fieldsets[0] = (_('User informations'),
                             {
-                'fields': ('email', 'name', 'phone',
+                'fields': ('email', 'name',
                            'user_type')
             })
             fieldsets[1] = (_('Permissions'), {
@@ -43,7 +43,7 @@ class UserAdmin(admin.ModelAdmin):
         else:
             fieldsets[0] = (_('User data'),
                             {
-                'fields': ('email', 'phone',
+                'fields': ('email',
                            'password', 'user_type')
             })
             del fieldsets[1:3]
@@ -52,7 +52,7 @@ class UserAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         if obj and request.user.id != obj.id:
             return self.readonly_fields + (
-                'email', 'phone', 'date_joined',
+                'email', 'date_joined',
                 'last_login', 'total_visits', 'likes_count', 'followers_count'
             )
         return self.readonly_fields + ('date_joined', 'last_login',
@@ -72,7 +72,7 @@ class PublisherInline(admin.StackedInline):
 
         fieldsets[0] = (_('User informations'),
                         {
-            'fields': ('email', 'phone',
+            'fields': ('email',
                        )
         })
         fieldsets[1] = (_('Permissions'), {
@@ -84,7 +84,7 @@ class PublisherInline(admin.StackedInline):
         return fieldsets
 
     def get_readonly_fields(self, request, obj=None):
-        return self.readonly_fields + ('email', 'phone', 'verified',
+        return self.readonly_fields + ('email', 'verified',
                                        'date_joined', 'last_login')
 
 
@@ -96,7 +96,7 @@ class SearcherInline(admin.StackedInline):
 
         fieldsets[0] = (_('User informations'),
                         {
-            'fields': ('email', 'phone',
+            'fields': ('email',
                        )
         })
         fieldsets[1] = (_('Important dates'), {
@@ -105,7 +105,7 @@ class SearcherInline(admin.StackedInline):
         return fieldsets
 
     def get_readonly_fields(self, request, obj=None):
-        return self.readonly_fields + ('email', 'phone', 'verified',
+        return self.readonly_fields + ('email', 'verified',
                                        'date_joined', 'last_login')
 
 

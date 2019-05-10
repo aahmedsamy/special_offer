@@ -16,7 +16,6 @@ class User(AbstractUser):
         "users.Publisher", on_delete=models.CASCADE, related_name="publisher",
         null=True, blank=True)
     email = models.EmailField(_('Email address'), unique=True)
-    phone = models.CharField(_('Phone'), max_length=20, null=True, blank=True)
     verification_code = models.CharField(
         max_length=6, null=True, blank=True)
     verified = models.BooleanField(_("Verified"), default=False)
@@ -26,7 +25,7 @@ class User(AbstractUser):
     username = None
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['phone']
+    REQUIRED_FIELDS = []
     objects = UserManager()
 
     def total_visits(self):
@@ -72,6 +71,7 @@ class Publisher(models.Model):
     holidays = models.ManyToManyField(
         "users.Holiday", verbose_name=_("Holidays"), blank=True)
     name = models.CharField(_('Publisher name'), max_length=255)
+    phone = models.CharField(_('Phone'), max_length=20)
     image = models.ImageField(_("Image"), upload_to="users/images")
     address_url = models.URLField(_("Address URL"), max_length=256, null=True)
     website_url = models.URLField(_("Website URL"), max_length=256, null=True)
