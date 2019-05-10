@@ -5,6 +5,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext as u
 
 from .managers import UserManager
+
+import datetime
+
 # Create your models here.
 
 
@@ -28,18 +31,6 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
     objects = UserManager()
 
-    def total_visits(self):
-        if self.user_type == self.NORMAL:
-            return "--"
-        offer = self.publisher_offer.aggregate(Sum("visited"))['visited__sum']
-        offer = offer if offer else 0
-        discount = self.publisher_discount.aggregate(Sum("visited"))[
-            'visited__sum']
-        discount = discount if discount else 0
-        return offer + discount
-
-    total_visits.short_description = (_("Total visits"))
-
     def is_verified(self):
         return self.verified
 
@@ -57,7 +48,20 @@ class Searcher(models.Model):
     def following_count(self):
         return self.followed_category_user.count()
 
+    def email(self):
+        return self.searcher.email
+
+    def date_joined(self):
+        return self.searcher.date_joined.strftime('(%d/%m/%Y) - (%H:%M:%S)')
+
+    def last_login(self):
+        ret = self.searcher.last_login.strftime('(%d/%m/%Y) - (%H:%M:%S)')
+        return ret if ret else '-'
+
     following_count.short_description = (_("Following count"))
+    email.short_description = (_("Email"))
+    date_joined.short_description = (_("Date joined"))
+    last_login.short_description = (_("Last login"))
 
     def __str__(self):
         return self.name
@@ -68,8 +72,7 @@ class Searcher(models.Model):
 
 
 class Publisher(models.Model):
-    holidays = models.ManyToManyField(
-        "users.Holiday", verbose_name=_("Holidays"), blank=True)
+    holidays = models.CharField(_("Holidays"), blank=True, max_length=256, null=True)
     name = models.CharField(_('Publisher name'), max_length=255)
     phone = models.CharField(_('Phone'), max_length=20)
     image = models.ImageField(_("Image"), upload_to="users/images")
@@ -107,9 +110,25 @@ class Publisher(models.Model):
             cnt += discount.likes_count()
         return cnt
 
+    def email(self):
+        return self.publisher.email
+
+    def date_joined(self):
+        return self.publisher.date_joined.strftime('(%d/%m/%Y) - (%H:%M:%S)')
+
+    def last_login(self):
+        ret = self.publisher.last_login.strftime('(%d/%m/%Y) - (%H:%M:%S)')
+        return ret if ret else '-'
+
+    def verified(self):
+        return _("Verified") if self.verified else _("Not verified")
+
     active_posts.short_description = (_("Active posts"))
     total_visits.short_description = (_("Total visits"))
     likes.short_description = (_("Likes"))
+    email.short_description = (_("Email"))
+    date_joined.short_description = (_("Date joined"))
+    last_login.short_description = (_("Last login"))
 
     def __str__(self):
         return self.name
@@ -122,6 +141,3 @@ class Publisher(models.Model):
 class Subscriptions(models.Model):
         pass
 
-
-class Holiday(models.Model):
-    day = models.CharField(_("Day"), max_length=50)

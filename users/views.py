@@ -75,19 +75,24 @@ class UserViewSet(
             if user_type in user_type_values:
                 basic_info = request.data.get('basic_info', None)
                 more_info = request.data.get('more_info', None)
-                if not more_info or not basic_info:
-                    context['detail'] = {
+                if not basic_info or not more_info:
+                    context['detail'] = []
+                    if not basic_info:
+                        context['detail'].append(
+                            "'basic_info' key is required.")
+                    if not more_info:
+                        context['detail'].append(
+                            "'more_info' key is required.")
+                    context['sample'] = {
                         "basic_info": {
                             "email": "s.specialoffer@gmail.com",
-                            "phone": "01000000000",
-                            "password": "adminadmin",
-                            "password1": "adminadmin",
+                            "password": "23498ods",
+                            "password1": "23498ods",
                         },
                         "more_info": {
-                            "name": "sh"
+                            "name": "sh",
                         }
                     }
-                    context['info'] = "send body as same as the detail object"
                     return Response(context, 400)
                 basic_serializer = SignupSerializer(data=basic_info)
                 if basic_serializer.is_valid():
@@ -290,11 +295,14 @@ class UserViewSet(
     @action(detail=False, methods=['post'])
     def edit(self, request, pk=None):
         api_code = self.__class__.__name__, "edit"
-        return Response("it is not working, check your whatsapp for more info ya mostafa ")
         context = dict()
         user = request.user
-        serializer = UserSerializer(
-            user, data=request.data, partial=True)
+        if user.searcher:
+            serializer = SearcherSerialzer(
+                user, data=request.data, partial=True)
+        elif user.publisher:
+            serializer = PublisherSerialzer(
+                user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             logging.info('{} - {} data updated successfully'.format(

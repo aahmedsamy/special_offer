@@ -111,24 +111,60 @@ class SearcherInline(admin.StackedInline):
 
 class SearcherAdmin(admin.ModelAdmin):
     inlines = [
-        SearcherInline,
-        FollowedCategoryInline
+        FollowedCategoryInline,
     ]
+    list_display = ('name', 'email')
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = [None] * 3
+
+        fieldsets[0] = (_('User informations'),
+                        {
+            'fields': ('name', 'email')
+        })
+        fieldsets[1] = (_('Insights'), {
+            'fields': ('following_count',),
+        })
+        fieldsets[2] = (_('Important dates'), {
+            'fields': ('date_joined', 'last_login'),
+        })
+        return fieldsets
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
-            return self.readonly_fields + ('name',)
+            return self.readonly_fields + ('name', 'email', 'date_joined',
+                                           'following_count', 'last_login', 'verified')
         return self.readonly_fields
 
-    # def has_add_permission(self, request):
-    #     return False
+    def has_add_permission(self, request):
+        return False
 
 
 class PublisherAdmin(admin.ModelAdmin):
-    inlines = [
-        PublisherInline,
-    ]
     search_fields = ('id', 'name',)
+    list_display = ('name', 'email')
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = [None] * 5
+
+        fieldsets[0] = (_('User informations'),
+                        {
+            'fields': ('name', 'phone', 'email')
+        })
+        fieldsets[1] = (_('Links'), {
+            'fields': ('address_url', 'website_url', 'facebook_url',
+                       'twitter_url', 'instgram_url'),
+        })
+        fieldsets[2] = (_('Permissions'), {
+            'fields': ('verified', ),
+        })
+        fieldsets[3] = (_('Important dates'), {
+            'fields': ('date_joined', 'last_login'),
+        })
+        fieldsets[4] = (_('Insights'), {
+            'fields': ('total_visits', 'likes', 'followers_count'),
+        })
+        return fieldsets
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
@@ -137,7 +173,9 @@ class PublisherAdmin(admin.ModelAdmin):
                                            'twitter_url', 'instgram_url',
                                            'trading_doc', 'work_start_at',
                                            'work_end_at', 'total_visits',
-                                           'likes')
+                                           'likes', 'last_login', 'date_joined',
+                                           'verified', 'phone', 'email',
+                                           'followers_count')
         return self.readonly_fields
 
     # def has_add_permission(self, request):
