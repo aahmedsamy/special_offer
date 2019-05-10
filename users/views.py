@@ -16,7 +16,7 @@ from rest_framework_jwt.settings import api_settings
 
 from datetime import datetime
 
-from .models import User
+from .models import User, Searcher, Publisher
 from .serializers import (UserSerializer,
                           SearcherSerialzer,
                           PublisherSerialzer,
@@ -296,19 +296,30 @@ class UserViewSet(
     def edit(self, request, pk=None):
         api_code = self.__class__.__name__, "edit"
         context = dict()
-        user = request.user
-        if user.searcher:
+        user_type = ""
+        try:
+            user = Searcher.objects.get(searcher=request.user)
+            user_type = "searcher"
+        except Searcher.DoesNotExist:
+            try:
+                user = Publisher.objects.get(publisher=request.user)
+                user_type = "publisher"
+            except Publisher.DoesNotExist:
+                return Response("Unhandled exception, please contact adminstrator", 400)
+
+        if user_type == "searcher":
             serializer = SearcherSerialzer(
                 user, data=request.data, partial=True)
-        elif user.publisher:
+        elif user_type == "publisher":
             serializer = PublisherSerialzer(
                 user, data=request.data, partial=True)
+
         if serializer.is_valid():
             serializer.save()
             logging.info('{} - {} data updated successfully'.format(
                 api_code, request.user.email
             ))
-            context['detail'] = _("User Data updated successfully")
+            context['detail'] = "User Data updated successfully"
             return Response(context, status=status.HTTP_200_OK)
         else:
             logging.warning('{} - {} updating data user: {}, error{}'.format(
