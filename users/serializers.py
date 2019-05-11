@@ -24,13 +24,13 @@ class UserSerializer(serializers.ModelSerializer):
         depth = 1
 
 
-class SearcherSerialzer(serializers.ModelSerializer):
+class SearcherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Searcher
         fields = "__all__"
 
 
-class PublisherSerialzer(serializers.ModelSerializer):
+class PublisherSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
     trading_doc = Base64ImageField()
 

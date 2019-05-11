@@ -34,6 +34,9 @@ class User(AbstractUser):
     def is_verified(self):
         return self.verified
 
+    def is_publisher(self):
+        return True if self.publisher else False
+
     def __str__(self):
         return self.email
 
@@ -72,7 +75,8 @@ class Searcher(models.Model):
 
 
 class Publisher(models.Model):
-    holidays = models.CharField(_("Holidays"), blank=True, max_length=256, null=True)
+    holidays = models.CharField(
+        _("Holidays"), blank=True, max_length=256, null=True)
     name = models.CharField(_('Publisher name'), max_length=255)
     phone = models.CharField(_('Phone'), max_length=20)
     image = models.ImageField(_("Image"), upload_to="users/images")
@@ -140,4 +144,3 @@ class Publisher(models.Model):
 
 class Subscriptions(models.Model):
         pass
-

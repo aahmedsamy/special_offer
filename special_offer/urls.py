@@ -29,6 +29,7 @@ urlpatterns += (
     path('api-token-auth/', obtain_jwt_token),
     path('api/', include([
         path('users/', include('users.urls')),
+        path('offers/', include('offers.urls')),
     ])),
 )
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

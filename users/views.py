@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.contrib import auth
 from django.contrib.auth.hashers import check_password
-from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.core.mail import send_mail
@@ -18,8 +17,8 @@ from datetime import datetime
 
 from .models import User, Searcher, Publisher
 from .serializers import (UserSerializer,
-                          SearcherSerialzer,
-                          PublisherSerialzer,
+                          SearcherSerializer,
+                          PublisherSerializer,
                           PasswordResetingSerializer,
                           PasswordChangeSerializer,
                           SignupSerializer,
@@ -99,9 +98,9 @@ class UserViewSet(
                     basic_info = basic_serializer.data.copy()
                     del basic_info['password1']
                     if user_type == 'searcher':
-                        more_serializer = SearcherSerialzer(data=more_info)
+                        more_serializer = SearcherSerializer(data=more_info)
                     else:
-                        more_serializer = PublisherSerialzer(data=more_info)
+                        more_serializer = PublisherSerializer(data=more_info)
 
                     if more_serializer.is_valid():
                         basic = User.objects.create_user(**basic_info)
@@ -308,10 +307,10 @@ class UserViewSet(
                 return Response("Unhandled exception, please contact adminstrator", 400)
 
         if user_type == "searcher":
-            serializer = SearcherSerialzer(
+            serializer = SearcherSerializer(
                 user, data=request.data, partial=True)
         elif user_type == "publisher":
-            serializer = PublisherSerialzer(
+            serializer = PublisherSerializer(
                 user, data=request.data, partial=True)
 
         if serializer.is_valid():

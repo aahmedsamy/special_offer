@@ -9,3 +9,8 @@ class IsSuperUser(BasePermission):
 class IsAuthenticatedAndVerified(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.is_verified()
+
+
+class IsPublisher(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_publisher() and request.user.is_verified()
