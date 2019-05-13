@@ -149,7 +149,7 @@ class PublisherAdmin(admin.ModelAdmin):
 
         fieldsets[0] = (_('User informations'),
                         {
-            'fields': ('name', 'phone', 'email')
+            'fields': ('name', 'phone', 'email', 'image')
         })
         fieldsets[1] = (_('Links'), {
             'fields': ('address_url', 'website_url', 'facebook_url',
@@ -162,7 +162,7 @@ class PublisherAdmin(admin.ModelAdmin):
             'fields': ('date_joined', 'last_login'),
         })
         fieldsets[4] = (_('Insights'), {
-            'fields': ('total_visits', 'likes', 'followers_count'),
+            'fields': ('total_visits', 'likes'),
         })
         return fieldsets
 

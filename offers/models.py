@@ -30,8 +30,8 @@ class Offer(models.Model):
     name = models.CharField(_("Name"), max_length=256)
     description = models.TextField(_("Description"), max_length=1024)
     price = models.FloatField(_("Price"), validators=[MinValueValidator(0.0)])
-    start_date = models.DateTimeField(_("Start date"))
-    end_date = models.DateTimeField(_("End date"))
+    start_date = models.DateField(_("Start date"))
+    end_date = models.DateField(_("End date"))
     visited = models.PositiveIntegerField(_("Visited"), default=0)
     bending = models.BooleanField(_("Bending"), default=True)
 

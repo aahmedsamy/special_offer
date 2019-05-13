@@ -7,16 +7,6 @@ from .models import User, Searcher, Publisher
 
 class UserSerializer(serializers.ModelSerializer):
 
-    # def get_fields(self, obj=None):
-    #     if obj:
-    #         if obj.searcher:
-    #             return ('id', 'first_name', 'last_name', 'email',
-    #                     'phone', 'searcher')
-    #         elif obj.publisher:
-    #             return ('id', 'first_name', 'last_name', 'email',
-    #                     'phone', 'publisher')
-    #     return '__all__'
-
     class Meta:
         model = User
         fields = ('id', 'first_name', 'last_name', 'email',
@@ -46,7 +36,7 @@ class SignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'first_name', 'last_name', 'email',
-                  'phone', 'searcher', 'publisher', 'password', 'password1')
+                  'searcher', 'publisher', 'password', 'password1')
 
     def validate(self, data):
         """

@@ -9,17 +9,25 @@ from helpers.dates import Date
 from .models import Offer, Discount, Category
 
 
-class OfferSerializer(serializers.ModelSerializer):
+class OfferPostSerializer(serializers.ModelSerializer):
+     class Meta:
+        model = Offer
+        # fields = "__all__"
+        exclude = ('bending', 'visited')
+
+
+class OfferGetSerializer(serializers.ModelSerializer):
     publisher = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
     days_remaining = serializers.SerializerMethodField()
 
     def get_publisher(self, obj=None):
         ret = dict()
+        request = self.context['request']
         # pass
         if obj:
             ret['name'] = str(obj.publisher.name)
-            ret['image'] = "/media/" + str(obj.publisher.image)
+            ret['image'] = request.build_absolute_uri(obj.publisher.image.url)
             return ret
 
     def get_category(self, obj=None):
