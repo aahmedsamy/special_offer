@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.db.models import F
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
@@ -58,7 +59,7 @@ class OfferViewSet(
             serializer.save()
             return Response(serializer.data)
         else:
-            return Response(serializer.errors)
+            return Response(serializer.errors, 400)
 
     def partial_update(self, request, pk):
         context = dict()
@@ -73,3 +74,20 @@ class OfferViewSet(
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
+
+    def retrieve(self, request, pk):
+        offer = get_object_or_404(self.get_queryset(), pk=pk)
+        offer.visited = F('visited') + 1
+        offer.save()
+        offer = get_object_or_404(self.get_queryset(), pk=pk)
+        serializer = self.serializer_class(
+            offer, context=self.get_serializer_context())
+        return Response(serializer.data)
+
+    def destroy(self, request, pk):
+        context = dict()
+        offer = get_object_or_404(
+            self.get_queryset(), pk=pk, publisher=request.user.publisher)
+        offer.delete()
+        context['detail'] = "Offer deleted."
+        return Response(context, status=status.HTTP_204_NO_CONTENT)

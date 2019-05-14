@@ -111,6 +111,10 @@ class UserViewSet(
                             basic.publisher = more
                         basic.save()
                         context['basic_info'] = UserSerializer(basic).data
+                        context['basic_info']['publisher']['image'] = request.build_absolute_uri(
+                            context['basic_info']['publisher']['image'])
+                        context['basic_info']['publisher']['trading_doc'] = request.build_absolute_uri(
+                            context['basic_info']['publisher']['trading_doc'])
                         # context['more_info'] = more_serializer.data
                         logging.info("{} - New user {}".format(
                             api_code, basic.email,
