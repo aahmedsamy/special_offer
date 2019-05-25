@@ -110,17 +110,17 @@ class UserViewSet(
                         else:
                             basic.publisher = more
                         basic.save()
-                        context['basic_info'] = UserSerializer(basic).data
-                        if user_type == "publisher":
-                            context['basic_info']['publisher']['image'] = request.build_absolute_uri(
-                                context['basic_info']['publisher']['image'])
-                            context['basic_info']['publisher']['trading_doc'] = request.build_absolute_uri(
-                                context['basic_info']['publisher']['trading_doc'])
+                        # context['basic_info'] = UserSerializer(basic).data
+                        # if user_type == "publisher":
+                        #     context['basic_info']['publisher']['image'] = request.build_absolute_uri(
+                        #         context['basic_info']['publisher']['image'])
+                        #     context['basic_info']['publisher']['trading_doc'] = request.build_absolute_uri(
+                        #         context['basic_info']['publisher']['trading_doc'])
                         # context['more_info'] = more_serializer.data
                         logging.info("{} - New user {}".format(
                             api_code, basic.email,
                         ))
-                        return Response(context, 201)
+                        return Response({"detail": "User created successfully."}, 201)
                     else:
                         return Response(more_serializer.errors, 400)
                 else:
