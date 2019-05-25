@@ -45,3 +45,41 @@ class OfferGetSerializer(serializers.ModelSerializer):
         model = Offer
         # fields = "__all__"
         exclude = ('bending',)
+
+
+class DiscountPostSerializer(serializers.ModelSerializer):
+     class Meta:
+        model = Discount
+        # fields = "__all__"
+        exclude = ('bending', 'visited')
+
+
+class DiscountGetSerializer(serializers.ModelSerializer):
+    publisher = serializers.SerializerMethodField()
+    category = serializers.SerializerMethodField()
+    days_remaining = serializers.SerializerMethodField()
+
+    def get_publisher(self, obj=None):
+        ret = dict()
+        request = self.context['request']
+        # pass
+        if obj:
+            ret['name'] = str(obj.publisher.name)
+            ret['image'] = request.build_absolute_uri(obj.publisher.image.url)
+            return ret
+
+    def get_category(self, obj=None):
+        ret = dict()
+        if obj:
+            ret['name'] = str(obj.category.name)
+            return ret
+
+    def get_days_remaining(self, obj):
+        if obj:
+            return Date.calculate_remaining_days(timezone.now(),
+                                                 obj.end_date)
+
+    class Meta:
+        model = Discount
+        # fields = "__all__"
+        exclude = ('bending',)

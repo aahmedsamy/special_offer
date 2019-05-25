@@ -15,21 +15,26 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path, include
-from rest_framework_jwt.views import obtain_jwt_token
 from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.conf import settings
 
+from rest_framework_jwt.views import obtain_jwt_token
+from rest_framework.routers import DefaultRouter
 
-urlpatterns = i18n_patterns(
-)
+from offers.views import OfferViewSet, DiscountViewSet
+
+
+router = DefaultRouter()
+router.register(r'api/offers', OfferViewSet, basename='offers')
+router.register(r'api/discounts', DiscountViewSet, base_name='discounts')
+urlpatterns = router.urls
 
 urlpatterns += (
     path('admin/', admin.site.urls),
     path('api-token-auth/', obtain_jwt_token),
     path('api/', include([
         path('users/', include('users.urls')),
-        path('offers/', include('offers.urls')),
     ])),
 )
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

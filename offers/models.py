@@ -26,7 +26,7 @@ class Offer(models.Model):
     publisher = models.ForeignKey("users.Publisher", verbose_name=_(
         "Publisher"), on_delete=models.CASCADE, related_name="publisher_offer")
     category = models.ForeignKey("offers.Category", verbose_name=_(
-        "Category"), on_delete=models.SET_NULL, null=True)
+        "Category"), on_delete=models.PROTECT)
     name = models.CharField(_("Name"), max_length=256)
     description = models.TextField(_("Description"), max_length=1024)
     price = models.FloatField(_("Price"), validators=[MinValueValidator(0.0)])
@@ -77,15 +77,15 @@ class Discount(models.Model):
         "Publisher"), on_delete=models.CASCADE,
         related_name="publisher_discount")
     category = models.ForeignKey("offers.Category", verbose_name=_(
-        "Category"), on_delete=models.SET_NULL, null=True)
+        "Category"), on_delete=models.PROTECT, null=True)
     name = models.CharField(_("Name"), max_length=256)
     description = models.TextField(_("Description"), max_length=1024)
     price = models.FloatField(_("Price"), validators=[MinValueValidator(0.0)])
     precentage = models.FloatField(_("Precentage"), validators=[
                                    MinValueValidator(0.0),
                                    MaxValueValidator(100.0)])
-    start_date = models.DateTimeField(_("Start date"))
-    end_date = models.DateTimeField(_("End date"))
+    start_date = models.DateField(_("Start date"))
+    end_date = models.DateField(_("End date"))
     visited = models.PositiveIntegerField(_("Visited"), default=0)
     bending = models.BooleanField(_("Bending"), default=True)
 
