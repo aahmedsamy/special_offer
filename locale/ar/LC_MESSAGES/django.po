@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-26 20:40+0400\n"
+"POT-Creation-Date: 2019-06-02 20:23+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,8 +19,90 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
+#: ads/models.py:12
+msgid "Top"
+msgstr "الاعلي"
+
+#: ads/models.py:13
+msgid "Buttom"
+msgstr "الاسفل"
+
+#: ads/models.py:16
+msgid "Advertiser"
+msgstr "المعلن"
+
+#: ads/models.py:17 offers/models.py:47 offers/models.py:64
+#: offers/models.py:120
+msgid "Offer"
+msgstr "عرض"
+
+#: ads/models.py:19 offers/models.py:101 offers/models.py:122
+msgid "Discount"
+msgstr "خصم"
+
+#: ads/models.py:22 offers/models.py:13 offers/models.py:30 offers/models.py:65
+#: offers/models.py:81
+msgid "Name"
+msgstr "الاسم الاعلاني"
+
+#: ads/models.py:23
+#| msgid "Image"
+msgid "Ad Image"
+msgstr "صورة الاعلان"
+
+#: ads/models.py:25
+#| msgid "Description"
+msgid "Position"
+msgstr "الموقع"
+
+#: ads/models.py:27
+msgid "Period"
+msgstr "فترة عرض الاعلان"
+
+#: ads/models.py:27
+msgid "Please set ad period in seconds."
+msgstr "من فضلك ادخل فترة عرض الاعلان بالثواني"
+
+#: ads/models.py:29 offers/models.py:33 offers/models.py:87
+msgid "Start date"
+msgstr "تاريخ البداية"
+
+#: ads/models.py:29
+#| msgid "Start date"
+msgid "Start viewing date"
+msgstr "تاريخ بداية العرض"
+
+#: ads/models.py:30 offers/models.py:34 offers/models.py:88
+msgid "End date"
+msgstr "تاريخ نهاية"
+
+#: ads/models.py:30
+#| msgid "End date"
+msgid "End viewing date"
+msgstr "تاريخ نهاية العرض"
+
+#: ads/models.py:38
+msgid "End date must be greater than Start date."
+msgstr "تاريخ نهاية العرض لابد ان يكون بعد تاريخ البداية"
+
+#: ads/models.py:41
+msgid "Please select offer or discount."
+msgstr "من فضلك اختار عرض او خصم"
+
+#: ads/models.py:45
+msgid "It is not allowed to select offer and discount for the same Ad."
+msgstr "غير مسموح باختيار عرض وخصم لنفس الاعلان"
+
+#: ads/models.py:48
+msgid "Ad"
+msgstr "اعلان"
+
+#: ads/models.py:49
+msgid "Ads"
+msgstr "اعلانات"
+
 #: galleries/models.py:10 galleries/models.py:22 galleries/models.py:34
-#: users/models.py:73
+#: users/models.py:82
 msgid "Image"
 msgstr "صورة"
 
@@ -50,11 +132,6 @@ msgid ""
 "Z)."
 msgstr "تاكد ان كل الحروف حروف انجليزيه كبيره فقط"
 
-#: offers/models.py:13 offers/models.py:30 offers/models.py:65
-#: offers/models.py:81
-msgid "Name"
-msgstr "الاسم الاعلاني"
-
 #: offers/models.py:14
 msgid "Icon"
 msgstr "رمز"
@@ -68,7 +145,7 @@ msgstr "قسم"
 msgid "Categories"
 msgstr "اقسام"
 
-#: offers/models.py:27 offers/models.py:77 users/models.py:109
+#: offers/models.py:27 offers/models.py:77 users/models.py:141
 msgid "Publisher"
 msgstr "المعلن"
 
@@ -80,14 +157,6 @@ msgstr "وصف"
 msgid "Price"
 msgstr "سعر اساسي"
 
-#: offers/models.py:33 offers/models.py:87
-msgid "Start date"
-msgstr "تاريخ البداية"
-
-#: offers/models.py:34 offers/models.py:88
-msgid "End date"
-msgstr "تاريخ النهاية"
-
 #: offers/models.py:35 offers/models.py:89
 msgid "Visited"
 msgstr "المشاهدات"
@@ -96,20 +165,12 @@ msgstr "المشاهدات"
 msgid "Bending"
 msgstr "معلق"
 
-#: offers/models.py:37 offers/models.py:91
-msgid "Visible"
-msgstr "مرئي"
-
-#: offers/models.py:45 offers/models.py:99 offers/models.py:127
-#: users/models.py:103
+#: offers/models.py:44 offers/models.py:98 offers/models.py:126
+#: users/models.py:132
 msgid "Likes"
 msgstr "الاعجابات"
 
-#: offers/models.py:48 offers/models.py:64 offers/models.py:121
-msgid "Offer"
-msgstr "عرض"
-
-#: offers/models.py:49
+#: offers/models.py:48
 msgid "Offers"
 msgstr "عروض"
 
@@ -133,27 +194,23 @@ msgstr "محتوايات العرض"
 msgid "Precentage"
 msgstr "نسبة الخصم"
 
-#: offers/models.py:102 offers/models.py:123
-msgid "Discount"
-msgstr "خصم"
-
-#: offers/models.py:103
+#: offers/models.py:102
 msgid "Discounts"
 msgstr "خصومات"
 
-#: offers/models.py:113
+#: offers/models.py:112
 msgid "Bending Discount"
 msgstr "خصم معلق"
 
-#: offers/models.py:114
+#: offers/models.py:113
 msgid "Bending Discounts"
 msgstr "خصومات معلقه"
 
-#: offers/models.py:119 offers/models.py:132 users/models.py:51
+#: offers/models.py:118 offers/models.py:132 users/models.py:44
 msgid "User"
 msgstr "مستخدم"
 
-#: offers/models.py:126
+#: offers/models.py:125
 msgid "Like"
 msgstr "اعاجب"
 
@@ -169,19 +226,21 @@ msgstr "اقسام متابعه"
 msgid "Arabic"
 msgstr "عربي"
 
-#: users/admin.py:29 users/admin.py:73 users/admin.py:93
+#: users/admin.py:29 users/admin.py:73 users/admin.py:97 users/admin.py:121
+#: users/admin.py:150
 msgid "User informations"
 msgstr "معلومت المستخدم"
 
-#: users/admin.py:34 users/admin.py:78 users/admin.py:98
+#: users/admin.py:34 users/admin.py:78 users/admin.py:158
 msgid "Permissions"
 msgstr "الاذونات"
 
-#: users/admin.py:37 users/admin.py:81 users/admin.py:101
+#: users/admin.py:37 users/admin.py:81 users/admin.py:102 users/admin.py:128
+#: users/admin.py:161
 msgid "Important dates"
 msgstr "تواريخ هامه"
 
-#: users/admin.py:40
+#: users/admin.py:40 users/admin.py:125 users/admin.py:164
 msgid "Insights"
 msgstr "احصائيات"
 
@@ -189,145 +248,168 @@ msgstr "احصائيات"
 msgid "User data"
 msgstr "معلومات المستخدم"
 
-#: users/admin.py:146
+#: users/admin.py:154
+msgid "Links"
+msgstr "روابط"
+
+#: users/admin.py:190
 msgid "Special offer admin panel"
 msgstr "لوحة تحكم اسبيشل اوفر"
 
-#: users/admin.py:147
+#: users/admin.py:191
 msgid "Special offer Administration"
 msgstr "ادارة اسبيشل اوفر"
 
-#: users/admin.py:148
+#: users/admin.py:192
 msgid "Special offer Management"
 msgstr "ادارة اسبيشل اوفر"
 
-#: users/models.py:18
+#: users/models.py:21
 msgid "Email address"
 msgstr "عنوان بريد الكتروني"
 
-#: users/models.py:19
-msgid "Phone"
-msgstr "جوال"
-
-#: users/models.py:22
+#: users/models.py:24 users/models.py:128
 msgid "Verified"
 msgstr "مفعل"
 
-#: users/models.py:42 users/models.py:102
-msgid "Total visits"
-msgstr "عدد المشاهدات"
-
-#: users/models.py:52
+#: users/models.py:45
 msgid "Users"
 msgstr "مستخدمين"
 
-#: users/models.py:56
+#: users/models.py:49
 msgid "Searcher name"
 msgstr "اسم الباحث"
 
-#: users/models.py:61
+#: users/models.py:64
 msgid "Following count"
 msgstr "عدد المتابعات"
 
-#: users/models.py:67
+#: users/models.py:65 users/models.py:133
+msgid "Email"
+msgstr "ايميل"
+
+#: users/models.py:66 users/models.py:134
+msgid "Date joined"
+msgstr "تاريخ الانضمام"
+
+#: users/models.py:67 users/models.py:135
+msgid "Last login"
+msgstr "تاريخ اخر تسجيل دخول"
+
+#: users/models.py:73
 msgid "Searcher"
 msgstr "باحث"
 
-#: users/models.py:68
+#: users/models.py:74
 msgid "Searchers"
 msgstr "باحثين"
 
-#: users/models.py:72
+#: users/models.py:79
+msgid "Holidays"
+msgstr "الاجازات"
+
+#: users/models.py:80
 msgid "Publisher name"
 msgstr "اسم المعلن"
 
-#: users/models.py:74
+#: users/models.py:81
+msgid "Phone"
+msgstr "جوال"
+
+#: users/models.py:83
 msgid "Address URL"
 msgstr "رابط العنوان علي الخريطه"
 
-#: users/models.py:75
+#: users/models.py:84
 msgid "Website URL"
 msgstr "الموقع الالكتروني"
 
-#: users/models.py:77
+#: users/models.py:86
 msgid "Facebook URL"
 msgstr "حساب فيسبوك"
 
-#: users/models.py:78
+#: users/models.py:87
 msgid "Twitter URL"
 msgstr "حساب تويتر"
 
-#: users/models.py:80
+#: users/models.py:89
 msgid "Instgram URL"
 msgstr "حساب انستجرام"
 
-#: users/models.py:82
+#: users/models.py:91
 msgid "Trading document"
 msgstr "سجل تجاري"
 
-#: users/models.py:83
+#: users/models.py:92
 msgid "Work starts at"
 msgstr "بداية العمل"
 
-#: users/models.py:84
+#: users/models.py:93
 msgid "Work ends at"
 msgstr "نهايةالعمل"
 
-#: users/models.py:101
+#: users/models.py:128
+#| msgid "Verified"
+msgid "Not verified"
+msgstr "غير مفعل"
+
+#: users/models.py:130
 msgid "Active posts"
 msgstr "العروض النشطه"
 
-#: users/models.py:110
+#: users/models.py:131
+msgid "Total visits"
+msgstr "عدد المشاهدات"
+
+#: users/models.py:142
 msgid "Publishers"
 msgstr "معلنين"
 
-#: users/views.py:116
+#: users/views.py:152
 msgid "Change special offer password"
 msgstr "تغيير كلمة المرور"
 
-#: users/views.py:117
+#: users/views.py:153
 msgid "You special offer password has been changed."
 msgstr "تم تغيير كلمة المرور"
 
-#: users/views.py:121
+#: users/views.py:157
 msgid "Password changed successfully."
 msgstr "تم تغيير كلمة المرور بنجاح"
 
-#: users/views.py:127
+#: users/views.py:163
 msgid "Old password is wrong!"
 msgstr "كملة المرور القديمه خاطئه"
 
-#: users/views.py:145
+#: users/views.py:181
 msgid "Unable to login with provided                      credentials"
 msgstr "غير قادر علي تسجيل الدخول بالبيانات المعطاه"
 
-#: users/views.py:207
+#: users/views.py:269
 msgid "Password Resetted successfully"
 msgstr "تم استعادة كلمة المرور بنجاح"
 
-#: users/views.py:213
+#: users/views.py:275
 msgid "invalid code!"
 msgstr "كود خاطئ"
 
-#: users/views.py:236 users/views.py:242
+#: users/views.py:298 users/views.py:304
 msgid "Invalid URL!"
 msgstr "رابط خاطئ"
 
-#: users/views.py:251
+#: users/views.py:313
 msgid "Your account verified successfuly"
 msgstr "تم تفعيل الحساب بنجاح"
 
-#: users/views.py:257
+#: users/views.py:319
 msgid "Wrong verification code!"
 msgstr "كود تفعيل خاطئ"
 
-#: users/views.py:275
-msgid "User Data updated successfully"
-msgstr "تم تحديث بيانات المستخدم بنجاح"
+#~ msgid "Visible"
+#~ msgstr "مرئي"
 
-#: users/views.py:325
-msgid "No property yet!"
-msgstr ""
+#~ msgid "User Data updated successfully"
+#~ msgstr "تم تحديث بيانات المستخدم بنجاح"
 
 #~ msgid "Normal"
 #~ msgstr "باحث"
