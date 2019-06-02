@@ -149,7 +149,7 @@ class PublisherAdmin(admin.ModelAdmin):
 
         fieldsets[0] = (_('User informations'),
                         {
-            'fields': ('name', 'phone', 'email', 'image')
+            'fields': ('name', 'phone', 'email', 'image', 'trading_doc')
         })
         fieldsets[1] = (_('Links'), {
             'fields': ('address_url', 'website_url', 'facebook_url',
@@ -178,8 +178,8 @@ class PublisherAdmin(admin.ModelAdmin):
                                            'followers_count')
         return self.readonly_fields
 
-    # def has_add_permission(self, request):
-    #     return False
+    def has_add_permission(self, request):
+        return False
 
 
 admin.site.unregister(Group)

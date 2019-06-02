@@ -23,11 +23,13 @@ from rest_framework_jwt.views import obtain_jwt_token
 from rest_framework.routers import DefaultRouter
 
 from offers.views import OfferViewSet, DiscountViewSet
-
+from ads.views import AdViewSet
 
 router = DefaultRouter()
 router.register(r'api/offers', OfferViewSet, basename='offers')
 router.register(r'api/discounts', DiscountViewSet, base_name='discounts')
+router.register(r'api/ads', AdViewSet, base_name='ads')
+
 urlpatterns = router.urls
 
 urlpatterns += (
