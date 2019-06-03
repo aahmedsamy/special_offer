@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'galleries',
     'offers',
     'ads',
+    'transactions',
 ]
 
 MIDDLEWARE = [
@@ -205,3 +206,15 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'aahmedsamy.specialoffer@gmail.com'
 EMAIL_HOST_PASSWORD = 'adminadminspecialoffer'
+
+# BrainTree ####################
+if DEBUG:
+    BT_ENVIRONMENT = "sandbox"
+    BT_MERCHANT_ID = "gwnp7f3kpzc459k9"
+    BT_PUBLIC_KEY = "jymmdysrym3rkm36"
+    BT_PRIVATE_KEY = "fed7ceada9efbfdab21778f62cb08742"
+else:
+    BT_ENVIRONMENT = ""
+    BT_MERCHANT_ID = ""
+    BT_PUBLIC_KEY = ""
+    BT_PRIVATE_KEY = ""
