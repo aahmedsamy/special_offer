@@ -31,7 +31,6 @@ class TransactionViewSet(
         )
         return queryset
 
-    # serializer_class = TransactionAttemptSerializer
 
     def get_permissions(self):
         """
