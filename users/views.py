@@ -15,6 +15,9 @@ from rest_framework_jwt.settings import api_settings
 
 from datetime import datetime
 
+from offers.models import Category, Offer, FollowedCategory
+from offers.serializers import CategorySerializer
+
 from .models import User, Searcher, Publisher
 from .serializers import (UserSerializer,
                           SearcherSerializer,
@@ -25,7 +28,8 @@ from .serializers import (UserSerializer,
                           LoginSerializer,
                           VerficationSerializer)
 from helpers.numbers import gen_rand_number
-from helpers.permissions import IsAuthenticatedAndVerified
+from helpers.permissions import (
+    IsAuthenticatedAndVerified, IsPublisher, IsSearcher)
 from helpers.views import PaginatorView
 
 
@@ -56,8 +60,10 @@ class UserViewSet(
                            'send_pass_reset_code', 'reset_password', 'verify',
                            ]:
             permission_classes = [AllowAny]
-        elif self.action in ['my']:
-            permission_classes = [IsAuthenticatedAndVerified]
+        elif self.action in ['advertiser_insights']:
+            permission_classes = [IsPublisher]
+        elif self.action in ['followed_categories']:
+            permission_classes = [IsSearcher]
         elif self.action in ['change_password', 'edit']:
             permission_classes = [IsAuthenticated]
         else:
@@ -357,3 +363,18 @@ class UserViewSet(
             ))
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['get'])
+    def advertiser_insights(self, request):
+        advertiser = request.user.publisher
+        context = dict()
+        context['likes'] = advertiser.likes()
+        context['total_visites'] = advertiser.total_visits()
+        return Response(context, 200)
+
+    @action(detail=False, methods=['get'])
+    def followed_categories(self, request):
+        searcher = request.user.searcher
+        queryset = Category.objects.filter(followed_category_category__user=searcher)
+        serializer = CategorySerializer(queryset, many=True)
+        return Response(serializer.data)

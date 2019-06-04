@@ -37,6 +37,9 @@ class User(AbstractUser):
     def is_publisher(self):
         return True if self.publisher else False
 
+    def is_searcher(self):
+        return True if self.is_searcher else False
+
     def __str__(self):
         return self.email
 

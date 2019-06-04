@@ -83,3 +83,9 @@ class DiscountGetSerializer(serializers.ModelSerializer):
         model = Discount
         # fields = "__all__"
         exclude = ('bending',)
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'

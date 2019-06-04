@@ -16,3 +16,10 @@ class IsPublisher(BasePermission):
         if request.user.is_authenticated:
             return (request.user.is_publisher() and request.user.is_verified())
         return False
+
+
+class IsSearcher(BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return (request.user.is_searcher() and request.user.is_verified())
+        return False

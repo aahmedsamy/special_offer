@@ -13,7 +13,8 @@ from helpers.permissions import IsPublisher, IsAuthenticatedAndVerified
 
 from .models import Offer, Discount, Category
 from .serializers import (OfferGetSerializer, OfferPostSerializer,
-                          DiscountGetSerializer, DiscountPostSerializer)
+                          DiscountGetSerializer, DiscountPostSerializer,
+                          CategorySerializer)
 # Create your views here.
 
 
@@ -184,7 +185,8 @@ class DiscountViewSet(
 
     def partial_update(self, request, pk):
         context = dict()
-        discount = get_object_or_404(publisher=request.user.publisher.id, pk=pk)
+        discount = get_object_or_404(
+            publisher=request.user.publisher.id, pk=pk)
         del request.data['publisher']
         serializer = DiscountPostSerializer(discount, partial=True,
                                             context=self.get_serializer_context())
@@ -237,3 +239,25 @@ class DiscountViewSet(
         for i in range(len(context['results'])):
             context['results'][i]['images'] = context['results'][i]['images'][0] if context['results'][i]['images'] else []
         return Response(context)
+
+
+class CategoryViewSet(
+        mixins.ListModelMixin,
+        viewsets.GenericViewSet):
+
+    # queryset = Offer.objects.all()
+    def get_queryset(self,):
+        queryset = Category.objects.all()
+        return queryset
+
+    serializer_class = CategorySerializer
+
+    def get_permissions(self):
+        """
+        Set actions permissions.
+        """
+        permission_classes = [AllowAny]
+        return [permission() for permission in permission_classes]
+
+    def get_serializer_context(self):
+        return {"request": self.request}
