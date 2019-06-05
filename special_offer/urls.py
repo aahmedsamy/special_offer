@@ -24,9 +24,12 @@ from rest_framework.routers import DefaultRouter
 
 from offers.views import OfferViewSet, DiscountViewSet, CategoryViewSet
 from ads.views import AdViewSet
+from galleries.views import OfferImageViewSet
 
 router = DefaultRouter()
 router.register('api/offers', OfferViewSet, basename='offers')
+router.register('api/images-offers', OfferImageViewSet,
+                base_name="offers_image")
 router.register('api/discounts', DiscountViewSet, base_name='discounts')
 router.register('api/ads', AdViewSet, base_name='ads')
 router.register('api/categories', CategoryViewSet, base_name="categories")

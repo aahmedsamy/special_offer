@@ -63,7 +63,16 @@ class OfferViewSet(
         return {"request": self.request}
 
     def create(self, request):
+        context = dict()
+        required_fields = ['category', 'images']
         request.data['publisher'] = request.user.publisher.id
+        error = False
+        for key in required_fields:
+            if key not in request.data.keys():
+                error = True
+                context[key] = "This field is required"
+        if error:
+            return Response(context, 400)
         serializer = OfferPostSerializer(data=request.data,
                                          context=self.get_serializer_context())
         if serializer.is_valid():

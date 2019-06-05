@@ -11,8 +11,7 @@ from .managers import (BendingManager, NotBendingManager)
 
 class Category(models.Model):
     name = models.CharField(_("Name"), max_length=256, unique=True)
-    icon = models.FileField(_("Icon"), upload_to="icons/",
-                            validators=[HasSvgExtention])
+    image = models.ImageField(_("Image"), upload_to="categories/images/",)
 
     def __str__(self):
         return self.name
