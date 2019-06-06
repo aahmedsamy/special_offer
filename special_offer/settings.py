@@ -205,3 +205,8 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'aahmedsamy.specialoffer@gmail.com'
 EMAIL_HOST_PASSWORD = 'adminadminspecialoffer'
+################################
+
+# tinify #######################
+TINIFY_API_KEY = "hgsRJGVhNMlGnYFGZP0WHmp8M21pQxyW"
+################################

@@ -150,19 +150,19 @@ class DiscountViewSet(
     def get_queryset(self,):
         order_by = self.request.GET.get('order_by', None)
         cat_id = self.request.GET.get('cat_id', None)
-        end_soon = self.request.GET.get('end_soon', None)
+        # end_soon = self.request.GET.get('end_soon', None)
         queryset = Discount.objects.filter(bending=False, start_date__lte=timezone.now(
         ), end_date__gte=timezone.now(),).order_by('-id')
-        if end_soon:
-            end = timezone.now().today() + timedelta(days=3)
-            queryset = queryset.filter(end_date__gte=end)
+        # if end_soon:
+        #     end = timezone.now().today() + timedelta(days=3)
+        #     queryset = queryset.filter(end_date__gte=end)
         if cat_id:
             queryset = queryset.filter(category_id=cat_id)
         if order_by == 'most_visited':
             queryset = queryset.order_by('-visited')
         return queryset
 
-    serializer_class = OfferGetSerializer
+    serializer_class = DiscountGetSerializer
 
     def get_permissions(self):
         """
