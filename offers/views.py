@@ -330,12 +330,13 @@ class FeaturesViewSet(
             ad_id = discount
             get_object_or_404(Discount.objects.filter(
                 publisher=advertiser), id=ad_id)
-            return Response(context, 400)
+        
         for i in range(len(features)):
             features[i][field_name] = ad_id
 
         serializer = OfferAndDiscountFeatureSerializer(
             data=features, many=True)
+
         if serializer.is_valid():
             serializer.save()
             context['detail'] = "Features Created successfully"

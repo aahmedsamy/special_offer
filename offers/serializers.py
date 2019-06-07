@@ -23,6 +23,7 @@ class OfferGetSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField()
     days_remaining = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
+    features = serializers.SerializerMethodField()
 
     def get_publisher(self, obj=None):
         ret = dict()
@@ -62,6 +63,10 @@ class OfferGetSerializer(serializers.ModelSerializer):
                 ret.append(item)
         return ret
 
+    def get_features(self, obj=None):
+        features = obj.offer_features.all().values('name', 'desc')
+        return features
+
     class Meta:
         model = Offer
         # fields = "__all__"
@@ -80,6 +85,7 @@ class DiscountGetSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField()
     days_remaining = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
+    features = serializers.SerializerMethodField()
 
     def get_publisher(self, obj=None):
         ret = dict()
@@ -119,6 +125,10 @@ class DiscountGetSerializer(serializers.ModelSerializer):
                 ret.append(item)
         return ret
 
+    def get_features(self, obj=None):
+        features = obj.discount_features.all().values('name', 'desc')
+        return features
+
     class Meta:
         model = Discount
         # fields = "__all__"
@@ -135,4 +145,3 @@ class OfferAndDiscountFeatureSerializer(serializers.ModelSerializer):
     class Meta:
         model = OfferAndDiscountFeature
         fields = '__all__'
-    
