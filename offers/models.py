@@ -154,3 +154,7 @@ class OfferAndDiscountFeature(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = _("Offer and discount feature")
+        verbose_name_plural = _("Offer and discount features")
