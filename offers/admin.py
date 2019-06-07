@@ -3,13 +3,18 @@ from django.contrib import admin
 from galleries.models import (OfferImage, PlusItemImage, DiscountImage)
 
 from .models import (Offer, Category, Discount, PlusItem,
-                     BendingOffer, BendingDiscount)
+                     BendingOffer, BendingDiscount, OfferAndDiscountFeature)
 # Register your models here.
 
 
 class OfferImageInline(admin.TabularInline):
     model = OfferImage
     exclude = ('small_image_path', )
+    extra = 2
+
+class FeatureInline(admin.TabularInline):
+    model = OfferAndDiscountFeature
+    readonly_fields = ("offer", "discount")
     extra = 2
 
 
@@ -34,6 +39,7 @@ class OfferAdmin(admin.ModelAdmin):
     inlines = [
         PlusItemInline,
         OfferImageInline,
+        FeatureInline
     ]
     # raw_id_fields = ('publisher', 'category')
     list_display = ('publisher', 'category', 'name',
@@ -61,6 +67,7 @@ class BendingOfferAdmin(admin.ModelAdmin):
     inlines = [
         PlusItemInline,
         OfferImageInline,
+        FeatureInline,
     ]
     # raw_id_fields = ('publisher', 'category')
     list_display = ('publisher', 'category', 'name',
@@ -86,6 +93,7 @@ class BendingOfferAdmin(admin.ModelAdmin):
 class DiscountAdmin(admin.ModelAdmin):
     inlines = [
         DiscountImageInline,
+        FeatureInline
     ]
     # raw_id_fields = ('publisher', 'category')
     list_display = ('publisher', 'category', 'name', 'price',

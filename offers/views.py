@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from django.db.models import F
+from django.db.models import F, Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
@@ -11,10 +11,10 @@ from datetime import timedelta
 
 from helpers.permissions import IsPublisher, IsAuthenticatedAndVerified
 
-from .models import Offer, Discount, Category
+from .models import (Offer, Discount, Category, OfferAndDiscountFeature)
 from .serializers import (OfferGetSerializer, OfferPostSerializer,
                           DiscountGetSerializer, DiscountPostSerializer,
-                          CategorySerializer)
+                          CategorySerializer, OfferAndDiscountFeatureSerializer)
 # Create your views here.
 
 
@@ -270,3 +270,75 @@ class CategoryViewSet(
 
     def get_serializer_context(self):
         return {"request": self.request}
+
+
+class FeaturesViewSet(
+        mixins.CreateModelMixin,
+        mixins.DestroyModelMixin,
+        mixins.UpdateModelMixin,
+        viewsets.GenericViewSet):
+
+    # queryset = Discount.objects.all()
+    def get_queryset(self):
+        advertiser = self.request.user.publisher
+        queryset = OfferAndDiscountFeature.objects.filter(
+            Q(offer__publisher=advertiser) | Q(discount__publisher=advertiser))
+        return queryset
+
+    serializer_class = OfferAndDiscountFeatureSerializer
+
+    def get_permissions(self):
+        """
+        Set actions permissions.
+        """
+        permission_classes = []
+        if self.action in ['create', 'destroy', 'update']:
+            permission_classes = [IsPublisher]
+        return [permission() for permission in permission_classes]
+
+    def get_serializer_context(self):
+        return {"request": self.request}
+
+    def create(self, request):
+        context = dict()
+        advertiser = request.user.publisher
+        error = False
+        offer = request.data.get('offer', None)
+        discount = request.data.get('discount', None)
+        features = request.data.get('features', None)
+        field_name = ""
+        if discount and offer:
+            context['detail'] = "It is not allowed to provide offer and discount at the same time"
+            error = True
+
+        elif not discount and not offer:
+            context['detail'] = "Please provide offer or discount"
+            error = True
+
+        elif not features:
+            context['features'] = "field is required and not empty."
+            error = True
+        if error:
+            return Response(context, 400)
+        if offer:
+            field_name = "offer"
+            ad_id = offer
+            get_object_or_404(Offer.objects.filter(
+                publisher=advertiser), id=ad_id)
+        elif discount:
+            field_name = "discount"
+            ad_id = discount
+            get_object_or_404(Discount.objects.filter(
+                publisher=advertiser), id=ad_id)
+            return Response(context, 400)
+        for i in range(len(features)):
+            features[i][field_name] = ad_id
+
+        serializer = OfferAndDiscountFeatureSerializer(
+            data=features, many=True)
+        if serializer.is_valid():
+            serializer.save()
+            context['detail'] = "Features Created successfully"
+            return Response(context, 201)
+        else:
+            return Response(serializer.errors, 400)

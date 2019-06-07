@@ -142,3 +142,15 @@ class FollowedCategory(models.Model):
         verbose_name = _("Followed category")
         verbose_name_plural = _("Followed categories")
         unique_together = ('user', 'category')
+
+
+class OfferAndDiscountFeature(models.Model):
+    offer = models.ForeignKey(Offer, on_delete=models.CASCADE, null=True, verbose_name=_(
+        "Offer"), related_name='offer_features')
+    discount = models.ForeignKey(Discount, on_delete=models.CASCADE, null=True, verbose_name=_(
+        "Discount"), related_name='discount_features')
+    name = models.CharField(_("Feature name"), max_length=256)
+    desc = models.TextField(_("Description"), max_length=1024)
+
+    def __str__(self):
+        return self.name

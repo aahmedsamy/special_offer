@@ -8,7 +8,7 @@ from helpers.dates import Date
 
 from galleries.serializers import OfferImageSerializer
 
-from .models import Offer, Discount, Category
+from .models import (Offer, Discount, Category, OfferAndDiscountFeature)
 
 
 class OfferPostSerializer(serializers.ModelSerializer):
@@ -129,3 +129,10 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
+
+
+class OfferAndDiscountFeatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OfferAndDiscountFeature
+        fields = '__all__'
+    
