@@ -12,6 +12,13 @@ from .managers import (BendingManager, NotBendingManager)
 class Category(models.Model):
     name = models.CharField(_("Name"), max_length=256, unique=True)
     image = models.ImageField(_("Image"), upload_to="categories/images/",)
+    small_image_path = models.TextField()
+    
+    def clean(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        img = Image(image=self.image)
+        self.small_image_path = img.compress_image_tinify()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name

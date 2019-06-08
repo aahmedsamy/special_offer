@@ -5,25 +5,34 @@ from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 
 from helpers.dates import Date
+from helpers.images import Image
 
-from galleries.serializers import OfferImageSerializer
+from galleries.serializers import OfferImageSerializer, DiscountImageSerializer
+from galleries.models import OfferImage, DiscountImage
 
-from .models import (Offer, Discount, Category, OfferAndDiscountFeature)
-
-
-class OfferPostSerializer(serializers.ModelSerializer):
-     class Meta:
-        model = Offer
-        # fields = "__all__"
-        exclude = ('bending', 'visited')
+from .models import (Offer, Discount, Category,
+                     OfferAndDiscountFeature, PlusItem, OfferAndDiscountFeature)
 
 
-class OfferGetSerializer(serializers.ModelSerializer):
+class PlusItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlusItem
+        fields = '__all__'
+        read_only_fields = ('offer',)
+
+
+class OfferAndDiscountFeatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OfferAndDiscountFeature
+        fields = '__all__'
+
+
+class OfferSerializer(serializers.ModelSerializer):
+    plus_offer = PlusItemSerializer(many=True)
+    offer_images = OfferImageSerializer(many=True)
+    offer_features = OfferAndDiscountFeatureSerializer(many=True, )
     publisher = serializers.SerializerMethodField()
-    category = serializers.SerializerMethodField()
     days_remaining = serializers.SerializerMethodField()
-    images = serializers.SerializerMethodField()
-    features = serializers.SerializerMethodField()
 
     def get_publisher(self, obj=None):
         ret = dict()
@@ -47,30 +56,34 @@ class OfferGetSerializer(serializers.ModelSerializer):
             return Date.calculate_remaining_days(timezone.now(),
                                                  obj.end_date)
 
-    def get_images(self, obj=None):
-        ret = []
-        item = dict()
-        request = self.context['request']
-        if obj:
-            images = obj.offer_image.all()
-            for image in images:
-                item = item.copy()
-                item['image'] = request.build_absolute_uri(
-                    image.image.url)
-                if image.small_image_path:
-                    item['small_image_path'] = request.build_absolute_uri(
-                        image.small_image_path)
-                ret.append(item)
-        return ret
-
-    def get_features(self, obj=None):
-        features = obj.offer_features.all().values('name', 'desc')
-        return features
-
     class Meta:
         model = Offer
         # fields = "__all__"
         exclude = ('bending',)
+        read_only_fields = ('visited', 'publisher')
+
+    def create(self, validated_data):
+        request = self.context.get("request", None)
+        advertiser = request.user.publisher
+        images_data = validated_data.pop('offer_images')
+        plus_items = validated_data.pop('plus_offer')
+        features = validated_data.pop('offer_features')
+        print(validated_data)
+        offer = Offer.objects.create(publisher=advertiser, **validated_data)
+
+        room_images = []
+        for image in images_data:
+            room_images.append(
+                OfferImage.objects.create(offer=offer, **image))
+        Image.compress_list_of_images(room_images)
+
+        for item in plus_items:
+            PlusItem.objects.create(offer=offer, **item)
+
+        for feature in features:
+            OfferAndDiscountFeature.objects.create(offer=offer, **feature)
+
+        return offer
 
 
 class DiscountPostSerializer(serializers.ModelSerializer):
@@ -80,12 +93,11 @@ class DiscountPostSerializer(serializers.ModelSerializer):
         exclude = ('bending', 'visited')
 
 
-class DiscountGetSerializer(serializers.ModelSerializer):
+class DiscountSerializer(serializers.ModelSerializer):
+    discount_images = DiscountImageSerializer(many=True,)
+    discount_features = OfferAndDiscountFeatureSerializer(many=True, )
     publisher = serializers.SerializerMethodField()
-    category = serializers.SerializerMethodField()
     days_remaining = serializers.SerializerMethodField()
-    images = serializers.SerializerMethodField()
-    features = serializers.SerializerMethodField()
 
     def get_publisher(self, obj=None):
         ret = dict()
@@ -98,50 +110,39 @@ class DiscountGetSerializer(serializers.ModelSerializer):
                     obj.publisher.image.url)
             return ret
 
-    def get_category(self, obj=None):
-        ret = dict()
-        if obj:
-            ret['name'] = str(obj.category.name)
-            return ret
-
     def get_days_remaining(self, obj):
         if obj:
             return Date.calculate_remaining_days(timezone.now(),
                                                  obj.end_date)
 
-    def get_images(self, obj=None):
-        ret = []
-        item = dict()
-        request = self.context['request']
-        if obj:
-            images = obj.discount_image.all()
-            for image in images:
-                item = item.copy()
-                item['image'] = request.build_absolute_uri(
-                    image.image.url)
-                if image.small_image_path:
-                    item['small_image_path'] = request.build_absolute_uri(
-                        image.small_image_path)
-                ret.append(item)
-        return ret
-
-    def get_features(self, obj=None):
-        features = obj.discount_features.all().values('name', 'desc')
-        return features
-
     class Meta:
         model = Discount
         # fields = "__all__"
         exclude = ('bending',)
+        read_only_fields = ('visited', 'publisher')
+
+    def create(self, validated_data):
+        request = self.context.get("request", None)
+        advertiser = request.user.publisher
+        images_data = validated_data.pop('discount_images')
+        features = validated_data.pop('discount_features')
+        discount = Discount.objects.create(
+            publisher=advertiser, **validated_data)
+
+        room_images = []
+        for image in images_data:
+            room_images.append(
+                DiscountImage.objects.create(discount=discount, **image))
+        Image.compress_list_of_images(room_images)
+
+        for feature in features:
+            OfferAndDiscountFeature.objects.create(
+                discount=discount, **feature)
+
+        return discount
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = '__all__'
-
-
-class OfferAndDiscountFeatureSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OfferAndDiscountFeature
         fields = '__all__'

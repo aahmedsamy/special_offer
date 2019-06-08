@@ -7,17 +7,29 @@ from .models import (OfferImage, DiscountImage,)
 
 class OfferImageSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
+    small_image_path = serializers.SerializerMethodField()
 
     class Meta:
         model = OfferImage
-        fields = '__all__'
+        exclude = ('offer', )
         read_only_fields = ('small_image_path',)
+
+    def get_small_image_path(self, obj):
+        request = self.context.get("request", None)
+        return request.build_absolute_uri(
+            obj.small_image_path) if obj.small_image_path else ''
 
 
 class DiscountImageSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
+    small_image_path = serializers.SerializerMethodField()
 
     class Meta:
         model = DiscountImage
-        fields = '__all__'
+        exclude = ('discount', )
         read_only_fields = ('small_image_path',)
+
+    def get_small_image_path(self, obj):
+        request = self.context.get("request", None)
+        return request.build_absolute_uri(
+            obj.small_image_path) if obj.small_image_path else ''

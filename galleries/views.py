@@ -60,7 +60,7 @@ class OfferImageViewSet(
             data=request.data['images'], many=True)
         if serializer.is_valid():
             images = serializer.save()
-            compress_list_of_images(images)
+            Image.compress_list_of_images(images)
             context['detail'] = "Images uploaded successfully."
             return Response(context)
         else:
@@ -106,7 +106,7 @@ class DiscountImageViewSet(
             data=request.data['images'], many=True)
         if serializer.is_valid():
             images = serializer.save()
-            compress_list_of_images(images)
+            Image.compress_list_of_images(images)
             context['detail'] = "Images uploaded successfully."
             return Response(context)
         else:

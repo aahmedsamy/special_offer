@@ -12,8 +12,8 @@ from datetime import timedelta
 from helpers.permissions import IsPublisher, IsAuthenticatedAndVerified
 
 from .models import (Offer, Discount, Category, OfferAndDiscountFeature)
-from .serializers import (OfferGetSerializer, OfferPostSerializer,
-                          DiscountGetSerializer, DiscountPostSerializer,
+from .serializers import (OfferSerializer,
+                          DiscountSerializer,
                           CategorySerializer, OfferAndDiscountFeatureSerializer)
 # Create your views here.
 
@@ -42,7 +42,7 @@ class OfferViewSet(
             queryset = queryset.order_by('-visited')
         return queryset
 
-    serializer_class = OfferGetSerializer
+    serializer_class = OfferSerializer
 
     def get_permissions(self):
         """
@@ -62,31 +62,11 @@ class OfferViewSet(
     def get_serializer_context(self):
         return {"request": self.request}
 
-    def create(self, request):
-        context = dict()
-        required_fields = ['category', 'images']
-        request.data['publisher'] = request.user.publisher.id
-        error = False
-        for key in required_fields:
-            if key not in request.data.keys():
-                error = True
-                context[key] = "This field is required"
-        if error:
-            return Response(context, 400)
-        serializer = OfferPostSerializer(data=request.data,
-                                         context=self.get_serializer_context())
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors, 400)
-
     def partial_update(self, request, pk):
         context = dict()
-        offer = get_object_or_404(publisher=request.user.publisher.id, pk=pk)
-        del request.data['publisher']
-        serializer = OfferPostSerializer(offer, partial=True,
-                                         context=self.get_serializer_context())
+        offer = get_object_or_404(Offer.objects.filter(publisher=request.user.publisher), pk=pk)
+        serializer = self.serializer_class(data=request.data, partial=True,
+                                           context=self.get_serializer_context())
         if serializer.is_valid():
             offer = serializer.save()
             offer.bending = True
@@ -162,7 +142,7 @@ class DiscountViewSet(
             queryset = queryset.order_by('-visited')
         return queryset
 
-    serializer_class = DiscountGetSerializer
+    serializer_class = DiscountSerializer
 
     def get_permissions(self):
         """
@@ -182,23 +162,13 @@ class DiscountViewSet(
     def get_serializer_context(self):
         return {"request": self.request}
 
-    def create(self, request):
-        request.data['publisher'] = request.user.publisher.id
-        serializer = DiscountPostSerializer(data=request.data,
-                                            context=self.get_serializer_context())
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors, 400)
-
     def partial_update(self, request, pk):
         context = dict()
         discount = get_object_or_404(
             publisher=request.user.publisher.id, pk=pk)
         del request.data['publisher']
-        serializer = DiscountPostSerializer(discount, partial=True,
-                                            context=self.get_serializer_context())
+        serializer = DiscountSerializer(discount, partial=True,
+                                        context=self.get_serializer_context())
         if serializer.is_valid():
             discount = serializer.save()
             discount.bending = True
@@ -334,7 +304,7 @@ class FeaturesViewSet(
             ad_id = discount
             get_object_or_404(Discount.objects.filter(
                 publisher=advertiser), id=ad_id)
-        
+
         for i in range(len(features)):
             features[i][field_name] = ad_id
 

@@ -34,6 +34,14 @@ class Image:
 
     def get_image_name(ext):
         return "{}.{}".format(uuid.uuid5.hex, ext)
+    
+    @classmethod
+    def compress_list_of_images(cls, images):
+        obj=cls()
+        for image in images:
+            # img = Image()
+            image.small_image_path = obj.compress_image_tinify(image.image)
+            image.save()
 
     # def convert_base64_to_image_file(
     #     self, data, destination, image_url_to_be_deleted=None):
