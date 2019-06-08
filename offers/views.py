@@ -276,13 +276,17 @@ class FeaturesViewSet(
         mixins.CreateModelMixin,
         mixins.DestroyModelMixin,
         mixins.UpdateModelMixin,
+        mixins.RetrieveModelMixin,
         viewsets.GenericViewSet):
 
     # queryset = Discount.objects.all()
     def get_queryset(self):
-        advertiser = self.request.user.publisher
-        queryset = OfferAndDiscountFeature.objects.filter(
-            Q(offer__publisher=advertiser) | Q(discount__publisher=advertiser))
+        if self.action in ['create', 'destroy', 'update']:
+            advertiser = self.request.user.publisher
+            queryset = OfferAndDiscountFeature.objects.filter(
+                Q(offer__publisher=advertiser) | Q(discount__publisher=advertiser))
+        elif self.action in ['retrieve']:
+            queryset = OfferAndDiscountFeature.objects.all()
         return queryset
 
     serializer_class = OfferAndDiscountFeatureSerializer
