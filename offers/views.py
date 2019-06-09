@@ -65,7 +65,8 @@ class OfferViewSet(
 
     def partial_update(self, request, pk):
         context = dict()
-        offer = get_object_or_404(Offer.objects.filter(publisher=request.user.publisher), pk=pk)
+        offer = get_object_or_404(Offer.objects.filter(
+            publisher=request.user.publisher), pk=pk)
         serializer = self.serializer_class(data=request.data, partial=True,
                                            context=self.get_serializer_context())
         if serializer.is_valid():
@@ -92,7 +93,6 @@ class OfferViewSet(
         offer.delete()
         context['detail'] = "Offer deleted."
         return Response(context, status=status.HTTP_204_NO_CONTENT)
-
 
     @action(detail=False, methods=['get'])
     def end_soon(self, request):
@@ -124,7 +124,8 @@ class OfferViewSet(
         context = dict()
         page = request.GET.get('page', 1)
         advertiser = request.user.publisher
-        queryset = advertiser.publisher_offer.all()
+        queryset = advertiser.publisher_offer.filter(start_date__lte=timezone.now(
+        ), end_date__gte=timezone.now())
         context['count'] = queryset.count()
         queryset, cur_page, last_page = PaginatorView.queryset_paginator(
             queryset, page, 10)
@@ -146,6 +147,7 @@ class OfferViewSet(
         if serializer.is_valid():
             print(serializer.data)
             return Response(serializer.data)
+
 
 class DiscountViewSet(
         mixins.CreateModelMixin,
@@ -246,6 +248,29 @@ class DiscountViewSet(
         context['results'] = self.sort_upon_points(context['results'])[:3]
         for i in range(len(context['results'])):
             context['results'][i]['images'] = context['results'][i]['images'][0] if context['results'][i]['images'] else []
+        return Response(context)
+    
+    @action(detail=False, methods=['get'])
+    def my_discounts(self, request):
+        context = dict()
+        page = request.GET.get('page', 1)
+        advertiser = request.user.publisher
+        queryset = advertiser.publisher_discount.filter(start_date__lte=timezone.now(
+        ), end_date__gte=timezone.now())
+        context['count'] = queryset.count()
+        queryset, cur_page, last_page = PaginatorView.queryset_paginator(
+            queryset, page, 10)
+        context['previous'] = int(cur_page) - 1 if int(cur_page) > 1 else None
+        context['next'] = cur_page + 1 \
+            if int(cur_page) < last_page else None
+        if context['previous']:
+            context['previous'] = request.build_absolute_uri(
+                "?page="+str(context['previous']))
+        if context['next']:
+            context['next'] = request.build_absolute_uri(
+                "?page="+str(context['next']))
+        context['results'] = self.serializer_class(
+            queryset, many=True, context=self.get_serializer_context()).data
         return Response(context)
 
 
