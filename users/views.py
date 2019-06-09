@@ -126,7 +126,9 @@ class UserViewSet(
                         logging.info("{} - New user {}".format(
                             api_code, basic.email,
                         ))
-                        return Response({"detail": "User created successfully."}, 201)
+                        context['user_id'] = basic.id
+                        context['detail'] = "User created successfully."
+                        return Response(context, 201)
                     else:
                         return Response(more_serializer.errors, 400)
                 else:
@@ -375,6 +377,7 @@ class UserViewSet(
     @action(detail=False, methods=['get'])
     def followed_categories(self, request):
         searcher = request.user.searcher
-        queryset = Category.objects.filter(followed_category_category__user=searcher)
+        queryset = Category.objects.filter(
+            followed_category_category__user=searcher)
         serializer = CategorySerializer(queryset, many=True)
         return Response(serializer.data)
