@@ -12,6 +12,7 @@ class OfferImageInline(admin.TabularInline):
     exclude = ('small_image_path', )
     extra = 2
 
+
 class FeatureInline(admin.TabularInline):
     model = OfferAndDiscountFeature
     readonly_fields = ("offer", "discount")
@@ -153,9 +154,16 @@ class BendingDiscountAdmin(admin.ModelAdmin):
 #     list_per_page = 10
 
 
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    fields = ('name', 'image')
+    list_filter = ('name',)
+    list_per_page = 10
+
+
 admin.site.register(Offer, OfferAdmin)
 admin.site.register(BendingOffer, BendingOfferAdmin)
-admin.site.register(Category)
+admin.site.register(Category, CategoryAdmin)
 # admin.site.register(Like)
 admin.site.register(Discount, DiscountAdmin)
 admin.site.register(BendingDiscount, DiscountAdmin)

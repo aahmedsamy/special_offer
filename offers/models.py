@@ -4,6 +4,7 @@ from django.core.validators import (MinValueValidator, MaxValueValidator)
 from django.db.models import Count
 
 from helpers.validators import HasSvgExtention
+from helpers.images import Image
 
 from .managers import (BendingManager, NotBendingManager)
 # Create your models here.
@@ -16,8 +17,8 @@ class Category(models.Model):
     
     def clean(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        img = Image(image=self.image)
-        self.small_image_path = img.compress_image_tinify()
+        img = Image()
+        self.small_image_path = img.compress_image_tinify(image=self.image)
         super().save(*args, **kwargs)
 
     def __str__(self):

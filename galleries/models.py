@@ -13,8 +13,8 @@ class OfferImage(models.Model):
 
     def clean(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        img = Image(image=self.image)
-        self.small_image_path = img.compress_image_tinify()
+        img = Image()
+        self.small_image_path = img.compress_image_tinify(image=self.image)
         super().save(*args, **kwargs)
 
     class Meta:
@@ -31,8 +31,8 @@ class PlusItemImage(models.Model):
 
     def clean(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        img = Image(image=self.image)
-        self.small_image_path = img.compress_image_tinify()
+        img = Image()
+        self.small_image_path = img.compress_image_tinify(image=self.image)
         super().save(*args, **kwargs)
 
     class Meta:
@@ -49,8 +49,8 @@ class DiscountImage(models.Model):
 
     def clean(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        img = Image(image=self.image)
-        self.small_image_path = img.compress_image_tinify()
+        img = Image()
+        self.small_image_path = img.compress_image_tinify(image=self.image)
         super().save(*args, **kwargs)
 
     class Meta:

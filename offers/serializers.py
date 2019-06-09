@@ -143,6 +143,14 @@ class DiscountSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    small_image_path = serializers.SerializerMethodField()
+
     class Meta:
         model = Category
         fields = '__all__'
+        read_only_fields = ('small_image_path',)
+
+    def get_small_image_path(self, obj):
+        request = self.context.get("request", None)
+        return request.build_absolute_uri(
+            obj.small_image_path) if obj.small_image_path else ''
