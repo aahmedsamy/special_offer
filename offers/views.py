@@ -92,6 +92,7 @@ class OfferViewSet(
         context['detail'] = "Offer deleted."
         return Response(context, status=status.HTTP_204_NO_CONTENT)
 
+
     @action(detail=False, methods=['get'])
     def end_soon(self, request):
         context = dict()
@@ -117,6 +118,9 @@ class OfferViewSet(
             context['results'][i]['images'] = context['results'][i]['images'][0] if context['results'][i]['images'] else []
         return Response(context)
 
+    @action(detail=False, methods=['get'])
+    def my_offers(self, request):
+        pass
 
 class DiscountViewSet(
         mixins.CreateModelMixin,

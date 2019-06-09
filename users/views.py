@@ -126,7 +126,6 @@ class UserViewSet(
                         logging.info("{} - New user {}".format(
                             api_code, basic.email,
                         ))
-                        context['user_id'] = basic.id
                         context['detail'] = "User created successfully."
                         return Response(context, 201)
                     else:
@@ -192,6 +191,7 @@ class UserViewSet(
             token = generate_token(user)
             context['Token'] = token
             context['verified'] = user.is_verified()
+            context['user_id'] = user.id
             return Response(context, status=status.HTTP_200_OK)
         else:
             logging.warning('{} - faild login {}'.format(
