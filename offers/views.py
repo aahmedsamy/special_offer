@@ -10,6 +10,7 @@ from rest_framework.permissions import (AllowAny, IsAuthenticated)
 from datetime import timedelta
 
 from helpers.permissions import IsPublisher, IsAuthenticatedAndVerified
+from helpers.views import PaginatorView
 
 from .models import (Offer, Discount, Category, OfferAndDiscountFeature)
 from .serializers import (OfferSerializer,
@@ -50,7 +51,7 @@ class OfferViewSet(
         """
         permission_classes = []
         if self.action in ['create', 'update', 'destroy',
-                           'my',
+                           'my', 'my_offers'
                            ]:
             permission_classes = [IsPublisher, IsAuthenticatedAndVerified]
         elif self.action in ['list', 'retrieve']:
@@ -120,7 +121,31 @@ class OfferViewSet(
 
     @action(detail=False, methods=['get'])
     def my_offers(self, request):
-        pass
+        context = dict()
+        page = request.GET.get('page', 1)
+        advertiser = request.user.publisher
+        queryset = advertiser.publisher_offer.all()
+        context['count'] = queryset.count()
+        queryset, cur_page, last_page = PaginatorView.queryset_paginator(
+            queryset, page, 10)
+        context['previous'] = int(cur_page) - 1 if int(cur_page) > 1 else None
+        context['next'] = cur_page + 1 \
+            if int(cur_page) < last_page else None
+        if context['previous']:
+            context['previous'] = request.build_absolute_uri(
+                "?page="+str(context['previous']))
+        if context['next']:
+            context['next'] = request.build_absolute_uri(
+                "?page="+str(context['next']))
+        context['results'] = self.serializer_class(
+            queryset, many=True, context=self.get_serializer_context()).data
+        # for i in range(len(context['results'])):
+        #     context['results'][i]['images'] = context['results'][i]['images'][0] if context['results'][i]['images'] else []
+        return Response(context)
+        serializer = self.serializer_class(offers, many=True)
+        if serializer.is_valid():
+            print(serializer.data)
+            return Response(serializer.data)
 
 class DiscountViewSet(
         mixins.CreateModelMixin,
