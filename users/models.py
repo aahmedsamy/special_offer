@@ -30,9 +30,9 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
     objects = UserManager()
-
+    
     def is_verified(self):
-        return self.verified
+        return True if self.verified else False
 
     def is_publisher(self):
         return True if self.publisher else False
@@ -128,7 +128,7 @@ class Publisher(models.Model):
         return ret if ret else '-'
 
     def verified(self):
-        return _("Verified") if self.verified else _("Not verified")
+        return _("Verified") if self.publisher.is_verified() else _("Not verified")
 
     active_posts.short_description = (_("Active posts"))
     total_visits.short_description = (_("Total visits"))
