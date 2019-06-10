@@ -33,6 +33,7 @@ class OfferSerializer(serializers.ModelSerializer):
     offer_features = OfferAndDiscountFeatureSerializer(many=True, )
     publisher = serializers.SerializerMethodField()
     days_remaining = serializers.SerializerMethodField()
+    likes = serializers.SerializerMethodField()
 
     def get_publisher(self, obj=None):
         ret = dict()
@@ -55,6 +56,8 @@ class OfferSerializer(serializers.ModelSerializer):
         if obj:
             return Date.calculate_remaining_days(timezone.now(),
                                                  obj.end_date)
+    def get_likes(self, obj):
+        return obj.likes_count()
 
     class Meta:
         model = Offer
@@ -98,6 +101,8 @@ class DiscountSerializer(serializers.ModelSerializer):
     discount_features = OfferAndDiscountFeatureSerializer(many=True, )
     publisher = serializers.SerializerMethodField()
     days_remaining = serializers.SerializerMethodField()
+    likes = serializers.SerializerMethodField()
+
 
     def get_publisher(self, obj=None):
         ret = dict()
@@ -114,6 +119,8 @@ class DiscountSerializer(serializers.ModelSerializer):
         if obj:
             return Date.calculate_remaining_days(timezone.now(),
                                                  obj.end_date)
+    def get_likes(self, obj):
+        return obj.likes_count()
 
     class Meta:
         model = Discount
