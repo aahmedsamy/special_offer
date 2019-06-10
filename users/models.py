@@ -136,6 +136,7 @@ class Publisher(models.Model):
     email.short_description = (_("Email"))
     date_joined.short_description = (_("Date joined"))
     last_login.short_description = (_("Last login"))
+    verified.short_description = (_("Verified"))
 
     def __str__(self):
         return self.name
