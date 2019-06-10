@@ -113,7 +113,7 @@ class SearcherAdmin(admin.ModelAdmin):
     inlines = [
         FollowedCategoryInline,
     ]
-    list_display = ('name', 'email', 'verified')
+    list_display = ('name', 'email',)
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = [None] * 3
