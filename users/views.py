@@ -372,6 +372,7 @@ class UserViewSet(
         context = dict()
         context['likes'] = advertiser.likes()
         context['total_visites'] = advertiser.total_visits()
+        context['active_posts'] = advertiser.active_posts_cnt()
         return Response(context, 200)
 
     @action(detail=False, methods=['get'])

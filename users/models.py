@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models import Sum, Count
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext as u
+from django.utils import timezone
 
 from .managers import UserManager
 
@@ -116,6 +117,13 @@ class Publisher(models.Model):
         for discount in discounts:
             cnt += discount.likes_count()
         return cnt
+    
+    def active_posts_cnt(self):
+        offers = self.publisher_offer.filter(start_date__lte=timezone.now(
+        ), end_date__gte=timezone.now()).count()
+        discounts = self.publisher_discount.filter(start_date__lte=timezone.now(
+        ), end_date__gte=timezone.now()).count()
+        return offers + discounts
 
     def email(self):
         return self.publisher.email
