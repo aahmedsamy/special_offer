@@ -97,7 +97,9 @@ class OfferViewSet(
     def end_soon(self, request):
         context = dict()
         page = request.GET.get('page', 1)
-        queryset = self.get_queryset()
+        end = timezone.now().today().date() + timedelta(days=3)
+
+        queryset = self.get_queryset().filter(end_date__lte=end)
 
         context['count'] = queryset.count()
         queryset, cur_page, last_page = PaginatorView.queryset_paginator(
@@ -113,9 +115,6 @@ class OfferViewSet(
                 "?page="+str(context['next']))
         context['results'] = self.serializer_class(
             queryset, many=True, context=self.get_serializer_context()).data
-        context['results'] = self.sort_upon_points(context['results'])[:3]
-        for i in range(len(context['results'])):
-            context['results'][i]['images'] = context['results'][i]['images'][0] if context['results'][i]['images'] else []
         return Response(context)
 
     @action(detail=False, methods=['get'])
@@ -156,12 +155,12 @@ class DiscountViewSet(
     def get_queryset(self,):
         order_by = self.request.GET.get('order_by', None)
         cat_id = self.request.GET.get('cat_id', None)
-        # end_soon = self.request.GET.get('end_soon', None)
+        end_soon = self.request.GET.get('end_soon', None)
         queryset = Discount.objects.filter(bending=False, start_date__lte=timezone.now(
         ), end_date__gte=timezone.now(),).order_by('-id')
-        # if end_soon:
-        #     end = timezone.now().today() + timedelta(days=3)
-        #     queryset = queryset.filter(end_date__gte=end)
+        if end_soon:
+            end = timezone.now().today() + timedelta(days=3)
+            queryset = queryset.filter(end_date__lte=end)
         if cat_id:
             queryset = queryset.filter(category_id=cat_id)
         if order_by == 'most_visited':
@@ -223,7 +222,9 @@ class DiscountViewSet(
     def end_soon(self, request):
         context = dict()
         page = request.GET.get('page', 1)
-        queryset = self.get_queryset()
+        end = timezone.now().today().date() + timedelta(days=3)
+        
+        queryset = self.get_queryset().filter(end_date__lte=end)
 
         context['count'] = queryset.count()
         queryset, cur_page, last_page = PaginatorView.queryset_paginator(
@@ -239,9 +240,7 @@ class DiscountViewSet(
                 "?page="+str(context['next']))
         context['results'] = self.serializer_class(
             queryset, many=True, context=self.get_serializer_context()).data
-        context['results'] = self.sort_upon_points(context['results'])[:3]
-        for i in range(len(context['results'])):
-            context['results'][i]['images'] = context['results'][i]['images'][0] if context['results'][i]['images'] else []
+
         return Response(context)
 
     @action(detail=False, methods=['get'])

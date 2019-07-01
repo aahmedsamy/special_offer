@@ -87,7 +87,6 @@ class Discount(models.Model):
         "Category"), on_delete=models.PROTECT, null=True)
     name = models.CharField(_("Name"), max_length=256)
     description = models.TextField(_("Description"), max_length=1024)
-    price = models.FloatField(_("Price"), validators=[MinValueValidator(0.0)])
     precentage = models.FloatField(_("Precentage"), validators=[
                                    MinValueValidator(0.0),
                                    MaxValueValidator(100.0)])

@@ -97,7 +97,7 @@ class DiscountAdmin(admin.ModelAdmin):
         FeatureInline
     ]
     # raw_id_fields = ('publisher', 'category')
-    list_display = ('publisher', 'category', 'name', 'price',
+    list_display = ('publisher', 'category', 'name',
                     'precentage', 'bending',)
     list_editable = ('bending', )
 
@@ -123,7 +123,7 @@ class BendingDiscountAdmin(admin.ModelAdmin):
         DiscountImageInline,
     ]
     # raw_id_fields = ('publisher', 'category')
-    list_display = ('publisher', 'category', 'name', 'price',
+    list_display = ('publisher', 'category', 'name',
                     'precentage')
 
     search_fields = ('id', 'publisher',
