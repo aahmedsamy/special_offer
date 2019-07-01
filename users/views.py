@@ -148,7 +148,6 @@ class UserViewSet(
         user = request.user
         context = dict()
         if serializer.is_valid():
-            cur_password = user.password
             if user.check_password(serializer.data['old_password']):
                 user.set_password(serializer.data['password'])
                 user.save()
@@ -202,7 +201,6 @@ class UserViewSet(
 
     @action(detail=False, methods=['get'])
     def send_pass_reset_code(self, request,):
-        api_code = self.__class__.__name__, "send_pass_reset_code"
         email = request.GET.get('email', None)
         if email:
             try:
@@ -228,7 +226,6 @@ class UserViewSet(
 
     @action(detail=False, methods=['get'])
     def send_email_verification_code(self, request,):
-        api_code = self.__class__.__name__, "send_email_verification_code"
         email = request.GET.get('email', None)
         if email:
             try:

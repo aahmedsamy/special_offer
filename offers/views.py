@@ -9,13 +9,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import (AllowAny, IsAuthenticated)
 from datetime import timedelta
 
-from helpers.permissions import IsPublisher, IsAuthenticatedAndVerified
+from helpers.permissions import IsPublisher, IsAuthenticatedAndVerified, IsSearcher
 from helpers.views import PaginatorView
 
-from .models import (Offer, Discount, Category, OfferAndDiscountFeature)
+from .models import (Offer, Discount, Category, OfferAndDiscountFeature, Like)
 from .serializers import (OfferSerializer,
                           DiscountSerializer,
-                          CategorySerializer, OfferAndDiscountFeatureSerializer)
+                          CategorySerializer, OfferAndDiscountFeatureSerializer, LikeOfferSerializer, LikeDiscountSerializer)
 # Create your views here.
 
 
@@ -64,7 +64,6 @@ class OfferViewSet(
         return {"request": self.request}
 
     def partial_update(self, request, pk):
-        context = dict()
         offer = get_object_or_404(Offer.objects.filter(
             publisher=request.user.publisher), pk=pk)
         serializer = self.serializer_class(data=request.data, partial=True,
@@ -143,10 +142,6 @@ class OfferViewSet(
         # for i in range(len(context['results'])):
         #     context['results'][i]['images'] = context['results'][i]['images'][0] if context['results'][i]['images'] else []
         return Response(context)
-        serializer = self.serializer_class(offers, many=True)
-        if serializer.is_valid():
-            print(serializer.data)
-            return Response(serializer.data)
 
 
 class DiscountViewSet(
@@ -194,7 +189,6 @@ class DiscountViewSet(
         return {"request": self.request}
 
     def partial_update(self, request, pk):
-        context = dict()
         discount = get_object_or_404(
             publisher=request.user.publisher.id, pk=pk)
         del request.data['publisher']
@@ -249,7 +243,7 @@ class DiscountViewSet(
         for i in range(len(context['results'])):
             context['results'][i]['images'] = context['results'][i]['images'][0] if context['results'][i]['images'] else []
         return Response(context)
-    
+
     @action(detail=False, methods=['get'])
     def my_discounts(self, request):
         context = dict()
@@ -371,3 +365,80 @@ class FeaturesViewSet(
             return Response(context, 201)
         else:
             return Response(serializer.errors, 400)
+
+
+class LikeViewSet(mixins.CreateModelMixin,
+                  viewsets.GenericViewSet):
+
+    def get_queryset(self):
+        searcher = self.request.user.searcher
+        return Like.objects.filter(searcher=searcher)
+
+    serializer_class = LikeOfferSerializer
+
+    def get_permissions(self):
+        """
+        Set actions permissions.
+        """
+        permission_classes = []
+        if self.action in ['create', 'remove',
+                           ]:
+            permission_classes = [IsSearcher, IsAuthenticatedAndVerified]
+        else:
+            permission_classes = []
+        return [permission() for permission in permission_classes]
+
+    def get_serializer_context(self):
+        return {"request": self.request}
+
+    def create(self, request):
+        ad_type = request.GET.get("ad_type", None)
+        ad_type_list = ['offer', 'discount']
+        request.data['searcher'] = request.user.searcher.id
+        context = dict()
+        if ad_type in ad_type_list:
+            try:
+                Like.objects.get(**request.data)
+                context['detail'] = "You liked this ad before"
+                return Response(context, 400)
+            except Like.DoesNotExist:
+                if ad_type == "offer":
+                    serialser = LikeOfferSerializer(data=request.data)
+                elif ad_type == "discount":
+                    serialser = LikeDiscountSerializer(data=request.data)
+
+                if serialser.is_valid():
+                    serialser.save()
+                    return Response(serialser.data)
+                else:
+                    return Response(serialser.errors, 400)
+
+        else:
+            context['detail'] = "query string must contain 'ad_type' with one of {} values".format(
+                ad_type_list)
+            return Response(context, 400)
+
+    @action(detail=False, methods=['post'])
+    def unlike(self, request):
+        ad_type = request.GET.get("ad_type", None)
+        ad_type_list = ['offer', 'discount']
+        context = dict()
+        if ad_type in ad_type_list:
+            if ad_type == "offer":
+                offer = request.data.get("offer", None)
+                like = self.get_queryset().filter(offer=offer)
+            elif ad_type == "discount":
+                discount = request.data.get("discount", None)
+                like = self.get_queryset().filter(discount=discount)
+            if like.exists():
+                like.delete()
+                context['detail'] = "Like removed successfully."
+                return Response(context, 205)
+            else:
+                context['detail']= "You don't like this ad"
+                return Response(context, 400)
+
+        else:
+            context['detail'] = "query string mush contain 'ad_type' with one of {} values".format(
+                ad_type_list)
+            return Response(context, 400)

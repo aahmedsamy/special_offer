@@ -14,7 +14,7 @@ class Category(models.Model):
     name = models.CharField(_("Name"), max_length=256, unique=True)
     image = models.ImageField(_("Image"), upload_to="categories/images/",)
     small_image_path = models.TextField()
-    
+
     def clean(self, *args, **kwargs):
         super().save(*args, **kwargs)
         img = Image()
@@ -121,17 +121,17 @@ class BendingDiscount(Discount):
 
 
 class Like(models.Model):
-    user = models.ForeignKey("users.Searcher", verbose_name=_(
+    searcher = models.ForeignKey("users.Searcher", verbose_name=_(
         "User"), on_delete=models.CASCADE, related_name='like_user')
     offer = models.ForeignKey("offers.Offer", verbose_name=_(
-        "Offer"), on_delete=models.CASCADE, related_name='like_offer')
+        "Offer"), on_delete=models.CASCADE, related_name='like_offer', null=True)
     discount = models.ForeignKey("offers.Discount", verbose_name=_(
-        "Discount"), on_delete=models.CASCADE, related_name='like_discount')
+        "Discount"), on_delete=models.CASCADE, related_name='like_discount', null=True)
 
     class Meta:
         verbose_name = _("Like")
         verbose_name = _("Likes")
-        unique_together = ('user', 'offer', 'discount')
+        unique_together = ('searcher', 'offer', 'discount')
 
 
 class FollowedCategory(models.Model):

@@ -11,7 +11,7 @@ from galleries.serializers import OfferImageSerializer, DiscountImageSerializer
 from galleries.models import OfferImage, DiscountImage
 
 from .models import (Offer, Discount, Category,
-                     OfferAndDiscountFeature, PlusItem, OfferAndDiscountFeature)
+                     OfferAndDiscountFeature, PlusItem, OfferAndDiscountFeature, Like)
 
 
 class PlusItemSerializer(serializers.ModelSerializer):
@@ -161,3 +161,14 @@ class CategorySerializer(serializers.ModelSerializer):
         request = self.context.get("request", None)
         return request.build_absolute_uri(
             obj.small_image_path) if obj.small_image_path else ''
+
+
+class LikeOfferSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ['offer', 'searcher']
+
+class LikeDiscountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ['discount', 'searcher']

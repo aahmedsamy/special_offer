@@ -23,30 +23,32 @@ from rest_framework_jwt.views import obtain_jwt_token
 from rest_framework.routers import DefaultRouter
 
 from offers.views import (OfferViewSet, DiscountViewSet,
-                          CategoryViewSet, FeaturesViewSet)
+                          CategoryViewSet, FeaturesViewSet, LikeViewSet)
 from ads.views import AdViewSet
 from galleries.views import (
     OfferImageViewSet, DiscountImageViewSet)
+from users.views import UserViewSet
 
 router = DefaultRouter()
-router.register('api/offers', OfferViewSet, basename='offers')
-router.register('api/images-offers', OfferImageViewSet,
+router.register('users', UserViewSet, basename="users")
+router.register('offers', OfferViewSet, basename='offers')
+router.register('images-offers', OfferImageViewSet,
                 base_name="offers_images")
-router.register('api/images-discounts', DiscountImageViewSet,
+router.register('images-discounts', DiscountImageViewSet,
                 base_name="discounts-images")
-router.register('api/features', FeaturesViewSet, base_name='ad_features')
-router.register('api/discounts', DiscountViewSet, base_name='discounts')
-router.register('api/ads', AdViewSet, base_name='ads')
-router.register('api/categories', CategoryViewSet, base_name="categories")
+router.register('features', FeaturesViewSet, base_name='ad_features')
+router.register('discounts', DiscountViewSet, base_name='discounts')
+router.register('ads', AdViewSet, base_name='ads')
+router.register('categories', CategoryViewSet, base_name="categories")
+router.register('likes', LikeViewSet, base_name="likes")
 
 urlpatterns = router.urls
 
-urlpatterns += (
+urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-token-auth/', obtain_jwt_token),
-    path('api/', include([
-        path('users/', include('users.urls')),
-    ])),
-)
+    path('api/', include(router.urls)),
+    
+]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
