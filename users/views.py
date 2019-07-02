@@ -62,7 +62,7 @@ class UserViewSet(
             permission_classes = [AllowAny]
         elif self.action in ['advertiser_insights']:
             permission_classes = [IsPublisher]
-        elif self.action in ['followed_categories']:
+        elif self.action in ['followed_categories', 'follow_category']:
             permission_classes = [IsSearcher]
         elif self.action in ['change_password', 'edit']:
             permission_classes = [IsAuthenticated]
@@ -330,38 +330,41 @@ class UserViewSet(
     @action(detail=False, methods=['post'])
     def edit(self, request, pk=None):
         api_code = self.__class__.__name__, "edit"
+        required_keys = ['basic', 'more']
         context = dict()
-        user_type = ""
-        try:
-            user = Searcher.objects.get(searcher=request.user)
-            user_type = "searcher"
-        except Searcher.DoesNotExist:
-            try:
-                user = Publisher.objects.get(publisher=request.user)
-                user_type = "publisher"
-            except Publisher.DoesNotExist:
-                return Response("Unhandled exception, please contact adminstrator", 400)
+        for key in required_keys:
+            if key not in request.data.keys():
+                context['detail'] = "{} are required keys.".format(
+                    required_keys)
+                return Response(context, 400)
 
-        if user_type == "searcher":
-            serializer = SearcherSerializer(
-                user, data=request.data, partial=True)
-        elif user_type == "publisher":
-            serializer = PublisherSerializer(
-                user, data=request.data, partial=True)
+        basic = request.data['basic']
+        more = request.data['more']
+        user = request.user
+        if request.user.is_publisher():
+            b_serializer = UserSerializer(user, data=basic, partial=True)
+            publisher = Publisher.objects.get(publisher__id=user.id)
+            m_serialser = PublisherSerializer(
+                publisher, data=more, partial=True)
+        elif request.user.is_searcher():
+            b_serializer = UserSerializer(user, data=basic, partial=True)
+            searcher = Searcher.objects.get(searcher__id=user.id)
+            m_serialser = SearcherSerializer(
+                searcher, data=more, partial=True)
 
-        if serializer.is_valid():
-            serializer.save()
-            logging.info('{} - {} data updated successfully'.format(
-                api_code, request.user.email
-            ))
-            context['detail'] = "User Data updated successfully"
-            return Response(context, status=status.HTTP_200_OK)
+        if b_serializer.is_valid():
+            if m_serialser.is_valid():
+                m_serialser.save()
+                b_serializer.save()
+                user = User.objects.get(id=user.id)
+                context['detail'] = UserSerializer(user).data
+                return Response(context, 205)
+            else:
+                context['more'] = m_serialser.errors
+                return Response(context, 400)
         else:
-            logging.warning('{} - {} updating data user: {}, error{}'.format(
-                api_code, request.user.email, serializer.errors
-            ))
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            context['basic'] = b_serializer.errors
+            return Response(context, 400)
 
     @action(detail=False, methods=['get'])
     def advertiser_insights(self, request):
@@ -379,3 +382,36 @@ class UserViewSet(
             followed_category_category__user=searcher)
         serializer = CategorySerializer(queryset, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['post'])
+    def follow_category(self, request):
+        cat_id = request.data.get('cat_id', None)
+        searcher = request.user.searcher
+        context = dict()
+        if cat_id:
+            cat = get_object_or_404(Category.objects.all(), id=cat_id)
+            FollowedCategory.objects.get_or_create(
+                user=searcher,
+                category=cat
+            )
+            context['detail'] = "the requested category added to your followed categories."
+            return Response(context, 201)
+        else:
+            context['detail'] = "'cat_id' key is required"
+            return Response(context, 400)
+
+    @action(detail=False, methods=['post'])
+    def unfollow_category(self, request):
+        cat_id = request.data.get('cat_id', None)
+        searcher = request.user.searcher
+        context = dict()
+        if cat_id:
+            cat = get_object_or_404(Category.objects.all(), id=cat_id)
+            follow = get_object_or_404(
+                FollowedCategory.objects.all(), category=cat, user=searcher)
+            follow.delete()
+            context['detail'] = "the requested category removed from your followed categories."
+            return Response(context, 200)
+        else:
+            context['detail'] = "'cat_id' key is required"
+            return Response(context, 400)

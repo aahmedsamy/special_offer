@@ -39,7 +39,10 @@ class User(AbstractUser):
         return True if self.publisher else False
 
     def is_searcher(self):
-        return True if self.is_searcher else False
+        return True if self.searcher else False
+    
+    def has_trading_doc(self):
+        return True if self.trading_doc else False
 
     def __str__(self):
         return self.email
@@ -154,5 +157,8 @@ class Publisher(models.Model):
         verbose_name_plural = _("Publishers")
 
 
-class Subscriptions(models.Model):
-        pass
+# class Subscription(models.Model):
+#     searcher = models.ForeignKey("users.Searcher", verbose_name=_("Searcher"), on_delete=models.CASCADE, related_name="searcher_subscription")
+#     offer = models.ForeignKey("offers.Offer", verbose_name=_("Offer"), on_delete=models.CASCADE, related_name="offer_subscription")
+#     discount = models.ForeignKey("offers.Discount", verbose_name=_("Discount"), on_delete=models.CASCADE, related_name="discount_subscription")
+#     category = models.ForeignKey("offers.Category", verbose_name=_("Category"), on_delete=models.CASCADE, related_name="category_subscription")

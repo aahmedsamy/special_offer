@@ -42,6 +42,20 @@ class Offer(models.Model):
     visited = models.PositiveIntegerField(_("Visited"), default=0)
     bending = models.BooleanField(_("Bending"), default=True)
 
+    __original_bending = False
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_bending = self.bending
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        if self.bending != self.__original_bending and not self.bending:
+            Subscription.objects.get_or_create(offer_id=self.id, category=self.category)
+      # name changed - do something here
+
+    super(Person, self).save(force_insert, force_update, *args, **kwargs)
+    self.__original_name = self.name
+
     def __str__(self):
         return self.name
 

@@ -6,7 +6,6 @@ from .models import User, Searcher, Publisher
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = ('id', 'first_name', 'last_name', 'email',
@@ -23,7 +22,6 @@ class SearcherSerializer(serializers.ModelSerializer):
 class PublisherSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
     trading_doc = Base64ImageField()
-
     class Meta:
         model = Publisher
         fields = "__all__"
