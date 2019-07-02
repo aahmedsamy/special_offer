@@ -6,6 +6,8 @@ from django.db.models import Count
 from helpers.validators import HasSvgExtention
 from helpers.images import Image
 
+from users.models import SearcherNotification
+
 from .managers import (BendingManager, NotBendingManager)
 # Create your models here.
 
@@ -28,6 +30,22 @@ class Category(models.Model):
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
 
+class FollowedCategory(models.Model):
+    searcher = models.ForeignKey("users.Searcher", verbose_name=_(
+        "User"), on_delete=models.CASCADE,
+        related_name='followed_category_user')
+    category = models.ForeignKey("offers.Category", verbose_name=_(
+        "Category"), on_delete=models.CASCADE,
+        related_name='followed_category_category')
+
+    def __str__(self):
+        return ""
+        # return "{} --> {}".format(self.user.name, self.category.name)
+
+    class Meta:
+        verbose_name = _("Followed category")
+        verbose_name_plural = _("Followed categories")
+        unique_together = ('searcher', 'category')
 
 class Offer(models.Model):
     publisher = models.ForeignKey("users.Publisher", verbose_name=_(
@@ -42,19 +60,20 @@ class Offer(models.Model):
     visited = models.PositiveIntegerField(_("Visited"), default=0)
     bending = models.BooleanField(_("Bending"), default=True)
 
-    # __original_bending = False
+    __original_bending = False
 
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.__original_bending = self.bending
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_bending = self.bending
 
-    # def save(self, force_insert=False, force_update=False, *args, **kwargs):
-    #     if self.bending != self.__original_bending and not self.bending:
-    #         Subscription.objects.get_or_create(offer_id=self.id, category=self.category)
-    #   # name changed - do something here
-
-    # super(Person, self).save(force_insert, force_update, *args, **kwargs)
-    # self.__original_name = self.name
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        if self.bending != self.__original_bending and not self.bending:
+            fcs = FollowedCategory.objects.filter(category=self.category)
+            for fc in fcs:
+                SearcherNotification.objects.create(offer=self, searcher=fc.searcher)
+        self.__original_bending = self.bending
+        super().save(force_insert, force_update, *args, **kwargs)
+        
 
     def __str__(self):
         return self.name
@@ -109,6 +128,21 @@ class Discount(models.Model):
     visited = models.PositiveIntegerField(_("Visited"), default=0)
     bending = models.BooleanField(_("Bending"), default=True)
 
+    __original_bending = False
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_bending = self.bending
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        if self.bending != self.__original_bending and not self.bending:
+            fcs = FollowedCategory.objects.filter(category=self.category)
+            for fc in fcs:
+                SearcherNotification.objects.create(discount=self, searcher=fc.searcher)
+        self.__original_bending = self.bending
+        super().save(force_insert, force_update, *args, **kwargs)
+
+
     def __str__(self):
         return self.name
 
@@ -145,24 +179,6 @@ class Like(models.Model):
         verbose_name = _("Like")
         verbose_name = _("Likes")
         unique_together = ('searcher', 'offer', 'discount')
-
-
-class FollowedCategory(models.Model):
-    user = models.ForeignKey("users.Searcher", verbose_name=_(
-        "User"), on_delete=models.CASCADE,
-        related_name='followed_category_user')
-    category = models.ForeignKey("offers.Category", verbose_name=_(
-        "Category"), on_delete=models.CASCADE,
-        related_name='followed_category_category')
-
-    def __str__(self):
-        return ""
-        # return "{} --> {}".format(self.user.name, self.category.name)
-
-    class Meta:
-        verbose_name = _("Followed category")
-        verbose_name_plural = _("Followed categories")
-        unique_together = ('user', 'category')
 
 
 class OfferAndDiscountFeature(models.Model):

@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from drf_extra_fields.fields import Base64ImageField
 
-from .models import User, Searcher, Publisher
+from .models import User, Searcher, Publisher, SearcherNotification
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -22,6 +22,7 @@ class SearcherSerializer(serializers.ModelSerializer):
 class PublisherSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
     trading_doc = Base64ImageField()
+
     class Meta:
         model = Publisher
         fields = "__all__"
@@ -84,3 +85,26 @@ class LoginSerializer(serializers.Serializer):
 
 class VerficationSerializer(serializers.Serializer):
     code = serializers.CharField(max_length=6)
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    offer = serializers.SerializerMethodField()
+    discount = serializers.SerializerMethodField()
+
+    class Meta:
+        model = SearcherNotification
+        exclude = ['searcher']
+    
+    def get_offer(self, obj):
+        ret = dict()
+        if obj.offer:
+            ret['offer'] = obj.offer.name
+            ret['category'] = obj.offer.category.name
+            return ret
+    
+    def get_discount(self, obj):
+        ret = dict()
+        if obj.discount:
+            ret['discount'] = obj.discount.name
+            ret['category'] = obj.discount.category.name
+            return ret

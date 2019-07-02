@@ -18,7 +18,7 @@ from datetime import datetime
 from offers.models import Category, Offer, FollowedCategory
 from offers.serializers import CategorySerializer
 
-from .models import User, Searcher, Publisher
+from .models import User, Searcher, Publisher, SearcherNotification
 from .serializers import (UserSerializer,
                           SearcherSerializer,
                           PublisherSerializer,
@@ -26,7 +26,8 @@ from .serializers import (UserSerializer,
                           PasswordChangeSerializer,
                           SignupSerializer,
                           LoginSerializer,
-                          VerficationSerializer)
+                          VerficationSerializer,
+                          NotificationSerializer)
 from helpers.numbers import gen_rand_number
 from helpers.permissions import (
     IsAuthenticatedAndVerified, IsPublisher, IsSearcher)
@@ -415,3 +416,24 @@ class UserViewSet(
         else:
             context['detail'] = "'cat_id' key is required"
             return Response(context, 400)
+
+
+class NotificationViewSet(
+    mixins.ListModelMixin,
+        viewsets.GenericViewSet):
+
+    def get_queryset(self):
+        searcher = self.request.user.searcher
+        return SearcherNotification.objects.filter(searcher=searcher)
+
+    serializer_class = NotificationSerializer
+
+    def get_permissions(self):
+        """
+        Set actions permissions.
+        """
+        permission_classes = []
+        if self.action in ['list',
+                           ]:
+            permission_classes = [IsSearcher]
+        return [permission() for permission in permission_classes]

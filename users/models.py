@@ -31,7 +31,7 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
     objects = UserManager()
-    
+
     def is_verified(self):
         return True if self.verified else False
 
@@ -40,7 +40,7 @@ class User(AbstractUser):
 
     def is_searcher(self):
         return True if self.searcher else False
-    
+
     def has_trading_doc(self):
         return True if self.trading_doc else False
 
@@ -120,7 +120,7 @@ class Publisher(models.Model):
         for discount in discounts:
             cnt += discount.likes_count()
         return cnt
-    
+
     def active_posts_cnt(self):
         offers = self.publisher_offer.filter(start_date__lte=timezone.now(
         ), end_date__gte=timezone.now()).count()
@@ -157,8 +157,13 @@ class Publisher(models.Model):
         verbose_name_plural = _("Publishers")
 
 
-# class Subscription(models.Model):
-#     searcher = models.ForeignKey("users.Searcher", verbose_name=_("Searcher"), on_delete=models.CASCADE, related_name="searcher_subscription")
-#     offer = models.ForeignKey("offers.Offer", verbose_name=_("Offer"), on_delete=models.CASCADE, related_name="offer_subscription")
-#     discount = models.ForeignKey("offers.Discount", verbose_name=_("Discount"), on_delete=models.CASCADE, related_name="discount_subscription")
-#     category = models.ForeignKey("offers.Category", verbose_name=_("Category"), on_delete=models.CASCADE, related_name="category_subscription")
+class SearcherNotification(models.Model):
+    searcher = models.ForeignKey("users.Searcher", verbose_name=_(
+        "Searcher"), on_delete=models.CASCADE, related_name="searcher_subscription")
+    offer = models.ForeignKey("offers.Offer", verbose_name=_(
+        "Offer"), on_delete=models.CASCADE, related_name="offer_subscription", null=True)
+    discount = models.ForeignKey("offers.Discount", verbose_name=_(
+        "Discount"), on_delete=models.CASCADE, related_name="discount_subscription", null=True)
+
+    class Meta:
+        ordering = ['-id']

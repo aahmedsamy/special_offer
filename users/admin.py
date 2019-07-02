@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group
 from django.utils.translation import ugettext_lazy as _
 
 from offers.models import (FollowedCategory)
-from .models import (User, Searcher, Publisher)
+from .models import (User, Searcher, Publisher,)
 # Register your models here.
 
 
