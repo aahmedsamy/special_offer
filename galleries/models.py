@@ -62,8 +62,7 @@ class DiscountImage(models.Model):
 
 def compress_plus_item_image(sender, instance, **kwargs):
     img = Image()
-    instance.small_image_path = img.compress_image_tinify(instance=instance.image)
-    print(instance.small_image_path)
+    instance.small_image_path = img.compress_image_tinify(image=instance.image)
     instance.save()
 
 post_save.connect(compress_plus_item_image, sender=PlusItemImage)

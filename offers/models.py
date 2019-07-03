@@ -199,19 +199,15 @@ class OfferAndDiscountFeature(models.Model):
 
 
 def compress_offer_image(sender, instance, **kwargs):
-    print("Signal")
     img = Image()
     for image in instance.offer_images.all():
         image.small_image_path = img.compress_image_tinify(image=image.image)
-        print(image.small_image_path)
         image.save()
 
 def compress_discount_image(sender, instance, **kwargs):
-    print("Signal")
     img = Image()
     for image in instance.discount_images.all():
         image.small_image_path = img.compress_image_tinify(image=image.image)
-        print(image.small_image_path)
         image.save()
 
 post_save.connect(compress_offer_image, sender=Offer)
