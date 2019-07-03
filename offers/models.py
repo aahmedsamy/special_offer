@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import (MinValueValidator, MaxValueValidator)
 from django.db.models import Count
@@ -195,3 +196,23 @@ class OfferAndDiscountFeature(models.Model):
     class Meta:
         verbose_name = _("Offer and discount feature")
         verbose_name_plural = _("Offer and discount features")
+
+
+def compress_offer_image(sender, instance, **kwargs):
+    print("Signal")
+    img = Image()
+    for image in instance.offer_images.all():
+        image.small_image_path = img.compress_image_tinify(image=image.image)
+        print(image.small_image_path)
+        image.save()
+
+def compress_discount_image(sender, instance, **kwargs):
+    print("Signal")
+    img = Image()
+    for image in instance.discount_images.all():
+        image.small_image_path = img.compress_image_tinify(image=image.image)
+        print(image.small_image_path)
+        image.save()
+
+post_save.connect(compress_offer_image, sender=Offer)
+post_save.connect(compress_discount_image, sender=Discount)

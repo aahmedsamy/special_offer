@@ -1,4 +1,6 @@
 from django.db import models
+# from django.db.models.singal import post_save
+from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 from helpers.images import Image
 
@@ -11,11 +13,11 @@ class OfferImage(models.Model):
     image = models.ImageField(_("Image"), upload_to="items/imags/")
     small_image_path = models.TextField()
 
-    def clean(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        img = Image()
-        self.small_image_path = img.compress_image_tinify(image=self.image)
-        super().save(*args, **kwargs)
+    # def clean(self, *args, **kwargs):
+    #     super().save(*args, **kwargs)
+    #     img = Image()
+    #     self.small_image_path = img.compress_image_tinify(image=self.image)
+    #     super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("Offer image")
@@ -29,11 +31,11 @@ class PlusItemImage(models.Model):
     image = models.ImageField(_("Image"), upload_to="items/imags/")
     small_image_path = models.TextField()
 
-    def clean(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        img = Image()
-        self.small_image_path = img.compress_image_tinify(image=self.image)
-        super().save(*args, **kwargs)
+    # def clean(self, *args, **kwargs):
+    #     super().save(*args, **kwargs)
+    #     img = Image()
+    #     self.small_image_path = img.compress_image_tinify(image=self.image)
+    #     super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("Offer image")
@@ -47,12 +49,21 @@ class DiscountImage(models.Model):
     image = models.ImageField(_("Image"), upload_to="items/imags/")
     small_image_path = models.TextField()
 
-    def clean(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        img = Image()
-        self.small_image_path = img.compress_image_tinify(image=self.image)
-        super().save(*args, **kwargs)
+    # def clean(self, *args, **kwargs):
+    #     super().save(*args, **kwargs)
+    #     img = Image()
+    #     self.small_image_path = img.compress_image_tinify(image=self.image)
+    #     super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("Offer image")
         verbose_name_plural = _("Offer images")
+
+
+def compress_plus_item_image(sender, instance, **kwargs):
+    img = Image()
+    instance.small_image_path = img.compress_image_tinify(instance=instance.image)
+    print(instance.small_image_path)
+    instance.save()
+
+post_save.connect(compress_plus_item_image, sender=PlusItemImage)
