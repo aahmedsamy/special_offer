@@ -127,7 +127,11 @@ class UserViewSet(
                         logging.info("{} - New user {}".format(
                             api_code, basic.email,
                         ))
-                        context['detail'] = "User created successfully."
+                        context['message'] = "User created successfully."
+                        token = generate_token(basic)
+                        context['Token'] = token
+                        context['user_id'] = basic.id
+                        context['user_type'] = "advertiser" if basic.is_publisher() else "searcher"
                         return Response(context, 201)
                     else:
                         return Response(more_serializer.errors, 400)
@@ -192,6 +196,7 @@ class UserViewSet(
             context['Token'] = token
             context['verified'] = user.is_verified()
             context['user_id'] = user.id
+            context['user_type'] = "advertiser" if user.is_publisher() else "searcher"
             return Response(context, status=status.HTTP_200_OK)
         else:
             logging.warning('{} - faild login {}'.format(

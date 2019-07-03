@@ -7,6 +7,7 @@ from rest_framework import (viewsets, mixins, status)
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import (AllowAny, IsAuthenticated)
+from rest_framework.views import APIView
 from datetime import timedelta
 
 from helpers.permissions import IsPublisher, IsAuthenticatedAndVerified, IsSearcher
@@ -32,6 +33,7 @@ class OfferViewSet(
         order_by = self.request.GET.get('order_by', None)
         cat_id = self.request.GET.get('cat_id', None)
         end_soon = self.request.GET.get('end_soon', None)
+        q = self.request.GET.get('q', None)
         queryset = Offer.objects.filter(bending=False, start_date__lte=timezone.now(
         ), end_date__gte=timezone.now(),).order_by('-id')
         if end_soon:
@@ -41,6 +43,8 @@ class OfferViewSet(
             queryset = queryset.filter(category_id=cat_id)
         if order_by == 'most_visited':
             queryset = queryset.order_by('-visited')
+        if q:
+            queryset = queryset.filter(name__contains=q)
         return queryset
 
     serializer_class = OfferSerializer
@@ -141,8 +145,10 @@ class OfferViewSet(
         # for i in range(len(context['results'])):
         #     context['results'][i]['images'] = context['results'][i]['images'][0] if context['results'][i]['images'] else []
         return Response(context)
-
-
+    @action(detail=False, methods=['get'])
+    def search(self, request):
+        q = request.GET.get("q", None)
+        query
 class DiscountViewSet(
         mixins.CreateModelMixin,
         mixins.RetrieveModelMixin,
@@ -156,6 +162,7 @@ class DiscountViewSet(
         order_by = self.request.GET.get('order_by', None)
         cat_id = self.request.GET.get('cat_id', None)
         end_soon = self.request.GET.get('end_soon', None)
+        q = self.request.GET.get("q", None)
         queryset = Discount.objects.filter(bending=False, start_date__lte=timezone.now(
         ), end_date__gte=timezone.now(),).order_by('-id')
         if end_soon:
@@ -165,6 +172,8 @@ class DiscountViewSet(
             queryset = queryset.filter(category_id=cat_id)
         if order_by == 'most_visited':
             queryset = queryset.order_by('-visited')
+        if q:
+            queryset = queryset.filter(name__contains=q)
         return queryset
 
     serializer_class = DiscountSerializer
