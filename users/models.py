@@ -67,6 +67,18 @@ class Searcher(models.Model):
     def last_login(self):
         ret = self.searcher.last_login.strftime('(%d/%m/%Y) - (%H:%M:%S)')
         return ret if ret else '-'
+    
+    def get_liked_ads(self):
+        ret = dict()
+        ret['offers'] = []
+        ret['discounts'] = []
+        likes = self.like_user.all().values('offer_id', 'discount_id')
+        for like in likes:
+            if like['offer_id']:
+                ret['offers'].append(like["offer_id"])
+            if like['discount_id']:
+                ret['discounts'].append(like["discount_id"])
+        return ret
 
     following_count.short_description = (_("Following count"))
     email.short_description = (_("Email"))

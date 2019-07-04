@@ -71,6 +71,9 @@ class UserViewSet(
             permission_classes = []
         return [permission() for permission in permission_classes]
 
+    def get_serializer_context(self):
+        return {'request': self.request}
+    
     @action(detail=False, methods=['post'])
     def sign_up(self, request,):
         api_code = self.__class__.__name__, "sign_up"
@@ -132,6 +135,8 @@ class UserViewSet(
                         context['Token'] = token
                         context['user_id'] = basic.id
                         context['user_type'] = "advertiser" if basic.is_publisher() else "searcher"
+                        if context['user_type'] == "searcher":
+                            context['liked_ads'] = basic.searcher.get_liked_ads()
                         return Response(context, 201)
                     else:
                         return Response(more_serializer.errors, 400)
@@ -197,6 +202,8 @@ class UserViewSet(
             context['verified'] = user.is_verified()
             context['user_id'] = user.id
             context['user_type'] = "advertiser" if user.is_publisher() else "searcher"
+            if context['user_type'] == "searcher":
+                context['liked_ads'] = user.searcher.get_liked_ads()
             return Response(context, status=status.HTTP_200_OK)
         else:
             logging.warning('{} - faild login {}'.format(
@@ -385,8 +392,8 @@ class UserViewSet(
     def followed_categories(self, request):
         searcher = request.user.searcher
         queryset = Category.objects.filter(
-            followed_category_category__user=searcher)
-        serializer = CategorySerializer(queryset, many=True)
+            followed_category_category__searcher=searcher)
+        serializer = CategorySerializer(queryset, many=True, context=self.get_serializer_context())
         return Response(serializer.data)
 
     @action(detail=False, methods=['post'])

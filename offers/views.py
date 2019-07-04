@@ -405,6 +405,9 @@ class LikeViewSet(mixins.CreateModelMixin,
         request.data['searcher'] = request.user.searcher.id
         context = dict()
         if ad_type in ad_type_list:
+            if not request.data.get(ad_type, None):
+                context['detail']= "'{}' key is required".format(ad_type)
+                return Response(context, 400)
             try:
                 Like.objects.get(**request.data)
                 context['detail'] = "You liked this ad before"
@@ -432,6 +435,9 @@ class LikeViewSet(mixins.CreateModelMixin,
         ad_type_list = ['offer', 'discount']
         context = dict()
         if ad_type in ad_type_list:
+            if not request.data.get(ad_type, None):
+                context['detail']= "'{}' key is required".format(ad_type)
+                return Response(context, 400)
             if ad_type == "offer":
                 offer = request.data.get("offer", None)
                 like = self.get_queryset().filter(offer=offer)

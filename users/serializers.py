@@ -6,11 +6,17 @@ from .models import User, Searcher, Publisher, SearcherNotification
 
 
 class UserSerializer(serializers.ModelSerializer):
+    likes = serializers.SerializerMethodField()
+    
     class Meta:
         model = User
         fields = ('id', 'first_name', 'last_name', 'email',
-                  'searcher', 'publisher')
+                  'searcher', 'publisher', 'likes')
         depth = 1
+    
+    def get_likes(self, obj):
+        if obj and obj.is_searcher():
+            return obj.searcher.get_liked_ads()
 
 
 class SearcherSerializer(serializers.ModelSerializer):
