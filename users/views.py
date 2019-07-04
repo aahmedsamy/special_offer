@@ -404,7 +404,7 @@ class UserViewSet(
         if cat_id:
             cat = get_object_or_404(Category.objects.all(), id=cat_id)
             FollowedCategory.objects.get_or_create(
-                user=searcher,
+                searcher=searcher,
                 category=cat
             )
             context['detail'] = "the requested category added to your followed categories."
