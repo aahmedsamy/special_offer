@@ -421,7 +421,7 @@ class UserViewSet(
         if cat_id:
             cat = get_object_or_404(Category.objects.all(), id=cat_id)
             follow = get_object_or_404(
-                FollowedCategory.objects.all(), category=cat, user=searcher)
+                FollowedCategory.objects.all(), category=cat, searcher=searcher)
             follow.delete()
             context['detail'] = "the requested category removed from your followed categories."
             return Response(context, 200)
