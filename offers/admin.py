@@ -44,12 +44,12 @@ class OfferAdmin(admin.ModelAdmin):
     ]
     # raw_id_fields = ('publisher', 'category')
     list_display = ('publisher', 'category', 'name',
-                    'price', 'bending',)
+                    'price', 'status',)
     # readonly_fields = ('visited',)
     search_fields = ('id', 'publisher',
                      'publisher__phone', 'category__name', )
-    list_filter = ('publisher__name', 'category__name', 'bending',)
-    list_editable = ('bending', )
+    list_filter = ('publisher__name', 'category__name', 'status',)
+    list_editable = ('status', )
     autocomplete_fields = ('publisher',)
     list_per_page = 10
 
@@ -98,12 +98,12 @@ class DiscountAdmin(admin.ModelAdmin):
     ]
     # raw_id_fields = ('publisher', 'category')
     list_display = ('publisher', 'category', 'name',
-                    'precentage', 'bending',)
-    list_editable = ('bending', )
+                    'precentage', 'status',)
+    list_editable = ('status', )
 
     search_fields = ('id', 'publisher',
                      'publisher__user__phone', 'category__name',)
-    list_filter = ('publisher__name', 'category__name', 'bending',)
+    list_filter = ('publisher__name', 'category__name', 'status',)
     autocomplete_fields = ('publisher',)
     list_per_page = 10
 

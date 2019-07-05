@@ -2,7 +2,9 @@ from rest_framework import serializers
 
 from drf_extra_fields.fields import Base64ImageField
 
-from .models import User, Searcher, Publisher, SearcherNotification
+from offers.serializers import OfferSerializer, DiscountSerializer
+
+from .models import User, Searcher, Publisher, SearcherNotification, AdvertiserNotification
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -93,24 +95,32 @@ class VerficationSerializer(serializers.Serializer):
     code = serializers.CharField(max_length=6)
 
 
-class NotificationSerializer(serializers.ModelSerializer):
-    offer = serializers.SerializerMethodField()
-    discount = serializers.SerializerMethodField()
+class SearcherNotificationSerializer(serializers.ModelSerializer):
+    offer = OfferSerializer()
+    discount = DiscountSerializer()
 
     class Meta:
         model = SearcherNotification
         exclude = ['searcher']
+
+class AdvertiserNotificationSerializer(serializers.ModelSerializer):
+    offer = OfferSerializer()
+    discount = DiscountSerializer()
+
+    class Meta:
+        model = AdvertiserNotification
+        exclude = ['advertiser']
     
-    def get_offer(self, obj):
-        ret = dict()
-        if obj.offer:
-            ret['offer'] = obj.offer.name
-            ret['category'] = obj.offer.category.name
-            return ret
+    # def get_offer(self, obj):
+    #     ret = dict()
+    #     if obj.offer:
+    #         ret['offer'] = obj.offer.name
+    #         ret['category'] = obj.offer.category.name
+    #         return ret
     
-    def get_discount(self, obj):
-        ret = dict()
-        if obj.discount:
-            ret['discount'] = obj.discount.name
-            ret['category'] = obj.discount.category.name
-            return ret
+    # def get_discount(self, obj):
+    #     ret = dict()
+    #     if obj.discount:
+    #         ret['discount'] = obj.discount.name
+    #         ret['category'] = obj.discount.category.name
+    #         return ret

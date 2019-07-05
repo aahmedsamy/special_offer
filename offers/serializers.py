@@ -63,7 +63,7 @@ class OfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offer
         # fields = "__all__"
-        exclude = ('bending',)
+        exclude = ('status',)
         read_only_fields = ('visited', 'publisher')
 
     def create(self, validated_data):
@@ -94,7 +94,7 @@ class DiscountPostSerializer(serializers.ModelSerializer):
      class Meta:
         model = Discount
         # fields = "__all__"
-        exclude = ('bending', 'visited')
+        exclude = ('status', 'visited')
 
 
 class DiscountSerializer(serializers.ModelSerializer):
@@ -126,7 +126,7 @@ class DiscountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Discount
         # fields = "__all__"
-        exclude = ('bending',)
+        exclude = ('status',)
         read_only_fields = ('visited', 'publisher')
 
     def create(self, validated_data):

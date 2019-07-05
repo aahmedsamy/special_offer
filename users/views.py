@@ -18,7 +18,7 @@ from datetime import datetime
 from offers.models import Category, Offer, FollowedCategory
 from offers.serializers import CategorySerializer
 
-from .models import User, Searcher, Publisher, SearcherNotification
+from .models import User, Searcher, Publisher, SearcherNotification, AdvertiserNotification
 from .serializers import (UserSerializer,
                           SearcherSerializer,
                           PublisherSerializer,
@@ -27,7 +27,8 @@ from .serializers import (UserSerializer,
                           SignupSerializer,
                           LoginSerializer,
                           VerficationSerializer,
-                          NotificationSerializer)
+                          SearcherNotificationSerializer,
+                          AdvertiserNotificationSerializer)
 from helpers.numbers import gen_rand_number
 from helpers.permissions import (
     IsAuthenticatedAndVerified, IsPublisher, IsSearcher)
@@ -171,7 +172,7 @@ class UserViewSet(
                     [user.email]
                 )
                 context['detail'] = _("Password changed successfully.")
-                return Response(context, status=status.HTTP_205_RESET_CONTENT)
+                return Response(context, status=200)
             else:
                 logging.warning("{} - old password is wrong, user {}.".format(
                     api_code, user.email,
@@ -285,7 +286,7 @@ class UserViewSet(
                     api_code, user.email
                 ))
                 context['detail'] = _("Password Resetted successfully")
-                return Response(context, status=status.HTTP_205_RESET_CONTENT)
+                return Response(context, status=200)
             except User.DoesNotExist:
                 logging.warning('{} - Invalid code with email {}'.format(
                     api_code, serializer.data['email']
@@ -329,7 +330,7 @@ class UserViewSet(
                     api_code, user.email
                 ))
                 context['detail'] = _("Your account verified successfuly")
-                return Response(context, status=status.HTTP_205_RESET_CONTENT)
+                return Response(context, status=200)
             else:
                 logging.warning('{} - wrong verification code for {}'.format(
                     api_code, user.email
@@ -371,7 +372,7 @@ class UserViewSet(
                 b_serializer.save()
                 user = User.objects.get(id=user.id)
                 context['detail'] = UserSerializer(user).data
-                return Response(context, 205)
+                return Response(context, 200)
             else:
                 context['more'] = m_serialser.errors
                 return Response(context, 400)
@@ -430,7 +431,7 @@ class UserViewSet(
             return Response(context, 400)
 
 
-class NotificationViewSet(
+class SearcherNotificationViewSet(
     mixins.ListModelMixin,
         viewsets.GenericViewSet):
 
@@ -438,7 +439,7 @@ class NotificationViewSet(
         searcher = self.request.user.searcher
         return SearcherNotification.objects.filter(searcher=searcher)
 
-    serializer_class = NotificationSerializer
+    serializer_class = SearcherNotificationSerializer
 
     def get_permissions(self):
         """
@@ -448,4 +449,24 @@ class NotificationViewSet(
         if self.action in ['list',
                            ]:
             permission_classes = [IsSearcher]
+        return [permission() for permission in permission_classes]
+
+class AdvertiserNotificationViewSet(
+    mixins.ListModelMixin,
+        viewsets.GenericViewSet):
+
+    def get_queryset(self):
+        advertiser = self.request.user.publisher
+        return AdvertiserNotification.objects.filter(advertiser=advertiser)
+
+    serializer_class = AdvertiserNotificationSerializer
+
+    def get_permissions(self):
+        """
+        Set actions permissions.
+        """
+        permission_classes = []
+        if self.action in ['list',
+                           ]:
+            permission_classes = [IsPublisher]
         return [permission() for permission in permission_classes]

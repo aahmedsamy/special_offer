@@ -27,7 +27,7 @@ from offers.views import (OfferViewSet, DiscountViewSet,
 from ads.views import AdViewSet
 from galleries.views import (
     OfferImageViewSet, DiscountImageViewSet)
-from users.views import UserViewSet, NotificationViewSet
+from users.views import UserViewSet, AdvertiserNotificationViewSet, SearcherNotificationViewSet
 
 router = DefaultRouter()
 router.register('users', UserViewSet, basename="users")
@@ -41,7 +41,8 @@ router.register('discounts', DiscountViewSet, base_name='discounts')
 router.register('ads', AdViewSet, base_name='ads')
 router.register('categories', CategoryViewSet, base_name="categories")
 router.register('likes', LikeViewSet, base_name="likes")
-router.register('notifications', NotificationViewSet, base_name="notifications")
+router.register('searchernotifications', SearcherNotificationViewSet, base_name="searcher_notifications")
+router.register('advertisernotifications', AdvertiserNotificationViewSet, base_name="advertiser_notifications")
 
 urlpatterns = router.urls
 

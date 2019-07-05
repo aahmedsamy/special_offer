@@ -34,7 +34,7 @@ class OfferViewSet(
         cat_id = self.request.GET.get('cat_id', None)
         end_soon = self.request.GET.get('end_soon', None)
         q = self.request.GET.get('q', None)
-        queryset = Offer.objects.filter(bending=False, start_date__lte=timezone.now(
+        queryset = Offer.objects.filter(status=Offer.PUBLISHED, start_date__lte=timezone.now(
         ), end_date__gte=timezone.now(),).order_by('-id')
         if end_soon:
             end = timezone.now().today() + timedelta(days=3)
@@ -74,7 +74,7 @@ class OfferViewSet(
                                            context=self.get_serializer_context())
         if serializer.is_valid():
             offer = serializer.save()
-            offer.bending = True
+            offer.status = Discount.BENDING
             offer.save()
             return Response(serializer.data)
         else:
@@ -163,7 +163,7 @@ class DiscountViewSet(
         cat_id = self.request.GET.get('cat_id', None)
         end_soon = self.request.GET.get('end_soon', None)
         q = self.request.GET.get("q", None)
-        queryset = Discount.objects.filter(bending=False, start_date__lte=timezone.now(
+        queryset = Discount.objects.filter(status=Discount.PUBLISHED, start_date__lte=timezone.now(
         ), end_date__gte=timezone.now(),).order_by('-id')
         if end_soon:
             end = timezone.now().today() + timedelta(days=3)
@@ -204,7 +204,7 @@ class DiscountViewSet(
                                         context=self.get_serializer_context())
         if serializer.is_valid():
             discount = serializer.save()
-            discount.bending = True
+            discount.status = Discount.BENDING
             discount.save()
             return Response(serializer.data)
         else:
@@ -447,7 +447,7 @@ class LikeViewSet(mixins.CreateModelMixin,
             if like.exists():
                 like.delete()
                 context['detail'] = "Like removed successfully."
-                return Response(context, 205)
+                return Response(context, 200)
             else:
                 context['detail']= "You don't like this ad"
                 return Response(context, 400)

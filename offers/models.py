@@ -7,7 +7,7 @@ from django.db.models import Count
 from helpers.validators import HasSvgExtention
 from helpers.images import Image
 
-from users.models import SearcherNotification
+from users.models import SearcherNotification, AdvertiserNotification
 
 from .managers import (BendingManager, NotBendingManager)
 # Create your models here.
@@ -31,6 +31,7 @@ class Category(models.Model):
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
 
+
 class FollowedCategory(models.Model):
     searcher = models.ForeignKey("users.Searcher", verbose_name=_(
         "User"), on_delete=models.CASCADE,
@@ -48,7 +49,16 @@ class FollowedCategory(models.Model):
         verbose_name_plural = _("Followed categories")
         unique_together = ('searcher', 'category')
 
+
 class Offer(models.Model):
+    BENDING = _("Bending")
+    REFUSED = _("Refused")
+    PUBLISHED = _("Published")
+    STATUS_CHOICES = (
+        (BENDING, _("Bending")),
+        (REFUSED, _("Refused")),
+        (PUBLISHED, _("Published"))
+    )
     publisher = models.ForeignKey("users.Publisher", verbose_name=_(
         "Publisher"), on_delete=models.CASCADE, related_name="publisher_offer")
     category = models.ForeignKey("offers.Category", verbose_name=_(
@@ -59,22 +69,27 @@ class Offer(models.Model):
     start_date = models.DateField(_("Start date"))
     end_date = models.DateField(_("End date"))
     visited = models.PositiveIntegerField(_("Visited"), default=0)
-    bending = models.BooleanField(_("Bending"), default=True)
+    status = models.CharField(
+        _("Status"), max_length=50, choices=STATUS_CHOICES, default=BENDING)
 
-    __original_bending = False
+    __original_status = BENDING
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.__original_bending = self.bending
+        self.__original_status = self.status
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
-        if self.bending != self.__original_bending and not self.bending:
-            fcs = FollowedCategory.objects.filter(category=self.category)
-            for fc in fcs:
-                SearcherNotification.objects.create(offer=self, searcher=fc.searcher)
-        self.__original_bending = self.bending
+        if self.status != self.__original_status:
+            if self.status == self.PUBLISHED:
+                fcs = FollowedCategory.objects.filter(category=self.category)
+                for fc in fcs:
+                    SearcherNotification.objects.create(
+                        offer=self, searcher=fc.searcher, status=self.status)
+            AdvertiserNotification.objects.create(
+                offer=self, advertiser=self.publisher, status=self.status)
+
+        self.__original_status = self.status
         super().save(force_insert, force_update, *args, **kwargs)
-        
 
     def __str__(self):
         return self.name
@@ -114,6 +129,14 @@ class PlusItem(models.Model):
 
 
 class Discount(models.Model):
+    BENDING = _("Bending")
+    REFUSED = _("Refused")
+    PUBLISHED = _("Published")
+    STATUS_CHOICES = (
+        (BENDING, _("Bending")),
+        (REFUSED, _("Refused")),
+        (PUBLISHED, _("Published"))
+    )
     publisher = models.ForeignKey("users.Publisher", verbose_name=_(
         "Publisher"), on_delete=models.CASCADE,
         related_name="publisher_discount")
@@ -127,22 +150,27 @@ class Discount(models.Model):
     start_date = models.DateField(_("Start date"))
     end_date = models.DateField(_("End date"))
     visited = models.PositiveIntegerField(_("Visited"), default=0)
-    bending = models.BooleanField(_("Bending"), default=True)
+    status = models.CharField(
+        _("Status"), max_length=50, choices=STATUS_CHOICES, default=BENDING)
 
-    __original_bending = False
+    __original_status = BENDING
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.__original_bending = self.bending
+        self.__original_status = self.status
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
-        if self.bending != self.__original_bending and not self.bending:
-            fcs = FollowedCategory.objects.filter(category=self.category)
-            for fc in fcs:
-                SearcherNotification.objects.create(discount=self, searcher=fc.searcher)
-        self.__original_bending = self.bending
-        super().save(force_insert, force_update, *args, **kwargs)
+        if self.status != self.__original_status:
+            if self.status == self.PUBLISHED:
+                fcs = FollowedCategory.objects.filter(category=self.category)
+                for fc in fcs:
+                    SearcherNotification.objects.create(
+                        discount=self, searcher=fc.searcher, status=self.status)
+            AdvertiserNotification.objects.create(
+                discount=self, advertiser=self.publisher, status=self.status)
 
+        self.__original_status = self.status
+        super().save(force_insert, force_update, *args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -204,11 +232,13 @@ def compress_offer_image(sender, instance, **kwargs):
         image.small_image_path = img.compress_image_tinify(image=image.image)
         image.save()
 
+
 def compress_discount_image(sender, instance, **kwargs):
     img = Image()
     for image in instance.discount_images.all():
         image.small_image_path = img.compress_image_tinify(image=image.image)
         image.save()
+
 
 post_save.connect(compress_offer_image, sender=Offer)
 post_save.connect(compress_discount_image, sender=Discount)

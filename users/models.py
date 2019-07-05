@@ -67,7 +67,7 @@ class Searcher(models.Model):
     def last_login(self):
         ret = self.searcher.last_login.strftime('(%d/%m/%Y) - (%H:%M:%S)')
         return ret if ret else '-'
-    
+
     def get_liked_ads(self):
         ret = dict()
         ret['offers'] = []
@@ -171,11 +171,30 @@ class Publisher(models.Model):
 
 class SearcherNotification(models.Model):
     searcher = models.ForeignKey("users.Searcher", verbose_name=_(
-        "Searcher"), on_delete=models.CASCADE, related_name="searcher_subscription")
+        "Searcher"), on_delete=models.CASCADE, related_name="searcher_notifications")
     offer = models.ForeignKey("offers.Offer", verbose_name=_(
-        "Offer"), on_delete=models.CASCADE, related_name="offer_subscription", null=True)
+        "Offer"), on_delete=models.CASCADE, related_name="offer_searcher_notifications", null=True)
     discount = models.ForeignKey("offers.Discount", verbose_name=_(
-        "Discount"), on_delete=models.CASCADE, related_name="discount_subscription", null=True)
+        "Discount"), on_delete=models.CASCADE, related_name="discount_searcher_notifications", null=True)
+    
+    status = models.CharField(_("Status"), max_length=50)
 
     class Meta:
         ordering = ['-id']
+
+
+class AdvertiserNotification(models.Model):
+    advertiser = models.ForeignKey("users.Publisher", verbose_name=_(
+        "Advertiser"), on_delete=models.CASCADE, related_name="advertiser_notifications")
+    offer = models.ForeignKey("offers.Offer", verbose_name=_(
+        "Offer"), on_delete=models.CASCADE, related_name="offer_advertiser_notifications", null=True)
+    discount = models.ForeignKey("offers.Discount", verbose_name=_(
+        "Discount"), on_delete=models.CASCADE, related_name="discount_advertiser_notifications", null=True)
+    
+    status = models.CharField(_("Status"), max_length=50)
+        
+
+    class Meta:
+        ordering = ['-id']
+        verbose_name = _("AdvertiserNotification")
+        verbose_name_plural = _("AdvertiserNotifications")

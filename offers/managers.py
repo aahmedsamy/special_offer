@@ -1,5 +1,7 @@
 from django.db import models
+from django.db.models import Q
 
+# from offers.models import Offer
 
 class BendingManager(models.Manager):
 
@@ -7,7 +9,7 @@ class BendingManager(models.Manager):
 
         return super(BendingManager, self).get_queryset().filter(
 
-            bending=True)
+            status="Bending")
 
 
 class NotBendingManager(models.Manager):
@@ -16,4 +18,4 @@ class NotBendingManager(models.Manager):
 
         return super(BendingManager, self).get_queryset().filter(
 
-            bending=False)
+            ~Q(status="Bending"))
