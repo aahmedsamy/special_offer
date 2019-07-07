@@ -1,6 +1,9 @@
+asn1crypto==0.24.0
 braintree==3.54.0
 certifi==2019.3.9
+cffi==1.12.3
 chardet==3.0.4
+cryptography==2.7
 Django==2.2
 django-cors-headers==2.5.2
 django-extensions==2.1.6
@@ -8,8 +11,9 @@ django-extra-fields==1.2.1
 djangorestframework==3.9.2
 djangorestframework-jwt==1.11.0
 idna==2.8
+nexmo==2.4.0
 Pillow==6.0.0
-psycopg2==2.8.1
+pycparser==2.19
 PyJWT==1.7.1
 PySocks==1.7.0
 pytz==2019.1
@@ -17,5 +21,4 @@ requests==2.22.0
 six==1.12.0
 sqlparse==0.3.0
 tinify==1.5.1
-twilio==6.27.1
 urllib3==1.25.3
