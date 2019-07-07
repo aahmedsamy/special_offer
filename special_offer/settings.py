@@ -210,3 +210,9 @@ EMAIL_HOST_PASSWORD = 'adminadminspecialoffer'
 # tinify #######################
 TINIFY_API_KEY = "hgsRJGVhNMlGnYFGZP0WHmp8M21pQxyW"
 ################################
+
+################################
+# Nexmo ########################
+NEXMO_API_KEY = "01f3b2e5"
+NEXMO_API_SECRET = "vOlbTgDAh3oGphER"
+################################

@@ -79,7 +79,10 @@ class Offer(models.Model):
         self.__original_status = self.status
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
-        if self.status != self.__original_status:
+        original_status = self.__original_status
+        self.__original_status = self.status
+        super().save(force_insert, force_update, *args, **kwargs)
+        if self.status != original_status:
             if self.status == self.PUBLISHED:
                 fcs = FollowedCategory.objects.filter(category=self.category)
                 for fc in fcs:
@@ -88,8 +91,7 @@ class Offer(models.Model):
             AdvertiserNotification.objects.create(
                 offer=self, advertiser=self.publisher, status=self.status)
 
-        self.__original_status = self.status
-        super().save(force_insert, force_update, *args, **kwargs)
+        
 
     def __str__(self):
         return self.name
@@ -160,7 +162,10 @@ class Discount(models.Model):
         self.__original_status = self.status
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
-        if self.status != self.__original_status:
+        original_status = self.__original_status
+        self.__original_status = self.status
+        super().save(force_insert, force_update, *args, **kwargs)
+        if self.status != original_status:
             if self.status == self.PUBLISHED:
                 fcs = FollowedCategory.objects.filter(category=self.category)
                 for fc in fcs:
@@ -168,9 +173,6 @@ class Discount(models.Model):
                         discount=self, searcher=fc.searcher, status=self.status)
             AdvertiserNotification.objects.create(
                 discount=self, advertiser=self.publisher, status=self.status)
-
-        self.__original_status = self.status
-        super().save(force_insert, force_update, *args, **kwargs)
 
     def __str__(self):
         return self.name

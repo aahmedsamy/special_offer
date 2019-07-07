@@ -470,3 +470,13 @@ class AdvertiserNotificationViewSet(
                            ]:
             permission_classes = [IsPublisher]
         return [permission() for permission in permission_classes]
+
+
+from rest_framework.views import APIView
+from helpers.sms import Nexmo
+class SendSms(APIView):
+    def get(self, request, *args, **kwargs):
+        body = " -_- شكرا يا شيماء"
+        to = "+201144392922"
+        res = Nexmo.send_message("Special offer test", to, body)
+        return Response(res)
