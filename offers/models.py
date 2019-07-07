@@ -52,11 +52,11 @@ class FollowedCategory(models.Model):
 
 class Offer(models.Model):
     BENDING = _("Bending")
-    REFUSED = _("Refused")
+    DECLINED = _("Declined")
     PUBLISHED = _("Published")
     STATUS_CHOICES = (
         (BENDING, _("Bending")),
-        (REFUSED, _("Refused")),
+        (DECLINED, _("Declined")),
         (PUBLISHED, _("Published"))
     )
     publisher = models.ForeignKey("users.Publisher", verbose_name=_(
@@ -132,11 +132,11 @@ class PlusItem(models.Model):
 
 class Discount(models.Model):
     BENDING = _("Bending")
-    REFUSED = _("Refused")
+    DECLINED = _("Declined")
     PUBLISHED = _("Published")
     STATUS_CHOICES = (
         (BENDING, _("Bending")),
-        (REFUSED, _("Refused")),
+        (DECLINED, _("Declined")),
         (PUBLISHED, _("Published"))
     )
     publisher = models.ForeignKey("users.Publisher", verbose_name=_(
