@@ -11,7 +11,6 @@ django-extra-fields==1.2.1
 djangorestframework==3.9.2
 djangorestframework-jwt==1.11.0
 idna==2.8
-nexmo==2.4.0
 Pillow==6.0.0
 pycparser==2.19
 PyJWT==1.7.1
@@ -21,4 +20,5 @@ requests==2.22.0
 six==1.12.0
 sqlparse==0.3.0
 tinify==1.5.1
+twilio==6.29.0
 urllib3==1.25.3
