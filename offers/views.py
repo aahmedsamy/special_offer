@@ -10,7 +10,7 @@ from rest_framework.permissions import (AllowAny, IsAuthenticated)
 from rest_framework.views import APIView
 from datetime import timedelta
 
-from helpers.permissions import IsPublisher, IsAuthenticatedAndVerified, IsSearcher
+from helpers.permissions import IsPublisher, IsVerified, IsSearcher
 from helpers.views import PaginatorView
 
 from .models import (Offer, Discount, Category, OfferAndDiscountFeature, Like)
@@ -57,7 +57,7 @@ class OfferViewSet(
         if self.action in ['create', 'update', 'destroy',
                            'my', 'my_offers'
                            ]:
-            permission_classes = [IsPublisher, IsAuthenticatedAndVerified]
+            permission_classes = [IsAuthenticated, IsPublisher, IsVerified]
         elif self.action in ['list', 'retrieve']:
             permission_classes = [AllowAny]
         else:
@@ -186,7 +186,7 @@ class DiscountViewSet(
         if self.action in ['create', 'update', 'destroy',
                            'my',
                            ]:
-            permission_classes = [IsPublisher, IsAuthenticatedAndVerified]
+            permission_classes = [IsAuthenticated, IsPublisher, IsVerified]
         elif self.action in ['list', 'retrieve']:
             permission_classes = [AllowAny]
         else:
@@ -323,7 +323,7 @@ class FeaturesViewSet(
         """
         permission_classes = []
         if self.action in ['create', 'destroy', 'update']:
-            permission_classes = [IsPublisher]
+            permission_classes = [IsAuthenticated, IsPublisher, IsVerified]
         return [permission() for permission in permission_classes]
 
     def get_serializer_context(self):

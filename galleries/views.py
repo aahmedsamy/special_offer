@@ -5,7 +5,7 @@ from rest_framework import (viewsets, mixins, status)
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from helpers.permissions import IsPublisher
+from helpers.permissions import (IsPublisher, IsVerified)
 from helpers.images import Image
 
 from offers.models import Offer, Discount
@@ -35,7 +35,7 @@ class OfferImageViewSet(
         """
         permission_classes = []
         if self.action in ['create']:
-            permission_classes = [IsPublisher]
+            permission_classes = [IsPublisher, IsVerified]
         return [permission() for permission in permission_classes]
 
     def get_serializer_context(self):
@@ -81,7 +81,7 @@ class DiscountImageViewSet(
         """
         permission_classes = []
         if self.action in ['create']:
-            permission_classes = [IsPublisher]
+            permission_classes = [IsPublisher, IsVerified]
         return [permission() for permission in permission_classes]
 
     def get_serializer_context(self):

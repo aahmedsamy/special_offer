@@ -18,6 +18,8 @@ from datetime import datetime
 from offers.models import Category, Offer, FollowedCategory
 from offers.serializers import CategorySerializer
 
+from helpers.sms import Twilio
+
 from .models import User, Searcher, Publisher, SearcherNotification, AdvertiserNotification
 from .serializers import (UserSerializer,
                           SearcherSerializer,
@@ -30,8 +32,7 @@ from .serializers import (UserSerializer,
                           SearcherNotificationSerializer,
                           AdvertiserNotificationSerializer)
 from helpers.numbers import gen_rand_number
-from helpers.permissions import (
-    IsAuthenticatedAndVerified, IsPublisher, IsSearcher)
+from helpers.permissions import (IsPublisher, IsVerified, IsSearcher)
 from helpers.views import PaginatorView
 
 
@@ -63,9 +64,11 @@ class UserViewSet(
                            ]:
             permission_classes = [AllowAny]
         elif self.action in ['advertiser_insights']:
-            permission_classes = [IsPublisher]
+            permission_classes = [IsAuthenticated, IsPublisher, IsVerified]
+        elif self.action in ['send_phone_verification_code', 'verify_phone']:
+            permission_classes = [IsAuthenticated, IsPublisher,]
         elif self.action in ['followed_categories', 'follow_category']:
-            permission_classes = [IsSearcher]
+            permission_classes = [IsSearcher, IsVerified]
         elif self.action in ['change_password', 'edit']:
             permission_classes = [IsAuthenticated]
         else:
@@ -261,7 +264,40 @@ class UserViewSet(
         else:
             return Response({"details": "Please provide 'email' query string"},
                             status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
+    
+    @action(detail=False, methods=['get'])
+    def send_phone_verification_code(self, request,):
+        advertiser = request.user.publisher
+        advertiser.phone_verification_code = gen_rand_number(6)
+        advertiser.save()
+        body = 'SPO Phone verification code "{}"'.format(advertiser.phone_verification_code),
+        to = advertiser.phone
+        Twilio.send_message(
+            body = body,
+            to = to
+        )
+        return Response({"detail": "Phone verification code sent to {}".format(
+            advertiser.phone)})
+    
+    @action(detail=False, methods=['post'])
+    def verify_phone(self, request):
+        api_code = self.__class__.__name__, "verify_phone"
+        serializer = VerficationSerializer(data=request.data)
+        context = dict()
+        if serializer.is_valid():
+            advertiser = request.user.publisher
+            if advertiser.phone_verification_code == serializer.data['code']:
+                advertiser.phone_verification_code = None
+                advertiser.phone_verified = True
+                advertiser.save()
+                context['detail'] = _("Your account verified successfuly")
+                return Response(context, status=200)
+            else:
+                context['detail'] = _("Wrong verification code!")
+                return Response(context, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['post'])
     def reset_password(self, request):
@@ -448,7 +484,7 @@ class SearcherNotificationViewSet(
         permission_classes = []
         if self.action in ['list',
                            ]:
-            permission_classes = [IsSearcher]
+            permission_classes = [IsAuthenticated, IsSearcher, IsVerified]
         return [permission() for permission in permission_classes]
 
 class AdvertiserNotificationViewSet(
@@ -468,15 +504,5 @@ class AdvertiserNotificationViewSet(
         permission_classes = []
         if self.action in ['list',
                            ]:
-            permission_classes = [IsPublisher]
+            permission_classes = [IsAuthenticated, IsPublisher, IsVerified]
         return [permission() for permission in permission_classes]
-
-
-from rest_framework.views import APIView
-from helpers.sms import Nexmo
-class SendSms(APIView):
-    def get(self, request, *args, **kwargs):
-        body = " -_- شكرا يا شيماء"
-        to = "+201144392922"
-        res = Nexmo.send_message("Special offer test", to, body)
-        return Response(res)

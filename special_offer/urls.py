@@ -27,7 +27,7 @@ from offers.views import (OfferViewSet, DiscountViewSet,
 from ads.views import AdViewSet
 from galleries.views import (
     OfferImageViewSet, DiscountImageViewSet)
-from users.views import UserViewSet, AdvertiserNotificationViewSet, SearcherNotificationViewSet, SendSms
+from users.views import UserViewSet, AdvertiserNotificationViewSet, SearcherNotificationViewSet
 
 router = DefaultRouter()
 router.register('users', UserViewSet, basename="users")
@@ -49,9 +49,7 @@ urlpatterns = router.urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-token-auth/', obtain_jwt_token),
-    path('api/', include(router.urls)),
-    path("api/sendsms/", SendSms.as_view())
-    
+    path('api/', include(router.urls)),    
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

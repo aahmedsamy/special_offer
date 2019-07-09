@@ -33,7 +33,10 @@ class User(AbstractUser):
     objects = UserManager()
 
     def is_verified(self):
-        return True if self.verified else False
+        if self.is_searcher():
+            return True if self.verified else False
+        elif self.is_publisher():
+            return True if self.publisher.phone_verified else False
 
     def is_publisher(self):
         return True if self.publisher else False
@@ -110,6 +113,9 @@ class Publisher(models.Model):
         _("Trading document"), upload_to="images/docs")
     work_start_at = models.TimeField(_("Work starts at"))
     work_end_at = models.TimeField(_("Work ends at"))
+    phone_verification_code = models.CharField(
+        max_length=6, null=True, blank=True)
+    phone_verified = models.BooleanField(_("Verified"), default=False) 
 
     def active_posts(self):
         pass

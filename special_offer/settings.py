@@ -212,7 +212,8 @@ TINIFY_API_KEY = "hgsRJGVhNMlGnYFGZP0WHmp8M21pQxyW"
 ################################
 
 ################################
-# Nexmo ########################
-NEXMO_API_KEY = "01f3b2e5"
-NEXMO_API_SECRET = "vOlbTgDAh3oGphER"
+# Twilio ########################
+TWILIO_ACCOUNT_SID = "ACf57bfcde0f1ed047e6542af5ace1b22d"
+TWILIO_AUTH_TOKEN = "a53f15649201f6a4dad2c6c836f531d4"
+TWILIO_NUMBER = "+16156546342"
 ################################
