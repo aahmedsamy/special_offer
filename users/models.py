@@ -100,7 +100,7 @@ class Publisher(models.Model):
     holidays = models.CharField(
         _("Holidays"), blank=True, max_length=256, null=True)
     name = models.CharField(_('Publisher name'), max_length=255)
-    phone = models.CharField(_('Phone'), max_length=20)
+    phone = models.CharField(_('Phone'), max_length=20, unique=True)
     image = models.ImageField(_("Image"), upload_to="users/images")
     address_url = models.URLField(_("Address URL"), max_length=256, null=True)
     website_url = models.URLField(_("Website URL"), max_length=256, null=True)
