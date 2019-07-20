@@ -10,6 +10,7 @@ django-extensions==2.1.6
 django-extra-fields==1.2.1
 djangorestframework==3.9.2
 djangorestframework-jwt==1.11.0
+filetype==1.0.5
 idna==2.8
 Pillow==6.0.0
 pycparser==2.19
