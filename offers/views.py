@@ -13,10 +13,10 @@ from datetime import timedelta
 from helpers.permissions import IsPublisher, IsVerified, IsSearcher
 from helpers.views import PaginatorView
 
-from .models import (Offer, Discount, Category, OfferAndDiscountFeature, Like)
+from .models import (Offer, Discount, Category, OfferAndDiscountFeature, Like, Story)
 from .serializers import (OfferSerializer,
                           DiscountSerializer,
-                          CategorySerializer, OfferAndDiscountFeatureSerializer, LikeOfferSerializer, LikeDiscountSerializer)
+                          CategorySerializer, OfferAndDiscountFeatureSerializer, LikeOfferSerializer, LikeDiscountSerializer, StorySerializer)
 # Create your views here.
 
 
@@ -74,7 +74,7 @@ class OfferViewSet(
                                            context=self.get_serializer_context())
         if serializer.is_valid():
             offer = serializer.save()
-            offer.status = Discount.BENDING
+            offer.status = Discount.PENDING
             offer.save()
             return Response(serializer.data)
         else:
@@ -145,10 +145,7 @@ class OfferViewSet(
         # for i in range(len(context['results'])):
         #     context['results'][i]['images'] = context['results'][i]['images'][0] if context['results'][i]['images'] else []
         return Response(context)
-    @action(detail=False, methods=['get'])
-    def search(self, request):
-        q = request.GET.get("q", None)
-        query
+
 class DiscountViewSet(
         mixins.CreateModelMixin,
         mixins.RetrieveModelMixin,
@@ -197,14 +194,13 @@ class DiscountViewSet(
         return {"request": self.request}
 
     def partial_update(self, request, pk):
-        discount = get_object_or_404(
-            publisher=request.user.publisher.id, pk=pk)
-        del request.data['publisher']
-        serializer = DiscountSerializer(discount, partial=True,
+        discount = get_object_or_404(Discount.objects.filter(
+            publisher=request.user.publisher), pk=pk)
+        serializer = DiscountSerializer(discount, data=request.data, partial=True,
                                         context=self.get_serializer_context())
         if serializer.is_valid():
             discount = serializer.save()
-            discount.status = Discount.BENDING
+            discount.status = Discount.PENDING
             discount.save()
             return Response(serializer.data)
         else:
@@ -391,7 +387,7 @@ class LikeViewSet(mixins.CreateModelMixin,
         permission_classes = []
         if self.action in ['create', 'remove',
                            ]:
-            permission_classes = [IsSearcher, IsAuthenticatedAndVerified]
+            permission_classes = [IsAuthenticated, IsSearcher, IsVerified]
         else:
             permission_classes = []
         return [permission() for permission in permission_classes]
@@ -456,3 +452,92 @@ class LikeViewSet(mixins.CreateModelMixin,
             context['detail'] = "query string mush contain 'ad_type' with one of {} values".format(
                 ad_type_list)
             return Response(context, 400)
+
+
+class StoryViewSet(
+        mixins.CreateModelMixin,
+        mixins.RetrieveModelMixin,
+        mixins.UpdateModelMixin,
+        mixins.DestroyModelMixin,
+        mixins.ListModelMixin,
+        viewsets.GenericViewSet):
+
+    # queryset = Offer.objects.all()
+    def get_queryset(self,):
+        queryset = Story.objects.filter(status=Story.APPROVED, start_time__lte=timezone.now(
+        ), end_time__gte=timezone.now(),)
+        return queryset
+
+    serializer_class = StorySerializer
+
+    def get_permissions(self):
+        """
+        Set actions permissions.
+        """
+        permission_classes = []
+        if self.action in ['create', 'partial_update', 'destroy','my_stories'
+                           ]:
+            print("1")
+            permission_classes = [IsAuthenticated, IsPublisher, IsVerified]
+        elif self.action in ['list', 'retrieve']:
+            print("2")
+            permission_classes = [AllowAny]
+        else:
+            print("3")
+            permission_classes = []
+        print(permission_classes)
+        return [permission() for permission in permission_classes]
+
+    def get_serializer_context(self):
+        return {"request": self.request}
+    
+    def create(self, request):
+        print("Create")
+        advertiser = request.user.publisher
+        request.data['advertiser'] = advertiser.id
+        serializer = self.serializer_class(data=request.data, context=self.get_serializer_context())
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def partial_update(self, request, pk):
+        story = get_object_or_404(Story.objects.filter(
+            advertiser=request.user.publisher), pk=pk)
+        serializer = self.serializer_class(story, data=request.data, partial=True,
+                                           context=self.get_serializer_context())
+        serializer.is_valid(raise_exception=True)
+        story = serializer.save()
+        story.status = Story.PENDING
+        story.save()
+        return Response(serializer.data)
+
+    def destroy(self, request, pk):
+        context = dict()
+        story = get_object_or_404(Story.objects.filter(advertiser=request.user.publisher), pk=pk)
+        story.delete()
+        context['detail'] = "Story deleted."
+        return Response(context, status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=['get'])
+    def my_stories(self, request):
+        context = dict()
+        page = request.GET.get('page', 1)
+        advertiser = request.user.publisher
+        queryset = advertiser.advertiser_stories.all()
+        context['count'] = queryset.count()
+        queryset, cur_page, last_page = PaginatorView.queryset_paginator(
+            queryset, page, 10)
+        context['previous'] = int(cur_page) - 1 if int(cur_page) > 1 else None
+        context['next'] = cur_page + 1 \
+            if int(cur_page) < last_page else None
+        if context['previous']:
+            context['previous'] = request.build_absolute_uri(
+                "?page="+str(context['previous']))
+        if context['next']:
+            context['next'] = request.build_absolute_uri(
+                "?page="+str(context['next']))
+        context['results'] = self.serializer_class(
+            queryset, many=True, context=self.get_serializer_context()).data
+        # for i in range(len(context['results'])):
+        #     context['results'][i]['images'] = context['results'][i]['images'][0] if context['results'][i]['images'] else []
+        return Response(context)

@@ -281,7 +281,6 @@ class UserViewSet(
     
     @action(detail=False, methods=['post'])
     def verify_phone(self, request):
-        api_code = self.__class__.__name__, "verify_phone"
         serializer = VerficationSerializer(data=request.data)
         context = dict()
         if serializer.is_valid():

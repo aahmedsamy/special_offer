@@ -11,7 +11,7 @@ from galleries.serializers import OfferImageSerializer, DiscountImageSerializer
 from galleries.models import OfferImage, DiscountImage
 
 from .models import (Offer, Discount, Category,
-                     OfferAndDiscountFeature, PlusItem, OfferAndDiscountFeature, Like)
+                     OfferAndDiscountFeature, PlusItem, OfferAndDiscountFeature, Like, Story)
 
 
 class PlusItemSerializer(serializers.ModelSerializer):
@@ -174,3 +174,25 @@ class LikeDiscountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Like
         fields = ['discount', 'searcher']
+
+
+class StorySerializer(serializers.ModelSerializer):
+    advertiser_data = serializers.SerializerMethodField()
+
+    def get_advertiser_data(self, obj=None):
+        ret = dict()
+        request = self.context['request']
+        # pass
+        if obj:
+            ret['name'] = str(obj.advertiser.name)
+            if obj.advertiser.image:
+                ret['image'] = request.build_absolute_uri(
+                    obj.advertiser.image.url)
+            return ret
+
+    class Meta:
+        model = Story
+        # fields = "__all__"
+        exclude = ('status',)
+        read_only_fields = ('advertiser_data', 'end_time',)
+

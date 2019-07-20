@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from drf_extra_fields.fields import Base64ImageField
 
-from offers.serializers import OfferSerializer, DiscountSerializer
+from offers.serializers import (OfferSerializer, DiscountSerializer, StorySerializer)
 
 from .models import User, Searcher, Publisher, SearcherNotification, AdvertiserNotification
 
@@ -106,7 +106,7 @@ class SearcherNotificationSerializer(serializers.ModelSerializer):
 class AdvertiserNotificationSerializer(serializers.ModelSerializer):
     offer = OfferSerializer()
     discount = DiscountSerializer()
-
+    story = StorySerializer()
     class Meta:
         model = AdvertiserNotification
         exclude = ['advertiser']

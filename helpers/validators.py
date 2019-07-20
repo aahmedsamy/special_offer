@@ -2,6 +2,9 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.deconstruct import deconstructible
 
+import filetype
+
+
 
 @deconstructible
 class StringBaseValidator:
@@ -57,4 +60,15 @@ class HasSvgExtention(StringBaseValidator):
     def check(self, value):
         ext = value.name.split('.')[-1]
         if ext.lower() != "svg":
+            return True
+
+@deconstructible
+class ImageOrVideo(StringBaseValidator):
+    message = "Please upload image or video"
+    code = 'not_img_video'
+
+    def check(self, value):
+        kind = filetype.guess(value)
+        ext =  kind.mime.lower().split('/')[0]
+        if kind is None or ext not in ['image', 'video']:
             return True

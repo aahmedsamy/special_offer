@@ -3,19 +3,19 @@ from django.db.models import Q
 
 # from offers.models import Offer
 
-class BendingManager(models.Manager):
+class PendingManager(models.Manager):
 
     def get_queryset(self):
 
-        return super(BendingManager, self).get_queryset().filter(
+        return super(PendingManager, self).get_queryset().filter(
 
-            status="Bending")
+            status="Pending")
 
 
-class NotBendingManager(models.Manager):
+class NotPendingManager(models.Manager):
 
     def get_queryset(self):
 
-        return super(BendingManager, self).get_queryset().filter(
+        return super(NotPendingManager, self).get_queryset().filter(
 
-            ~Q(status="Bending"))
+            ~Q(status="Pending"))

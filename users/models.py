@@ -196,7 +196,7 @@ class AdvertiserNotification(models.Model):
         "Offer"), on_delete=models.CASCADE, related_name="offer_advertiser_notifications", null=True)
     discount = models.ForeignKey("offers.Discount", verbose_name=_(
         "Discount"), on_delete=models.CASCADE, related_name="discount_advertiser_notifications", null=True)
-    
+    story = models.ForeignKey("offers.Story", on_delete=models.CASCADE, related_name="story_advertiser_notifications", null=True)
     status = models.CharField(_("Status"), max_length=50)
         
 

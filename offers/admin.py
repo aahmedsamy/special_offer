@@ -3,7 +3,7 @@ from django.contrib import admin
 from galleries.models import (OfferImage, PlusItemImage, DiscountImage)
 
 from .models import (Offer, Category, Discount, PlusItem,
-                     BendingOffer, BendingDiscount, OfferAndDiscountFeature)
+                     PendingOffer, PendingDiscount, OfferAndDiscountFeature, Story, PendingStory)
 # Register your models here.
 
 
@@ -64,7 +64,7 @@ class OfferAdmin(admin.ModelAdmin):
         return self.readonly_fields
 
 
-class BendingOfferAdmin(admin.ModelAdmin):
+class PendingOfferAdmin(admin.ModelAdmin):
     inlines = [
         PlusItemInline,
         OfferImageInline,
@@ -118,7 +118,7 @@ class DiscountAdmin(admin.ModelAdmin):
         return self.readonly_fields
 
 
-class BendingDiscountAdmin(admin.ModelAdmin):
+class PendingDiscountAdmin(admin.ModelAdmin):
     inlines = [
         DiscountImageInline,
     ]
@@ -160,12 +160,25 @@ class CategoryAdmin(admin.ModelAdmin):
     list_filter = ('name',)
     list_per_page = 10
 
+class StoryAdmin(admin.ModelAdmin):
+    # raw_id_fields = ('publisher', 'category')
+    list_display = ('advertiser', 'start_time', 'number_of_hours', 'status')
+    # readonly_fields = ('visited',)
+    search_fields = ('id', 'advertiser',
+                     'advertiser__phone', )
+    list_filter = ('advertiser__name', 'status',)
+    list_editable = ('status', )
+    autocomplete_fields = ('advertiser',)
+    list_per_page = 10
+
 
 admin.site.register(Offer, OfferAdmin)
-admin.site.register(BendingOffer, BendingOfferAdmin)
+admin.site.register(Story, StoryAdmin)
+admin.site.register(PendingStory, StoryAdmin)
+admin.site.register(PendingOffer, PendingOfferAdmin)
 admin.site.register(Category, CategoryAdmin)
 # admin.site.register(Like)
 admin.site.register(Discount, DiscountAdmin)
-admin.site.register(BendingDiscount, DiscountAdmin)
+admin.site.register(PendingDiscount, DiscountAdmin)
 
 # admin.site.register(PlusItem, PlusItemAdmin)

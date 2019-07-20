@@ -4,12 +4,14 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import (MinValueValidator, MaxValueValidator)
 from django.db.models import Count
 
-from helpers.validators import HasSvgExtention
+from datetime import timedelta
+
+from helpers.validators import HasSvgExtention, ImageOrVideo
 from helpers.images import Image
 
 from users.models import SearcherNotification, AdvertiserNotification
 
-from .managers import (BendingManager, NotBendingManager)
+from .managers import (PendingManager, NotPendingManager)
 # Create your models here.
 
 
@@ -51,11 +53,11 @@ class FollowedCategory(models.Model):
 
 
 class Offer(models.Model):
-    BENDING = _("Bending")
+    PENDING = _("Pending")
     DECLINED = _("Declined")
     PUBLISHED = _("Published")
     STATUS_CHOICES = (
-        (BENDING, _("Bending")),
+        (PENDING, _("Pending")),
         (DECLINED, _("Declined")),
         (PUBLISHED, _("Published"))
     )
@@ -70,9 +72,9 @@ class Offer(models.Model):
     end_date = models.DateField(_("End date"))
     visited = models.PositiveIntegerField(_("Visited"), default=0)
     status = models.CharField(
-        _("Status"), max_length=50, choices=STATUS_CHOICES, default=BENDING)
+        _("Status"), max_length=50, choices=STATUS_CHOICES, default=PENDING)
 
-    __original_status = BENDING
+    __original_status = PENDING
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -106,15 +108,15 @@ class Offer(models.Model):
         verbose_name_plural = _("Offers")
 
 
-class BendingOffer(Offer):
+class PendingOffer(Offer):
 
-    objects = BendingManager()
+    objects = PendingManager()
 
     class Meta:
 
         proxy = True
-        verbose_name = _("Bending Offer")
-        verbose_name_plural = _("Bending Offers")
+        verbose_name = _("Pending Offer")
+        verbose_name_plural = _("Pending Offers")
 
 
 class PlusItem(models.Model):
@@ -131,11 +133,11 @@ class PlusItem(models.Model):
 
 
 class Discount(models.Model):
-    BENDING = _("Bending")
+    PENDING = _("Pending")
     DECLINED = _("Declined")
     PUBLISHED = _("Published")
     STATUS_CHOICES = (
-        (BENDING, _("Bending")),
+        (PENDING, _("Pending")),
         (DECLINED, _("Declined")),
         (PUBLISHED, _("Published"))
     )
@@ -153,9 +155,9 @@ class Discount(models.Model):
     end_date = models.DateField(_("End date"))
     visited = models.PositiveIntegerField(_("Visited"), default=0)
     status = models.CharField(
-        _("Status"), max_length=50, choices=STATUS_CHOICES, default=BENDING)
+        _("Status"), max_length=50, choices=STATUS_CHOICES, default=PENDING)
 
-    __original_status = BENDING
+    __original_status = PENDING
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -187,15 +189,15 @@ class Discount(models.Model):
         verbose_name_plural = _("Discounts")
 
 
-class BendingDiscount(Discount):
+class PendingDiscount(Discount):
 
-    objects = BendingManager()
+    objects = PendingManager()
 
     class Meta:
 
         proxy = True
-        verbose_name = _("Bending Discount")
-        verbose_name_plural = _("Bending Discounts")
+        verbose_name = _("Pending Discount")
+        verbose_name_plural = _("Pending Discounts")
 
 
 class Like(models.Model):
@@ -226,6 +228,62 @@ class OfferAndDiscountFeature(models.Model):
     class Meta:
         verbose_name = _("Offer and discount feature")
         verbose_name_plural = _("Offer and discount features")
+
+
+class Story(models.Model):
+    PENDING = _("Pending")
+    DECLINED = _("Declined")
+    APPROVED = _("Approved")
+    STATUS_CHOICES = (
+        (PENDING, _("Pending")),
+        (DECLINED, _("Declined")),
+        (APPROVED, _("Approved"))
+    )
+    advertiser = models.ForeignKey("users.Publisher", verbose_name=_(
+        "Advertiser"), on_delete=models.CASCADE, related_name="advertiser_stories")
+    media = models.FileField(_("Image/Video"), upload_to="stories/", max_length=256, validators=[ImageOrVideo])
+    desc = models.TextField(_("Description"), max_length = 1024)
+    start_time = models.DateTimeField(_("Start date"))
+    end_time = models.DateTimeField(_("Start date"))
+    number_of_hours = models.PositiveSmallIntegerField(_("Number of hours"), validators=[
+                                   MinValueValidator(1),
+                                   MaxValueValidator(24)])
+    status = models.CharField(
+        _("Status"), max_length=50, choices=STATUS_CHOICES, default=PENDING)
+
+    __original_status = PENDING
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_status = self.status        
+
+    class Meta:
+        verbose_name = _("Story")
+        verbose_name_plural = _("Stories")
+        ordering = ['-id']
+    
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        original_status = self.__original_status
+        self.__original_status = self.status
+        self.end_time = self.start_time + timedelta(hours=self.number_of_hours)
+        super().save(force_insert, force_update, *args, **kwargs)
+        if self.status != original_status:
+            AdvertiserNotification.objects.create(
+                story=self, advertiser=self.advertiser, status=self.status)    
+
+    def get_end_date(self, hours):
+        print(self.start_time, hours)
+        return self.start_time + timedelta(hours=hours)
+
+class PendingStory(Story):
+
+    objects = PendingManager()
+
+    class Meta:
+
+        proxy = True
+        verbose_name = _("Pending Story")
+        verbose_name_plural = _("Pending Stories")
 
 
 def compress_offer_image(sender, instance, **kwargs):
