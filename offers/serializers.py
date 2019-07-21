@@ -184,7 +184,7 @@ class StorySerializer(serializers.ModelSerializer):
         # pass
         if obj:
             ret['id'] = str(obj.advertiser.publisher.id)
-            ret['address_url'] = str(obj.advertiser.publisher.address_url)
+            ret['address_url'] = str(obj.advertiser.address_url)
             ret['name'] = str(obj.advertiser.name)
 
             if obj.advertiser.image:
