@@ -183,7 +183,9 @@ class StorySerializer(serializers.ModelSerializer):
         request = self.context['request']
         # pass
         if obj:
+            ret['id'] = str(obj.advertiser.publisher.id)
             ret['name'] = str(obj.advertiser.name)
+
             if obj.advertiser.image:
                 ret['image'] = request.build_absolute_uri(
                     obj.advertiser.image.url)
