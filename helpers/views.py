@@ -111,6 +111,5 @@ class PaginatorView:
         try:
             queryset = paginator.page(cur_page)
         except Exception as e:
-            print(e)
             return None, cur_page, number
         return queryset, cur_page, number

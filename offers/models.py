@@ -272,7 +272,6 @@ class Story(models.Model):
                 story=self, advertiser=self.advertiser, status=self.status)    
 
     def get_end_date(self, hours):
-        print(self.start_time, hours)
         return self.start_time + timedelta(hours=hours)
 
 class PendingStory(Story):

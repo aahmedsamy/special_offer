@@ -477,22 +477,17 @@ class StoryViewSet(
         permission_classes = []
         if self.action in ['create', 'partial_update', 'destroy','my_stories'
                            ]:
-            print("1")
             permission_classes = [IsAuthenticated, IsPublisher, IsVerified]
         elif self.action in ['list', 'retrieve']:
-            print("2")
             permission_classes = [AllowAny]
         else:
-            print("3")
             permission_classes = []
-        print(permission_classes)
         return [permission() for permission in permission_classes]
 
     def get_serializer_context(self):
         return {"request": self.request}
     
     def create(self, request):
-        print("Create")
         advertiser = request.user.publisher
         request.data['advertiser'] = advertiser.id
         serializer = self.serializer_class(data=request.data, context=self.get_serializer_context())

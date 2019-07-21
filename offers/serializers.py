@@ -72,7 +72,6 @@ class OfferSerializer(serializers.ModelSerializer):
         images_data = validated_data.pop('offer_images')
         plus_items = validated_data.pop('plus_offer')
         features = validated_data.pop('offer_features')
-        print(validated_data)
         offer = Offer.objects.create(publisher=advertiser, **validated_data)
 
         room_images = []

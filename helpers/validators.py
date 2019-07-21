@@ -69,6 +69,8 @@ class ImageOrVideo(StringBaseValidator):
 
     def check(self, value):
         kind = filetype.guess(value)
+        if kind is None:
+            return True
         ext =  kind.mime.lower().split('/')[0]
-        if kind is None or ext not in ['image', 'video']:
+        if ext not in ['image', 'video']:
             return True
