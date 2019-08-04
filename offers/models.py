@@ -16,7 +16,7 @@ from .managers import (PendingManager, NotPendingManager)
 
 
 class Category(models.Model):
-    name = models.CharField(_("Name"), max_length=256, unique=True)
+    name = models.CharField(_("Name"), max_length=255, unique=True)
     image = models.ImageField(_("Image"), upload_to="categories/images/",)
     small_image_path = models.TextField()
 

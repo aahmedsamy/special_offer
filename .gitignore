@@ -96,3 +96,4 @@ static/*
 scripts/*
 url_patterns_to_be_deleted.txt
 helpers/status.py
+special_offer_venv
