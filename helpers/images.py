@@ -13,8 +13,6 @@ class Image:
         self.MEDIA_URL = settings.MEDIA_URL
         self.TINIFY_API_KEY = settings.TINIFY_API_KEY
 
-        
-
     @classmethod
     def compress_image_tinify(cls, image):
         """
@@ -23,7 +21,7 @@ class Image:
         returns the compressed image link with <image>_small.<ext>
         """
         obj = cls()
-        path = obj.BASE_DIR + image.url
+        path = obj.MEDIA_ROOT + image.url
         image_name_split = image.name.rsplit('.', 1)
         obj.image_name = image_name_split[0]+'_small.'+image_name_split[1]
         image_full_path = obj.MEDIA_ROOT+"/"+obj.image_name
@@ -34,10 +32,10 @@ class Image:
 
     def get_image_name(ext):
         return "{}.{}".format(uuid.uuid5.hex, ext)
-    
+
     @classmethod
     def compress_list_of_images(cls, images):
-        obj=cls()
+        obj = cls()
         for image in images:
             # img = Image()
             image.small_image_path = obj.compress_image_tinify(image.image)
@@ -66,9 +64,3 @@ class Image:
     #             f.write(imgdata)
     #         except Exception as e:
     #             raise Response(str(e))
-
-
-
-
-
-

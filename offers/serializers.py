@@ -78,7 +78,7 @@ class OfferSerializer(serializers.ModelSerializer):
         for image in images_data:
             room_images.append(
                 OfferImage.objects.create(offer=offer, **image))
-        Image.compress_list_of_images(room_images)
+        # Image.compress_list_of_images(room_images)
 
         for item in plus_items:
             PlusItem.objects.create(offer=offer, **item)
@@ -90,7 +90,7 @@ class OfferSerializer(serializers.ModelSerializer):
 
 
 class DiscountPostSerializer(serializers.ModelSerializer):
-     class Meta:
+    class Meta:
         model = Discount
         # fields = "__all__"
         exclude = ('status', 'visited')
@@ -140,7 +140,7 @@ class DiscountSerializer(serializers.ModelSerializer):
         for image in images_data:
             room_images.append(
                 DiscountImage.objects.create(discount=discount, **image))
-        Image.compress_list_of_images(room_images)
+        # Image.compress_list_of_images(room_images)
 
         for feature in features:
             OfferAndDiscountFeature.objects.create(
@@ -197,4 +197,3 @@ class StorySerializer(serializers.ModelSerializer):
         # fields = "__all__"
         exclude = ('status',)
         read_only_fields = ('advertiser_data', 'end_time',)
-
