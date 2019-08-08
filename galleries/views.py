@@ -15,11 +15,13 @@ from .serializers import (OfferImageSerializer, DiscountImageSerializer)
 
 # Create your views here.
 
+
 def compress_list_of_images(images):
     for image in images:
         # img = Image()
         image.small_image_path = Image.compress_image_tinify(image.image)
         image.save()
+
 
 class OfferImageViewSet(
         mixins.CreateModelMixin,
@@ -60,7 +62,7 @@ class OfferImageViewSet(
             data=request.data['images'], many=True)
         if serializer.is_valid():
             images = serializer.save()
-            Image.compress_list_of_images(images)
+            # Image.compress_list_of_images(images)
             context['detail'] = "Images uploaded successfully."
             return Response(context)
         else:
@@ -106,7 +108,7 @@ class DiscountImageViewSet(
             data=request.data['images'], many=True)
         if serializer.is_valid():
             images = serializer.save()
-            Image.compress_list_of_images(images)
+            # Image.compress_list_of_images(images)
             context['detail'] = "Images uploaded successfully."
             return Response(context)
         else:

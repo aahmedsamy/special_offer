@@ -93,8 +93,6 @@ class Offer(models.Model):
             AdvertiserNotification.objects.create(
                 offer=self, advertiser=self.publisher, status=self.status)
 
-        
-
     def __str__(self):
         return self.name
 
@@ -241,13 +239,14 @@ class Story(models.Model):
     )
     advertiser = models.ForeignKey("users.Publisher", verbose_name=_(
         "Advertiser"), on_delete=models.CASCADE, related_name="advertiser_stories")
-    media = models.FileField(_("Image/Video"), upload_to="stories/", max_length=256, validators=[ImageOrVideo])
-    desc = models.TextField(_("Description"), max_length = 1024)
+    media = models.FileField(
+        _("Image/Video"), upload_to="stories/", max_length=256, validators=[ImageOrVideo])
+    desc = models.TextField(_("Description"), max_length=1024)
     start_time = models.DateTimeField(_("Start date"))
     end_time = models.DateTimeField(_("Start date"))
     number_of_hours = models.PositiveSmallIntegerField(_("Number of hours"), validators=[
-                                   MinValueValidator(1),
-                                   MaxValueValidator(24)])
+        MinValueValidator(1),
+        MaxValueValidator(24)])
     status = models.CharField(
         _("Status"), max_length=50, choices=STATUS_CHOICES, default=PENDING)
 
@@ -255,13 +254,13 @@ class Story(models.Model):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.__original_status = self.status        
+        self.__original_status = self.status
 
     class Meta:
         verbose_name = _("Story")
         verbose_name_plural = _("Stories")
         ordering = ['-id']
-    
+
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         original_status = self.__original_status
         self.__original_status = self.status
@@ -269,10 +268,11 @@ class Story(models.Model):
         super().save(force_insert, force_update, *args, **kwargs)
         if self.status != original_status:
             AdvertiserNotification.objects.create(
-                story=self, advertiser=self.advertiser, status=self.status)    
+                story=self, advertiser=self.advertiser, status=self.status)
 
     def get_end_date(self, hours):
         return self.start_time + timedelta(hours=hours)
+
 
 class PendingStory(Story):
 
@@ -299,5 +299,5 @@ def compress_discount_image(sender, instance, **kwargs):
         image.save()
 
 
-post_save.connect(compress_offer_image, sender=Offer)
-post_save.connect(compress_discount_image, sender=Discount)
+# post_save.connect(compress_offer_image, sender=Offer)
+# post_save.connect(compress_discount_image, sender=Discount)
