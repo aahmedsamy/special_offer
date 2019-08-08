@@ -7,12 +7,21 @@ from drf_extra_fields.fields import Base64ImageField
 from helpers.dates import Date
 from helpers.images import Image
 
+from users.models import Publisher
+
 from galleries.serializers import OfferImageSerializer, DiscountImageSerializer
 from galleries.models import OfferImage, DiscountImage
 
 from .models import (Offer, Discount, Category,
                      OfferAndDiscountFeature, PlusItem, OfferAndDiscountFeature, Like, Story)
 
+class PublisherSerializer(serializers.ModelSerializer):
+    image = Base64ImageField()
+    trading_doc = Base64ImageField()
+
+    class Meta:
+        model = Publisher
+        exclude = ['phone_verified', 'phone_verification_code']
 
 class PlusItemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,20 +40,9 @@ class OfferSerializer(serializers.ModelSerializer):
     plus_offer = PlusItemSerializer(many=True)
     offer_images = OfferImageSerializer(many=True)
     offer_features = OfferAndDiscountFeatureSerializer(many=True, )
-    publisher = serializers.SerializerMethodField()
+    publisher = PublisherSerializer(read_only=True)
     days_remaining = serializers.SerializerMethodField()
     likes = serializers.SerializerMethodField()
-
-    def get_publisher(self, obj=None):
-        ret = dict()
-        request = self.context['request']
-        # pass
-        if obj:
-            ret['name'] = str(obj.publisher.name)
-            if obj.publisher.image:
-                ret['image'] = request.build_absolute_uri(
-                    obj.publisher.image.url)
-            return ret
 
     def get_category(self, obj=None):
         ret = dict()
@@ -99,20 +97,9 @@ class DiscountPostSerializer(serializers.ModelSerializer):
 class DiscountSerializer(serializers.ModelSerializer):
     discount_images = DiscountImageSerializer(many=True,)
     discount_features = OfferAndDiscountFeatureSerializer(many=True, )
-    publisher = serializers.SerializerMethodField()
+    publisher = PublisherSerializer(read_only=True)
     days_remaining = serializers.SerializerMethodField()
     likes = serializers.SerializerMethodField()
-
-    def get_publisher(self, obj=None):
-        ret = dict()
-        request = self.context['request']
-        # pass
-        if obj:
-            ret['name'] = str(obj.publisher.name)
-            if obj.publisher.image:
-                ret['image'] = request.build_absolute_uri(
-                    obj.publisher.image.url)
-            return ret
 
     def get_days_remaining(self, obj):
         if obj:
