@@ -59,7 +59,7 @@ class OfferImageViewSet(
         for i in range(len(request.data['images'])):
             request.data['images'][i]['offer'] = offer_id
         serializer = OfferImageSerializer(
-            data=request.data['images'], many=True)
+            data=request.data['images'], many=True, context=self.get_serializer_context())
         if serializer.is_valid():
             images = serializer.save()
             # Image.compress_list_of_images(images)
@@ -105,7 +105,7 @@ class DiscountImageViewSet(
         for i in range(len(request.data['images'])):
             request.data['images'][i]['discount'] = discount_id
         serializer = DiscountImageSerializer(
-            data=request.data['images'], many=True)
+            data=request.data['images'], many=True, context=self.get_serializer_context())
         if serializer.is_valid():
             images = serializer.save()
             # Image.compress_list_of_images(images)

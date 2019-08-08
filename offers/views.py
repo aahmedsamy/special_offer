@@ -361,7 +361,7 @@ class FeaturesViewSet(
             features[i][field_name] = ad_id
 
         serializer = OfferAndDiscountFeatureSerializer(
-            data=features, many=True)
+            data=features, many=True, context=self.get_serializer_context())
 
         if serializer.is_valid():
             serializer.save()
@@ -410,9 +410,9 @@ class LikeViewSet(mixins.CreateModelMixin,
                 return Response(context, 400)
             except Like.DoesNotExist:
                 if ad_type == "offer":
-                    serialser = LikeOfferSerializer(data=request.data)
+                    serialser = LikeOfferSerializer(data=request.data, context=self.get_serializer_context())
                 elif ad_type == "discount":
-                    serialser = LikeDiscountSerializer(data=request.data)
+                    serialser = LikeDiscountSerializer(data=request.data, context=self.get_serializer_context())
 
                 if serialser.is_valid():
                     serialser.save()

@@ -53,6 +53,7 @@ class UserViewSet(
     queryset = User.objects.all()
     serializer_class = UserSerializer
     parser_class = (FileUploadParser,)
+    
 
     def get_permissions(self):
         """
@@ -107,14 +108,14 @@ class UserViewSet(
                         }
                     }
                     return Response(context, 400)
-                basic_serializer = SignupSerializer(data=basic_info)
+                basic_serializer = SignupSerializer(data=basic_info, context=self.get_serializer_context())
                 if basic_serializer.is_valid():
                     basic_info = basic_serializer.data.copy()
                     del basic_info['password1']
                     if user_type == 'searcher':
-                        more_serializer = SearcherSerializer(data=more_info)
+                        more_serializer = SearcherSerializer(data=more_info, context=self.get_serializer_context())
                     else:
-                        more_serializer = PublisherSerializer(data=more_info)
+                        more_serializer = PublisherSerializer(data=more_info, context=self.get_serializer_context())
 
                     if more_serializer.is_valid():
                         basic = User.objects.create_user(**basic_info)
@@ -158,7 +159,7 @@ class UserViewSet(
     @action(detail=False, methods=['post'])
     def change_password(self, request,):
         api_code = self.__class__.__name__, "change_password"
-        serializer = PasswordChangeSerializer(data=request.data)
+        serializer = PasswordChangeSerializer(data=request.data, context=self.get_serializer_context())
         user = request.user
         context = dict()
         if serializer.is_valid():
@@ -192,7 +193,7 @@ class UserViewSet(
     @action(detail=False, methods=['post'])
     def login(self, request,):
         api_code = self.__class__.__name__, "login"
-        serializer = LoginSerializer(data=request.data)
+        serializer = LoginSerializer(data=request.data, context=self.get_serializer_context())
         context = dict()
         if serializer.is_valid():
             user = auth.authenticate(
@@ -281,7 +282,7 @@ class UserViewSet(
     
     @action(detail=False, methods=['post'])
     def verify_phone(self, request):
-        serializer = VerficationSerializer(data=request.data)
+        serializer = VerficationSerializer(data=request.data, context=self.get_serializer_context())
         context = dict()
         if serializer.is_valid():
             advertiser = request.user.publisher
@@ -301,7 +302,7 @@ class UserViewSet(
     @action(detail=False, methods=['post'])
     def reset_password(self, request):
         api_code = self.__class__.__name__, "reset_password"
-        serializer = PasswordResetingSerializer(data=request.data)
+        serializer = PasswordResetingSerializer(data=request.data, context=self.get_serializer_context())
         context = dict()
         if serializer.is_valid():
             try:
@@ -338,7 +339,7 @@ class UserViewSet(
     @action(detail=False, methods=['post'])
     def verify(self, request):
         api_code = self.__class__.__name__, "verify"
-        serializer = VerficationSerializer(data=request.data)
+        serializer = VerficationSerializer(data=request.data, context=self.get_serializer_context())
         context = dict()
         if serializer.is_valid():
             email = request.data.get('email', None)
@@ -391,22 +392,22 @@ class UserViewSet(
         more = request.data['more']
         user = request.user
         if request.user.is_publisher():
-            b_serializer = UserSerializer(user, data=basic, partial=True)
+            b_serializer = UserSerializer(user, data=basic, partial=True, context=self.get_serializer_context())
             publisher = Publisher.objects.get(publisher__id=user.id)
             m_serialser = PublisherSerializer(
-                publisher, data=more, partial=True)
+                publisher, data=more, partial=True, context=self.get_serializer_context())
         elif request.user.is_searcher():
-            b_serializer = UserSerializer(user, data=basic, partial=True)
+            b_serializer = UserSerializer(user, data=basic, partial=True, context=self.get_serializer_context())
             searcher = Searcher.objects.get(searcher__id=user.id)
             m_serialser = SearcherSerializer(
-                searcher, data=more, partial=True)
+                searcher, data=more, partial=True, context=self.get_serializer_context())
 
         if b_serializer.is_valid():
             if m_serialser.is_valid():
                 m_serialser.save()
                 b_serializer.save()
                 user = User.objects.get(id=user.id)
-                context['detail'] = UserSerializer(user).data
+                context['detail'] = UserSerializer(user, context=self.get_serializer_context()).data
                 return Response(context, 200)
             else:
                 context['more'] = m_serialser.errors
