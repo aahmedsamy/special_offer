@@ -273,12 +273,16 @@ class UserViewSet(
         advertiser.save()
         body = 'SPO Phone verification code "{}"'.format(advertiser.phone_verification_code),
         to = advertiser.phone
-        Twilio.send_message(
+        res = Twilio.send_message(
             body = body,
             to = to
         )
-        return Response({"detail": "Phone verification code sent to {}".format(
-            advertiser.phone)})
+        if res['status'] == "success":
+            print(res)
+            return Response({"detail": "Phone verification code sent to {}".format(
+                advertiser.phone)})
+        else:
+            return Response({"error": "Wrong phone number"}, 400)
     
     @action(detail=False, methods=['post'])
     def verify_phone(self, request):

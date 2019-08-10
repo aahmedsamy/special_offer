@@ -13,7 +13,7 @@ from galleries.serializers import OfferImageSerializer, DiscountImageSerializer
 from galleries.models import OfferImage, DiscountImage
 
 from .models import (Offer, Discount, Category,
-                     OfferAndDiscountFeature, PlusItem, OfferAndDiscountFeature, Like, Story)
+                     OfferFeature, PlusItem, OfferFeature, Like, Story)
 
 class PublisherSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
@@ -30,16 +30,16 @@ class PlusItemSerializer(serializers.ModelSerializer):
         read_only_fields = ('offer',)
 
 
-class OfferAndDiscountFeatureSerializer(serializers.ModelSerializer):
+class OfferFeatureSerializer(serializers.ModelSerializer):
     class Meta:
-        model = OfferAndDiscountFeature
+        model = OfferFeature
         fields = '__all__'
 
 
 class OfferSerializer(serializers.ModelSerializer):
     plus_offer = PlusItemSerializer(many=True)
     offer_images = OfferImageSerializer(many=True)
-    offer_features = OfferAndDiscountFeatureSerializer(many=True, )
+    offer_features = OfferFeatureSerializer(many=True, )
     publisher = PublisherSerializer(read_only=True)
     days_remaining = serializers.SerializerMethodField()
     likes = serializers.SerializerMethodField()
@@ -82,7 +82,7 @@ class OfferSerializer(serializers.ModelSerializer):
             PlusItem.objects.create(offer=offer, **item)
 
         for feature in features:
-            OfferAndDiscountFeature.objects.create(offer=offer, **feature)
+            OfferFeature.objects.create(offer=offer, **feature)
 
         return offer
 
@@ -96,7 +96,6 @@ class DiscountPostSerializer(serializers.ModelSerializer):
 
 class DiscountSerializer(serializers.ModelSerializer):
     discount_images = DiscountImageSerializer(many=True,)
-    discount_features = OfferAndDiscountFeatureSerializer(many=True, )
     publisher = PublisherSerializer(read_only=True)
     days_remaining = serializers.SerializerMethodField()
     likes = serializers.SerializerMethodField()
@@ -119,7 +118,6 @@ class DiscountSerializer(serializers.ModelSerializer):
         request = self.context.get("request", None)
         advertiser = request.user.publisher
         images_data = validated_data.pop('discount_images')
-        features = validated_data.pop('discount_features')
         discount = Discount.objects.create(
             publisher=advertiser, **validated_data)
 
@@ -130,7 +128,7 @@ class DiscountSerializer(serializers.ModelSerializer):
         # Image.compress_list_of_images(room_images)
 
         for feature in features:
-            OfferAndDiscountFeature.objects.create(
+            OfferFeature.objects.create(
                 discount=discount, **feature)
 
         return discount

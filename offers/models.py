@@ -206,11 +206,9 @@ class Like(models.Model):
         unique_together = ('searcher', 'offer', 'discount')
 
 
-class OfferAndDiscountFeature(models.Model):
+class OfferFeature(models.Model):
     offer = models.ForeignKey(Offer, on_delete=models.CASCADE, null=True, verbose_name=_(
         "Offer"), related_name='offer_features')
-    discount = models.ForeignKey(Discount, on_delete=models.CASCADE, null=True, verbose_name=_(
-        "Discount"), related_name='discount_features')
     name = models.CharField(_("Feature name"), max_length=256)
     desc = models.TextField(_("Description"), max_length=1024)
 

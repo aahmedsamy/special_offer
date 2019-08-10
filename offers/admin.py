@@ -3,7 +3,7 @@ from django.contrib import admin
 from galleries.models import (OfferImage, PlusItemImage, DiscountImage)
 
 from .models import (Offer, Category, Discount, PlusItem,
-                     PendingOffer, PendingDiscount, OfferAndDiscountFeature, Story, PendingStory)
+                     PendingOffer, PendingDiscount, OfferFeature, Story, PendingStory)
 # Register your models here.
 
 
@@ -14,8 +14,8 @@ class OfferImageInline(admin.TabularInline):
 
 
 class FeatureInline(admin.TabularInline):
-    model = OfferAndDiscountFeature
-    readonly_fields = ("offer", "discount")
+    model = OfferFeature
+    readonly_fields = ("offer",)
     extra = 2
 
 
@@ -94,7 +94,6 @@ class PendingOfferAdmin(admin.ModelAdmin):
 class DiscountAdmin(admin.ModelAdmin):
     inlines = [
         DiscountImageInline,
-        FeatureInline
     ]
     # raw_id_fields = ('publisher', 'category')
     list_display = ('publisher', 'category', 'name',

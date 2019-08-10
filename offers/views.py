@@ -13,10 +13,10 @@ from datetime import timedelta
 from helpers.permissions import IsPublisher, IsVerified, IsSearcher
 from helpers.views import PaginatorView
 
-from .models import (Offer, Discount, Category, OfferAndDiscountFeature, Like, Story)
+from .models import (Offer, Discount, Category, OfferFeature, Like, Story)
 from .serializers import (OfferSerializer,
                           DiscountSerializer,
-                          CategorySerializer, OfferAndDiscountFeatureSerializer, LikeOfferSerializer, LikeDiscountSerializer, StorySerializer)
+                          CategorySerializer, OfferFeatureSerializer, LikeOfferSerializer, LikeDiscountSerializer, StorySerializer)
 # Create your views here.
 
 
@@ -319,13 +319,13 @@ class FeaturesViewSet(
     def get_queryset(self):
         if self.action in ['create', 'destroy', 'update']:
             advertiser = self.request.user.publisher
-            queryset = OfferAndDiscountFeature.objects.filter(
+            queryset = OfferFeature.objects.filter(
                 Q(offer__publisher=advertiser) | Q(discount__publisher=advertiser))
         elif self.action in ['retrieve']:
-            queryset = OfferAndDiscountFeature.objects.all()
+            queryset = OfferFeature.objects.all()
         return queryset
 
-    serializer_class = OfferAndDiscountFeatureSerializer
+    serializer_class = OfferFeatureSerializer
 
     def get_permissions(self):
         """
@@ -374,7 +374,7 @@ class FeaturesViewSet(
         for i in range(len(features)):
             features[i][field_name] = ad_id
 
-        serializer = OfferAndDiscountFeatureSerializer(
+        serializer = OfferFeatureSerializer(
             data=features, many=True, context=self.get_serializer_context())
 
         if serializer.is_valid():
