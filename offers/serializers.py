@@ -21,7 +21,7 @@ class PublisherSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Publisher
-        exclude = ['phone_verified', 'phone_verification_code']
+        exclude = ['phone_verification_code']
 
 class PlusItemSerializer(serializers.ModelSerializer):
     class Meta:

@@ -124,10 +124,17 @@ class OfferViewSet(
     @action(detail=False, methods=['get'])
     def my_offers(self, request):
         context = dict()
+        filter_by = dict()
         page = request.GET.get('page', 1)
+        status = str(request.GET.get('status', None))
+        status_list = ['Pending', 'Declined', 'Published']
+        if status not in status_list:
+            context['error'] = "You should enter one of '{}' in 'status' query".format(status_list)
+            return Response(context, status=400)
+        filter_by['status'] = _(status)
         advertiser = request.user.publisher
         queryset = advertiser.publisher_offer.filter(start_date__lte=timezone.now(
-        ), end_date__gte=timezone.now())
+        ), end_date__gte=timezone.now(), **filter_by)
         context['count'] = queryset.count()
         queryset, cur_page, last_page = PaginatorView.queryset_paginator(
             queryset, page, 10)
@@ -251,10 +258,17 @@ class DiscountViewSet(
     @action(detail=False, methods=['get'])
     def my_discounts(self, request):
         context = dict()
+        filter_by = dict()
         page = request.GET.get('page', 1)
+        status = str(request.GET.get('status', None))
+        status_list = ['Pending', 'Declined', 'Published']
+        if status not in status_list:
+            context['error'] = "You should enter one of '{}' in 'status' query".format(status_list)
+            return Response(context, status=400)
+        filter_by['status'] = _(status)
         advertiser = request.user.publisher
         queryset = advertiser.publisher_discount.filter(start_date__lte=timezone.now(
-        ), end_date__gte=timezone.now())
+        ), end_date__gte=timezone.now(), **filter_by)
         context['count'] = queryset.count()
         queryset, cur_page, last_page = PaginatorView.queryset_paginator(
             queryset, page, 10)

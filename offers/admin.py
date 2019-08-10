@@ -160,6 +160,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_filter = ('name',)
     list_per_page = 10
 
+
 class StoryAdmin(admin.ModelAdmin):
     # raw_id_fields = ('publisher', 'category')
     list_display = ('advertiser', 'start_time', 'number_of_hours', 'status')
@@ -179,6 +180,6 @@ admin.site.register(PendingOffer, PendingOfferAdmin)
 admin.site.register(Category, CategoryAdmin)
 # admin.site.register(Like)
 admin.site.register(Discount, DiscountAdmin)
-admin.site.register(PendingDiscount, DiscountAdmin)
+admin.site.register(PendingDiscount, PendingDiscountAdmin)
 
 # admin.site.register(PlusItem, PlusItemAdmin)
