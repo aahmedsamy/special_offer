@@ -161,24 +161,9 @@ class LikeDiscountSerializer(serializers.ModelSerializer):
 
 
 class StorySerializer(serializers.ModelSerializer):
-    advertiser_data = serializers.SerializerMethodField()
-
-    def get_advertiser_data(self, obj=None):
-        ret = dict()
-        request = self.context['request']
-        # pass
-        if obj:
-            ret['id'] = str(obj.advertiser.publisher.id)
-            ret['address_url'] = str(obj.advertiser.address_url)
-            ret['name'] = str(obj.advertiser.name)
-
-            if obj.advertiser.image:
-                ret['image'] = request.build_absolute_uri(
-                    obj.advertiser.image.url)
-            return ret
+    advertiser = PublisherSerializer(read_only=True)
 
     class Meta:
         model = Story
         # fields = "__all__"
         exclude = ('status',)
-        read_only_fields = ('advertiser_data', 'end_time',)

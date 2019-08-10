@@ -163,7 +163,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class StoryAdmin(admin.ModelAdmin):
     # raw_id_fields = ('publisher', 'category')
     list_display = ('advertiser', 'start_time', 'number_of_hours', 'status')
-    # readonly_fields = ('visited',)
+    readonly_fields = ('end_time',)
     search_fields = ('id', 'advertiser',
                      'advertiser__phone', )
     list_filter = ('advertiser__name', 'status',)

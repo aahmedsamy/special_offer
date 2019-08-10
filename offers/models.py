@@ -238,6 +238,7 @@ class Story(models.Model):
     number_of_hours = models.PositiveSmallIntegerField(_("Number of hours"), validators=[
         MinValueValidator(1),
         MaxValueValidator(24)])
+    end_time = models.DateTimeField(_("End date"))
     status = models.CharField(
         _("Status"), max_length=50, choices=STATUS_CHOICES, default=PENDING)
 
