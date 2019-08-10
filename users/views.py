@@ -67,10 +67,10 @@ class UserViewSet(
         elif self.action in ['advertiser_insights']:
             permission_classes = [IsAuthenticated, IsPublisher, IsVerified]
         elif self.action in ['send_phone_verification_code', 'verify_phone']:
-            permission_classes = [IsAuthenticated, IsPublisher,]
+            permission_classes = [IsAuthenticated, IsPublisher]
         elif self.action in ['followed_categories', 'follow_category']:
             permission_classes = [IsSearcher, IsVerified]
-        elif self.action in ['change_password', 'edit']:
+        elif self.action in ['change_password', 'edit', 'my_data']:
             permission_classes = [IsAuthenticated]
         else:
             permission_classes = []
@@ -465,7 +465,11 @@ class UserViewSet(
         else:
             context['detail'] = "'cat_id' key is required"
             return Response(context, 400)
-
+    
+    @action(detail=False, methods=['get'])
+    def my_data(self, request):
+        serializer = self.serializer_class(request.user, context=self.get_serializer_context())
+        return Response(serializer.data)
 
 class SearcherNotificationViewSet(
     mixins.ListModelMixin,
