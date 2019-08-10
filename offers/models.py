@@ -20,12 +20,6 @@ class Category(models.Model):
     image = models.ImageField(_("Image"), upload_to="categories/images/",)
     small_image_path = models.TextField()
 
-    def clean(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        img = Image()
-        self.small_image_path = img.compress_image_tinify(image=self.image)
-        super().save(*args, **kwargs)
-
     def __str__(self):
         return self.name
 
@@ -243,7 +237,6 @@ class Story(models.Model):
         _("Image/Video"), upload_to="stories/", max_length=256, validators=[ImageOrVideo])
     desc = models.TextField(_("Description"), max_length=1024)
     start_time = models.DateTimeField(_("Start date"))
-    end_time = models.DateTimeField(_("Start date"))
     number_of_hours = models.PositiveSmallIntegerField(_("Number of hours"), validators=[
         MinValueValidator(1),
         MaxValueValidator(24)])
