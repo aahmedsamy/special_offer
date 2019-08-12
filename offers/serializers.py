@@ -127,10 +127,6 @@ class DiscountSerializer(serializers.ModelSerializer):
                 DiscountImage.objects.create(discount=discount, **image))
         # Image.compress_list_of_images(room_images)
 
-        for feature in features:
-            OfferFeature.objects.create(
-                discount=discount, **feature)
-
         return discount
 
 
@@ -167,3 +163,12 @@ class StorySerializer(serializers.ModelSerializer):
         model = Story
         # fields = "__all__"
         exclude = ('status',)
+        read_only = ['end_time']
+
+class StorySerializerPost(serializers.ModelSerializer):
+
+    class Meta:
+        model = Story
+        # fields = "__all__"
+        exclude = ('status',)
+        read_only = ['end_time']

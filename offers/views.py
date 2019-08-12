@@ -16,7 +16,7 @@ from helpers.views import PaginatorView
 from .models import (Offer, Discount, Category, OfferFeature, Like, Story)
 from .serializers import (OfferSerializer,
                           DiscountSerializer,
-                          CategorySerializer, OfferFeatureSerializer, LikeOfferSerializer, LikeDiscountSerializer, StorySerializer)
+                          CategorySerializer, OfferFeatureSerializer, LikeOfferSerializer, LikeDiscountSerializer, StorySerializer, StorySerializerPost)
 # Create your views here.
 
 
@@ -129,7 +129,8 @@ class OfferViewSet(
         status = str(request.GET.get('status', None))
         status_list = ['Pending', 'Declined', 'Published']
         if status not in status_list:
-            context['error'] = "You should enter one of '{}' in 'status' query".format(status_list)
+            context['error'] = "You should enter one of '{}' in 'status' query".format(
+                status_list)
             return Response(context, status=400)
         filter_by['status'] = _(status)
         advertiser = request.user.publisher
@@ -152,6 +153,7 @@ class OfferViewSet(
         # for i in range(len(context['results'])):
         #     context['results'][i]['images'] = context['results'][i]['images'][0] if context['results'][i]['images'] else []
         return Response(context)
+
 
 class DiscountViewSet(
         mixins.CreateModelMixin,
@@ -235,7 +237,7 @@ class DiscountViewSet(
         context = dict()
         page = request.GET.get('page', 1)
         end = timezone.now().today().date() + timedelta(days=3)
-        
+
         queryset = self.get_queryset().filter(end_date__lte=end)
 
         context['count'] = queryset.count()
@@ -263,7 +265,8 @@ class DiscountViewSet(
         status = str(request.GET.get('status', None))
         status_list = ['Pending', 'Declined', 'Published']
         if status not in status_list:
-            context['error'] = "You should enter one of '{}' in 'status' query".format(status_list)
+            context['error'] = "You should enter one of '{}' in 'status' query".format(
+                status_list)
             return Response(context, status=400)
         filter_by['status'] = _(status)
         advertiser = request.user.publisher
@@ -416,7 +419,7 @@ class LikeViewSet(mixins.CreateModelMixin,
         context = dict()
         if ad_type in ad_type_list:
             if not request.data.get(ad_type, None):
-                context['detail']= "'{}' key is required".format(ad_type)
+                context['detail'] = "'{}' key is required".format(ad_type)
                 return Response(context, 400)
             try:
                 Like.objects.get(**request.data)
@@ -424,9 +427,11 @@ class LikeViewSet(mixins.CreateModelMixin,
                 return Response(context, 400)
             except Like.DoesNotExist:
                 if ad_type == "offer":
-                    serialser = LikeOfferSerializer(data=request.data, context=self.get_serializer_context())
+                    serialser = LikeOfferSerializer(
+                        data=request.data, context=self.get_serializer_context())
                 elif ad_type == "discount":
-                    serialser = LikeDiscountSerializer(data=request.data, context=self.get_serializer_context())
+                    serialser = LikeDiscountSerializer(
+                        data=request.data, context=self.get_serializer_context())
 
                 if serialser.is_valid():
                     serialser.save()
@@ -446,7 +451,7 @@ class LikeViewSet(mixins.CreateModelMixin,
         context = dict()
         if ad_type in ad_type_list:
             if not request.data.get(ad_type, None):
-                context['detail']= "'{}' key is required".format(ad_type)
+                context['detail'] = "'{}' key is required".format(ad_type)
                 return Response(context, 400)
             if ad_type == "offer":
                 offer = request.data.get("offer", None)
@@ -459,7 +464,7 @@ class LikeViewSet(mixins.CreateModelMixin,
                 context['detail'] = "Like removed successfully."
                 return Response(context, 200)
             else:
-                context['detail']= "You don't like this ad"
+                context['detail'] = "You don't like this ad"
                 return Response(context, 400)
 
         else:
@@ -489,7 +494,7 @@ class StoryViewSet(
         Set actions permissions.
         """
         permission_classes = []
-        if self.action in ['create', 'partial_update', 'destroy','my_stories'
+        if self.action in ['create', 'partial_update', 'destroy', 'my_stories'
                            ]:
             permission_classes = [IsAuthenticated, IsPublisher, IsVerified]
         elif self.action in ['list', 'retrieve']:
@@ -500,11 +505,13 @@ class StoryViewSet(
 
     def get_serializer_context(self):
         return {"request": self.request}
-    
+
     def create(self, request):
         advertiser = request.user.publisher
         request.data['advertiser'] = advertiser.id
-        serializer = self.serializer_class(data=request.data, context=self.get_serializer_context())
+        print("******************************************************")
+        print(request.data)
+        serializer =  StorySerializerPost(data=request.data, context=self.get_serializer_context())
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
@@ -512,8 +519,9 @@ class StoryViewSet(
     def partial_update(self, request, pk):
         story = get_object_or_404(Story.objects.filter(
             advertiser=request.user.publisher), pk=pk)
-        serializer = self.serializer_class(story, data=request.data, partial=True,
-                                           context=self.get_serializer_context())
+        request.data['advertiser'] = advertiser.id
+        serializer = StorySerializerPost(story, data=request.data, partial=True,
+                                        context=self.get_serializer_context())
         serializer.is_valid(raise_exception=True)
         story = serializer.save()
         story.status = Story.PENDING
@@ -522,7 +530,8 @@ class StoryViewSet(
 
     def destroy(self, request, pk):
         context = dict()
-        story = get_object_or_404(Story.objects.filter(advertiser=request.user.publisher), pk=pk)
+        story = get_object_or_404(Story.objects.filter(
+            advertiser=request.user.publisher), pk=pk)
         story.delete()
         context['detail'] = "Story deleted."
         return Response(context, status=status.HTTP_204_NO_CONTENT)
