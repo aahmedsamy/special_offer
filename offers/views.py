@@ -476,8 +476,6 @@ class LikeViewSet(mixins.CreateModelMixin,
 class StoryViewSet(
         mixins.CreateModelMixin,
         mixins.RetrieveModelMixin,
-        mixins.UpdateModelMixin,
-        mixins.DestroyModelMixin,
         mixins.ListModelMixin,
         viewsets.GenericViewSet):
 
@@ -506,27 +504,25 @@ class StoryViewSet(
     def get_serializer_context(self):
         return {"request": self.request}
 
-    def create(self, request):
-        advertiser = request.user.publisher
-        request.data['advertiser'] = advertiser.id
-        print("******************************************************")
-        print(request.data)
-        serializer =  StorySerializerPost(data=request.data, context=self.get_serializer_context())
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+    # def create(self, request):
+    #     advertiser = request.user.publisher
+    #     request.data['advertiser'] = advertiser.id
+    #     serializer =  StorySerializerPost(data=request.data, context=self.get_serializer_context())
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+    #     return Response(serializer.data)
 
-    def partial_update(self, request, pk):
-        story = get_object_or_404(Story.objects.filter(
-            advertiser=request.user.publisher), pk=pk)
-        request.data['advertiser'] = advertiser.id
-        serializer = StorySerializerPost(story, data=request.data, partial=True,
-                                        context=self.get_serializer_context())
-        serializer.is_valid(raise_exception=True)
-        story = serializer.save()
-        story.status = Story.PENDING
-        story.save()
-        return Response(serializer.data)
+    # def partial_update(self, request, pk):
+    #     story = get_object_or_404(Story.objects.filter(
+    #         advertiser=request.user.publisher), pk=pk)
+    #     request.data['advertiser'] = advertiser.id
+    #     serializer = StorySerializerPost(story, data=request.data, partial=True,
+    #                                     context=self.get_serializer_context())
+    #     serializer.is_valid(raise_exception=True)
+    #     story = serializer.save()
+    #     story.status = Story.PENDING
+    #     story.save()
+    #     return Response(serializer.data)
 
     def destroy(self, request, pk):
         context = dict()

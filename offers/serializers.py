@@ -164,6 +164,14 @@ class StorySerializer(serializers.ModelSerializer):
         # fields = "__all__"
         exclude = ('status',)
         read_only = ['end_time']
+    
+    def create(self, validated_data):
+        request = self.context.get("request", None)
+        advertiser = request.user.publisher
+        story = Story.objects.create(
+            advertiser=advertiser, **validated_data)
+
+        return story
 
 class StorySerializerPost(serializers.ModelSerializer):
 
@@ -172,3 +180,5 @@ class StorySerializerPost(serializers.ModelSerializer):
         # fields = "__all__"
         exclude = ('status',)
         read_only = ['end_time']
+    
+    
