@@ -233,7 +233,7 @@ class Story(models.Model):
         "Advertiser"), on_delete=models.CASCADE, related_name="advertiser_stories")
     media = models.FileField(
         _("Image/Video"), upload_to="stories/", max_length=256, validators=[ImageOrVideo])
-    desc = models.TextField(_("Description"), max_length=1024)
+    desc = models.TextField(_("Description"), max_length=1024, null=True)
     start_time = models.DateTimeField(_("Start date"))
     number_of_hours = models.PositiveSmallIntegerField(_("Number of hours"), validators=[
         MinValueValidator(1),
