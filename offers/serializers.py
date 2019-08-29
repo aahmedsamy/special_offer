@@ -15,6 +15,7 @@ from galleries.models import OfferImage, DiscountImage
 from .models import (Offer, Discount, Category,
                      OfferFeature, PlusItem, OfferFeature, Like, Story)
 
+
 class PublisherSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
     trading_doc = Base64ImageField()
@@ -22,6 +23,7 @@ class PublisherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Publisher
         exclude = ['phone_verification_code']
+
 
 class PlusItemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -164,7 +166,7 @@ class StorySerializer(serializers.ModelSerializer):
         # fields = "__all__"
         exclude = ('status',)
         read_only = ['end_time']
-    
+
     def create(self, validated_data):
         request = self.context.get("request", None)
         advertiser = request.user.publisher
@@ -173,6 +175,18 @@ class StorySerializer(serializers.ModelSerializer):
 
         return story
 
+
+class PublisherStoriesSerializer(serializers.ModelSerializer):
+    advertiser_stories = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Publisher
+        fields = ('image', 'name', 'address', 'advertiser_stories')
+
+    def get_advertiser_stories(self, obj):
+        return StorySerializer(obj.advertiser_stories.filter(status=Story.APPROVED, start_time__lte=timezone.now(), end_time__gte=timezone.now()), many=True).data
+
+
 class StorySerializerPost(serializers.ModelSerializer):
 
     class Meta:
@@ -180,5 +194,3 @@ class StorySerializerPost(serializers.ModelSerializer):
         # fields = "__all__"
         exclude = ('status',)
         read_only = ['end_time']
-    
-    

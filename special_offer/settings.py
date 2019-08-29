@@ -15,7 +15,7 @@ import logging
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATIC_DIR = os.path.join(BASE_DIR, 'static/')
+STATIC_DIR = '/home/spffo/public_html/backend/static/'
 # MEDIA_DIR = os.path.join(BASE_DIR, 'media')
 MEDIA_DIR = '/home/spffo/public_html/backend/media/'
 
@@ -166,7 +166,7 @@ LOCALE_PATHS = (
 STATIC_URL = '/backend/static/'
 MEDIA_URL = '/backend/media/'
 STATIC_ROOT = STATIC_DIR
-MEDIA_ROOT = '/home/spffo/public_html/backend'
+MEDIA_ROOT = MEDIA_DIR
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "staticfiles/"),

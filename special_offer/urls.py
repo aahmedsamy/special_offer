@@ -23,7 +23,7 @@ from rest_framework_jwt.views import obtain_jwt_token
 from rest_framework.routers import DefaultRouter
 
 from offers.views import (OfferViewSet, DiscountViewSet,
-                          CategoryViewSet, FeaturesViewSet, LikeViewSet, StoryViewSet)
+                          CategoryViewSet, FeaturesViewSet, LikeViewSet, StoryViewSet, PublisherStoryAPI)
 from ads.views import AdViewSet
 from galleries.views import (
     OfferImageViewSet, DiscountImageViewSet)
@@ -41,16 +41,20 @@ router.register('discounts', DiscountViewSet, base_name='discounts')
 router.register('ads', AdViewSet, base_name='ads')
 router.register('categories', CategoryViewSet, base_name="categories")
 router.register('likes', LikeViewSet, base_name="likes")
-router.register('searchernotifications', SearcherNotificationViewSet, base_name="searcher_notifications")
-router.register('advertisernotifications', AdvertiserNotificationViewSet, base_name="advertiser_notifications")
+router.register('searchernotifications', SearcherNotificationViewSet,
+                base_name="searcher_notifications")
+router.register('advertisernotifications', AdvertiserNotificationViewSet,
+                base_name="advertiser_notifications")
 router.register('stories', StoryViewSet, base_name="stories")
+router.register('publisherstories', PublisherStoryAPI,
+                base_name="publisherstories")
 
 urlpatterns = router.urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-token-auth/', obtain_jwt_token),
-    path('api/', include(router.urls)),    
+    path('api/', include(router.urls)),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

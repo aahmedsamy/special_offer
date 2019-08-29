@@ -21,6 +21,7 @@ class Ad(models.Model):
     #                              blank=True)
     name = models.CharField(_("Name"), max_length=256)
     image = models.ImageField(_("Ad Image"), upload_to='ads/images')
+    url = models.URLField(_("URL"), blank=True, null=True)
     position = models.CharField(
         _("Position"), max_length=256, choices=POSITION_CHOICES)
     period = models.PositiveSmallIntegerField(

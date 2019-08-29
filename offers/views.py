@@ -12,11 +12,11 @@ from datetime import timedelta
 
 from helpers.permissions import IsPublisher, IsVerified, IsSearcher
 from helpers.views import PaginatorView
-
+from users.models import Publisher
 from .models import (Offer, Discount, Category, OfferFeature, Like, Story)
 from .serializers import (OfferSerializer,
                           DiscountSerializer,
-                          CategorySerializer, OfferFeatureSerializer, LikeOfferSerializer, LikeDiscountSerializer, StorySerializer, StorySerializerPost)
+                          CategorySerializer, OfferFeatureSerializer, LikeOfferSerializer, LikeDiscountSerializer, StorySerializer, StorySerializerPost, PublisherStoriesSerializer)
 # Create your views here.
 
 
@@ -471,6 +471,13 @@ class LikeViewSet(mixins.CreateModelMixin,
             context['detail'] = "query string mush contain 'ad_type' with one of {} values".format(
                 ad_type_list)
             return Response(context, 400)
+
+
+class PublisherStoryAPI(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Publisher.objects.all().order_by('-advertiser_stories__start_date')
+    serializer_class = PublisherStoriesSerializer
+    # permission_classes = [IsAuthenticated]
+    pagination_class = None
 
 
 class StoryViewSet(
