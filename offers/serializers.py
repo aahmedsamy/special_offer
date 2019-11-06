@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 from rest_framework import serializers
@@ -13,7 +14,7 @@ from galleries.serializers import OfferImageSerializer, DiscountImageSerializer
 from galleries.models import OfferImage, DiscountImage
 
 from .models import (Offer, Discount, Category,
-                     OfferFeature, PlusItem, OfferFeature, Like, Story)
+                     OfferFeature, PlusItem, OfferFeature, Like, Story, StorySeen)
 
 
 class PublisherSerializer(serializers.ModelSerializer):
@@ -176,15 +177,59 @@ class StorySerializer(serializers.ModelSerializer):
         return story
 
 
+class StoryOnlySerializer(serializers.ModelSerializer):
+    # advertiser = PublisherSerializer(read_only=True)
+    seen = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Story
+        # fields = "__all__"
+        exclude = ('status',)
+        read_only = ['end_time']
+
+    def create(self, validated_data):
+        request = self.context.get("request", None)
+        advertiser = request.user.publisher
+        story = Story.objects.create(
+            advertiser=advertiser, **validated_data)
+
+        return story
+
+    def get_seen(self, obj):
+        if not self.context['request'].user.is_anonymous and StorySeen.objects.filter(user=self.context['request'].user, story=obj).first():
+            return True
+        return False
+
+
 class PublisherStoriesSerializer(serializers.ModelSerializer):
     advertiser_stories = serializers.SerializerMethodField()
 
     class Meta:
         model = Publisher
-        fields = ('image', 'name', 'address', 'advertiser_stories')
+        fields = ('image', 'name', 'address',
+                  'advertiser_stories', 'id')
 
     def get_advertiser_stories(self, obj):
-        return StorySerializer(obj.advertiser_stories.filter(status=Story.APPROVED, start_time__lte=timezone.now(), end_time__gte=timezone.now()), many=True).data
+        return StoryOnlySerializer(obj.advertiser_stories.filter(status=Story.APPROVED, start_time__lte=timezone.now(), end_time__gte=timezone.now()).order_by('start_time')
+            , many=True, context=self.context).data
+    # , start_time__lte = timezone.now(), end_time__gte = timezone.now()
+
+
+class StorySeenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StorySeen
+        read_only_fields = ('user',)
+        fields = '__all__'
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        if not user.is_anonymous:
+            seen = StorySeen.objects.create(
+                user=user, story=validated_data['story'])
+            return seen
+        else:
+            raise ValidationError(
+                _('Not logged in'))
 
 
 class StorySerializerPost(serializers.ModelSerializer):

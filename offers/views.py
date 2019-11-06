@@ -13,10 +13,11 @@ from datetime import timedelta
 from helpers.permissions import IsPublisher, IsVerified, IsSearcher
 from helpers.views import PaginatorView
 from users.models import Publisher
-from .models import (Offer, Discount, Category, OfferFeature, Like, Story)
+from .models import (Offer, Discount, Category,
+                     OfferFeature, Like, Story, StorySeen)
 from .serializers import (OfferSerializer,
                           DiscountSerializer,
-                          CategorySerializer, OfferFeatureSerializer, LikeOfferSerializer, LikeDiscountSerializer, StorySerializer, StorySerializerPost, PublisherStoriesSerializer)
+                          CategorySerializer, StorySeenSerializer, OfferFeatureSerializer, LikeOfferSerializer, LikeDiscountSerializer, StorySerializer, StorySerializerPost, PublisherStoriesSerializer)
 # Create your views here.
 
 
@@ -474,10 +475,27 @@ class LikeViewSet(mixins.CreateModelMixin,
 
 
 class PublisherStoryAPI(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = Publisher.objects.all().order_by('-advertiser_stories__start_date')
+    queryset = Publisher.objects.all().order_by(
+        '-advertiser_stories__start_date').distinct()
     serializer_class = PublisherStoriesSerializer
     # permission_classes = [IsAuthenticated]
     pagination_class = None
+
+    def get_queryset(self):
+        filtered = Publisher.objects.filter(advertiser_stories__status=Story.APPROVED, advertiser_stories__start_time__lte=timezone.now(), advertiser_stories__end_time__gte=timezone.now()).order_by(
+            'advertiser_stories__start_time').distinct()
+        dist = []
+        for i in filtered:
+            if i not in dist:
+                dist.append(i)
+        return dist
+        # return Publisher.objects.all()
+
+
+class StorySeenAPI(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    queryset = StorySeen.objects.all()
+    serializer_class = StorySeenSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class StoryViewSet(

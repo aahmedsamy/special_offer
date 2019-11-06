@@ -109,7 +109,7 @@ DATABASES = {
 #         'NAME': 'spffo_special_offer_db',
 #         'USER': 'spffo_nagy3n',
 #         'PASSWORD': 'S6j^oHJ6^~$~',
-#         'HOST': 'localhost',
+#         'HOST': '136.243.104.8',
 #         'PORT': '3306',
 #     }
 # }

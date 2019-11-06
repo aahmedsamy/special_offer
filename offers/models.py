@@ -9,7 +9,7 @@ from datetime import timedelta
 from helpers.validators import HasSvgExtention, ImageOrVideo
 from helpers.images import Image
 
-from users.models import SearcherNotification, AdvertiserNotification
+from users.models import SearcherNotification, AdvertiserNotification, User
 
 from .managers import (PendingManager, NotPendingManager)
 # Create your models here.
@@ -234,6 +234,9 @@ class Story(models.Model):
     media = models.FileField(
         _("Image/Video"), upload_to="stories/", max_length=256, validators=[ImageOrVideo])
     desc = models.TextField(_("Description"), max_length=1024, null=True)
+    caption = models.TextField(_('Caption'), blank=True, null=True)
+    color = models.CharField(
+        _('Color'), max_length=256, blank=True, null=True)
     start_time = models.DateTimeField(_("Start date"))
     number_of_hours = models.PositiveSmallIntegerField(_("Number of hours"), validators=[
         MinValueValidator(1),
@@ -264,6 +267,11 @@ class Story(models.Model):
 
     def get_end_date(self, hours):
         return self.start_time + timedelta(hours=hours)
+
+
+class StorySeen(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE)
 
 
 class PendingStory(Story):

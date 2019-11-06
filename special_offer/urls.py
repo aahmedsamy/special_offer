@@ -23,7 +23,7 @@ from rest_framework_jwt.views import obtain_jwt_token
 from rest_framework.routers import DefaultRouter
 
 from offers.views import (OfferViewSet, DiscountViewSet,
-                          CategoryViewSet, FeaturesViewSet, LikeViewSet, StoryViewSet, PublisherStoryAPI)
+                          CategoryViewSet, FeaturesViewSet, LikeViewSet, StoryViewSet, PublisherStoryAPI, StorySeenAPI)
 from ads.views import AdViewSet
 from galleries.views import (
     OfferImageViewSet, DiscountImageViewSet)
@@ -48,6 +48,8 @@ router.register('advertisernotifications', AdvertiserNotificationViewSet,
 router.register('stories', StoryViewSet, base_name="stories")
 router.register('publisherstories', PublisherStoryAPI,
                 base_name="publisherstories")
+router.register('storyseen', StorySeenAPI,
+                base_name="storyseen")
 
 urlpatterns = router.urls
 
