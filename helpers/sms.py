@@ -57,10 +57,17 @@ class Twilio:
 
     @classmethod
     def send_message(cls, body, to):
+        context = dict()
         obj = cls()
-        message = obj.client.messages.create(
-            from_=obj.number,
-            body=body,
-            to=to
-        )
-        return message
+        try:
+            message = obj.client.messages.create(
+                from_=obj.number,
+                body=body,
+                to=to
+            )
+            context['status'] = "success"
+            context['message'] = message
+            return context
+        except:
+            context['status'] = "fail"
+            return context

@@ -65,4 +65,4 @@ def compress_plus_item_image(sender, instance, **kwargs):
     instance.small_image_path = img.compress_image_tinify(image=instance.image)
     instance.save()
 
-post_save.connect(compress_plus_item_image, sender=PlusItemImage)
+# post_save.connect(compress_plus_item_image, sender=PlusItemImage)

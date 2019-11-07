@@ -101,16 +101,17 @@ class Publisher(models.Model):
         _("Holidays"), blank=True, max_length=256, null=True)
     name = models.CharField(_('Publisher name'), max_length=255)
     phone = models.CharField(_('Phone'), max_length=20, unique=True)
-    image = models.ImageField(_("Image"), upload_to="users/images")
-    address_url = models.URLField(_("Address URL"), max_length=256, null=True)
-    website_url = models.URLField(_("Website URL"), max_length=256, null=True)
+    image = models.ImageField(_("Image"), upload_to="users/images", null=True)
+    address = models.CharField(_("Address"), max_length=250, null=True)
+    address_url = models.CharField(_("Address URL"), max_length=256, null=True)
+    website_url = models.CharField(_("Website URL"), max_length=256, null=True)
     facebook_url = models.URLField(
         _("Facebook URL"), max_length=256, null=True)
     twitter_url = models.URLField(_("Twitter URL"), max_length=256, null=True)
     instgram_url = models.URLField(
         _("Instgram URL"), max_length=256, null=True)
     trading_doc = models.ImageField(
-        _("Trading document"), upload_to="images/docs")
+        _("Trading document"), upload_to="images/docs", null=True)
     work_start_at = models.TimeField(_("Work starts at"))
     work_end_at = models.TimeField(_("Work ends at"))
     phone_verification_code = models.CharField(

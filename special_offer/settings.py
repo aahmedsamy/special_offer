@@ -15,8 +15,9 @@ import logging
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATIC_DIR = os.path.join(BASE_DIR, 'static/')
-MEDIA_DIR = os.path.join(BASE_DIR, 'media')
+STATIC_DIR = '/home/spffo/public_html/backend/static/'
+# MEDIA_DIR = os.path.join(BASE_DIR, 'media')
+MEDIA_DIR = '/home/spffo/public_html/backend/media/'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -27,7 +28,8 @@ SECRET_KEY = '_0q@o$rf!f9-pls@&1@$m=r%0g9bpv%7wcikqoor!kmagcrr5n'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'aahmedsamyspecialoffer.pythonanywhere.com']
+ALLOWED_HOSTS = ['*']
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 # Application definition
@@ -51,6 +53,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -97,6 +100,17 @@ DATABASES = {
 #         'PASSWORD': 'special_offer_password',
 #         'HOST': 'localhost',
 #         'PORT': '',
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'spffo_special_offer_db',
+#         'USER': 'spffo_nagy3n',
+#         'PASSWORD': 'S6j^oHJ6^~$~',
+#         'HOST': '136.243.104.8',
+#         'PORT': '3306',
 #     }
 # }
 
@@ -149,8 +163,8 @@ LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale'),
 )
 
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
+STATIC_URL = '/backend/static/'
+MEDIA_URL = '/backend/media/'
 STATIC_ROOT = STATIC_DIR
 MEDIA_ROOT = MEDIA_DIR
 

@@ -7,8 +7,10 @@ class AdAdmin(admin.ModelAdmin):
     list_display = ('advertiser', 'name', 'start_date',
                     'end_date', 'period', 'position')
     list_editable = ('position',)
-    search_fields = ('advertiser_id', 'advertiser', 'offer_id', 'discount_id')
-    autocomplete_fields = ('advertiser', 'offer', 'discount')
+    # search_fields = ('advertiser_id', 'advertiser', 'offer_id', 'discount_id')
+    search_fields = ('advertiser_id', 'advertiser')
+    # autocomplete_fields = ('advertiser', 'offer', 'discount')
+    autocomplete_fields = ('advertiser',)
 
 
 admin.site.register(Ad, AdAdmin)

@@ -9,22 +9,16 @@ from datetime import timedelta
 from helpers.validators import HasSvgExtention, ImageOrVideo
 from helpers.images import Image
 
-from users.models import SearcherNotification, AdvertiserNotification
+from users.models import SearcherNotification, AdvertiserNotification, User
 
 from .managers import (PendingManager, NotPendingManager)
 # Create your models here.
 
 
 class Category(models.Model):
-    name = models.CharField(_("Name"), max_length=256, unique=True)
+    name = models.CharField(_("Name"), max_length=255, unique=True)
     image = models.ImageField(_("Image"), upload_to="categories/images/",)
     small_image_path = models.TextField()
-
-    def clean(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        img = Image()
-        self.small_image_path = img.compress_image_tinify(image=self.image)
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -92,8 +86,6 @@ class Offer(models.Model):
                         offer=self, searcher=fc.searcher, status=self.status)
             AdvertiserNotification.objects.create(
                 offer=self, advertiser=self.publisher, status=self.status)
-
-        
 
     def __str__(self):
         return self.name
@@ -214,11 +206,9 @@ class Like(models.Model):
         unique_together = ('searcher', 'offer', 'discount')
 
 
-class OfferAndDiscountFeature(models.Model):
+class OfferFeature(models.Model):
     offer = models.ForeignKey(Offer, on_delete=models.CASCADE, null=True, verbose_name=_(
         "Offer"), related_name='offer_features')
-    discount = models.ForeignKey(Discount, on_delete=models.CASCADE, null=True, verbose_name=_(
-        "Discount"), related_name='discount_features')
     name = models.CharField(_("Feature name"), max_length=256)
     desc = models.TextField(_("Description"), max_length=1024)
 
@@ -241,13 +231,17 @@ class Story(models.Model):
     )
     advertiser = models.ForeignKey("users.Publisher", verbose_name=_(
         "Advertiser"), on_delete=models.CASCADE, related_name="advertiser_stories")
-    media = models.FileField(_("Image/Video"), upload_to="stories/", max_length=256, validators=[ImageOrVideo])
-    desc = models.TextField(_("Description"), max_length = 1024)
+    media = models.FileField(
+        _("Image/Video"), upload_to="stories/", max_length=256, validators=[ImageOrVideo])
+    desc = models.TextField(_("Description"), max_length=1024, null=True)
+    caption = models.TextField(_('Caption'), blank=True, null=True)
+    color = models.CharField(
+        _('Color'), max_length=256, blank=True, null=True)
     start_time = models.DateTimeField(_("Start date"))
-    end_time = models.DateTimeField(_("Start date"))
     number_of_hours = models.PositiveSmallIntegerField(_("Number of hours"), validators=[
-                                   MinValueValidator(1),
-                                   MaxValueValidator(24)])
+        MinValueValidator(1),
+        MaxValueValidator(24)])
+    end_time = models.DateTimeField(_("End date"), null=True)
     status = models.CharField(
         _("Status"), max_length=50, choices=STATUS_CHOICES, default=PENDING)
 
@@ -255,13 +249,13 @@ class Story(models.Model):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.__original_status = self.status        
+        self.__original_status = self.status
 
     class Meta:
         verbose_name = _("Story")
         verbose_name_plural = _("Stories")
         ordering = ['-id']
-    
+
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         original_status = self.__original_status
         self.__original_status = self.status
@@ -269,10 +263,16 @@ class Story(models.Model):
         super().save(force_insert, force_update, *args, **kwargs)
         if self.status != original_status:
             AdvertiserNotification.objects.create(
-                story=self, advertiser=self.advertiser, status=self.status)    
+                story=self, advertiser=self.advertiser, status=self.status)
 
     def get_end_date(self, hours):
         return self.start_time + timedelta(hours=hours)
+
+
+class StorySeen(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE)
+
 
 class PendingStory(Story):
 
@@ -299,5 +299,5 @@ def compress_discount_image(sender, instance, **kwargs):
         image.save()
 
 
-post_save.connect(compress_offer_image, sender=Offer)
-post_save.connect(compress_discount_image, sender=Discount)
+# post_save.connect(compress_offer_image, sender=Offer)
+# post_save.connect(compress_discount_image, sender=Discount)

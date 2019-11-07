@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Q
+from django.utils.translation import ugettext_lazy as _
 
 # from offers.models import Offer
 
@@ -9,7 +10,7 @@ class PendingManager(models.Manager):
 
         return super(PendingManager, self).get_queryset().filter(
 
-            status="Pending")
+            status=_("Pending"))
 
 
 class NotPendingManager(models.Manager):
@@ -18,4 +19,4 @@ class NotPendingManager(models.Manager):
 
         return super(NotPendingManager, self).get_queryset().filter(
 
-            ~Q(status="Pending"))
+            ~Q(status=_("Pending")))

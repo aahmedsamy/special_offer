@@ -6,21 +6,6 @@ from offers.serializers import (OfferSerializer, DiscountSerializer, StorySerial
 
 from .models import User, Searcher, Publisher, SearcherNotification, AdvertiserNotification
 
-
-class UserSerializer(serializers.ModelSerializer):
-    likes = serializers.SerializerMethodField()
-    
-    class Meta:
-        model = User
-        fields = ('id', 'first_name', 'last_name', 'email',
-                  'searcher', 'publisher', 'likes')
-        depth = 1
-    
-    def get_likes(self, obj):
-        if obj and obj.is_searcher():
-            return obj.searcher.get_liked_ads()
-
-
 class SearcherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Searcher
@@ -33,7 +18,21 @@ class PublisherSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Publisher
-        fields = "__all__"
+        exclude = ['phone_verification_code']
+
+class UserSerializer(serializers.ModelSerializer):
+    likes = serializers.SerializerMethodField()
+    publisher = PublisherSerializer(read_only=True)
+    searcher = SearcherSerializer(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'email',
+                  'searcher', 'publisher', 'likes')
+    
+    def get_likes(self, obj):
+        if obj and obj.is_searcher():
+            return obj.searcher.get_liked_ads()
 
 
 class SignupSerializer(serializers.ModelSerializer):
